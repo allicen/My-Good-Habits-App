@@ -34,13 +34,14 @@
         </LinearLayout>
 
         <LinearLayout
+                android:id="@+id/layout"
                 android:orientation="vertical"
                 android:padding="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
             <EditText
-                    android:id="@+id/title"
+                    android:id="@+id/title_item"
                     android:hint="@string/habit_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -48,7 +49,7 @@
                     android:inputType="text"/>
 
             <EditText
-                    android:id="@+id/description"
+                    android:id="@+id/description_item"
                     android:hint="@string/habit_description"
                     android:importantForAutofill="no"
                     android:inputType="text"
@@ -69,13 +70,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 
+
                 <org.apmem.tools.layouts.FlowLayout
+                        android:id="@+id/radio_group"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content">
 
                     <RadioButton
                             android:text="@string/work"
                             android:id="@+id/work"
+                            android:tag="@string/work"
+                            android:checked="true"
                             android:layout_width="wrap_content"
                             android:layout_weight="1"
                             android:layout_height="wrap_content"/>
@@ -83,6 +88,7 @@
                     <RadioButton
                             android:text="@string/study"
                             android:id="@+id/study"
+                            android:tag="@string/study"
                             android:layout_width="wrap_content"
                             android:layout_weight="1"
                             android:layout_height="wrap_content"/>
@@ -90,6 +96,7 @@
                     <RadioButton
                             android:text="@string/health"
                             android:id="@+id/health"
+                            android:tag="@string/health"
                             android:layout_width="wrap_content"
                             android:layout_weight="1"
                             android:layout_height="wrap_content"/>
@@ -97,6 +104,7 @@
                     <RadioButton
                             android:text="@string/family"
                             android:id="@+id/family"
+                            android:tag="@string/family"
                             android:layout_width="wrap_content"
                             android:layout_weight="1"
                             android:layout_height="wrap_content"/>
@@ -104,6 +112,7 @@
                     <RadioButton
                             android:text="@string/life"
                             android:id="@+id/life"
+                            android:tag="@string/life"
                             android:layout_width="wrap_content"
                             android:layout_weight="1"
                             android:layout_height="wrap_content"/>
