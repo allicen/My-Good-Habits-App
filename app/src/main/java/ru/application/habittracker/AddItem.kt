@@ -3,21 +3,21 @@ package ru.application.habittracker
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.EditText
 import android.widget.RadioButton
-import android.widget.RadioGroup
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.item.*
-import kotlinx.android.synthetic.main.list.*
+import kotlinx.android.synthetic.main.add_item.*
 import kotlin.collections.List
 
 
-class Item: AppCompatActivity() {
+class AddItem: AppCompatActivity() {
     lateinit var types: List<RadioButton>
+
+    lateinit var itemTitle: String
+    lateinit var itemDescription: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.item)
+        setContentView(R.layout.add_item)
 
         types = listOf<RadioButton>(work, study, health, family, life)
 
@@ -28,10 +28,18 @@ class Item: AppCompatActivity() {
         life.setOnClickListener{ checkedRadioButton(it) }
 
         save.setOnClickListener {
+            itemTitle = title_item.text.toString()
+            itemDescription = description_item.text.toString()
+
+            val intent = Intent(this, List::class.java)
+                .apply {
+                    putExtra("test", itemTitle)
+                }
+            setResult(0, intent)
+
             finish()
         }
     }
-
 
     fun checkedRadioButton (radioButton: View) {
         for (type in types) {

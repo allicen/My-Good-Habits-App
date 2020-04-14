@@ -17,6 +17,6 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".Item"/>
+                android:name=".AddItem"/>
     </application>
 </manifest>

@@ -66,11 +66,15 @@
 
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/habit_list"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent">
+            <LinearLayout
+                    android:id="@+id/list_item"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+        </ScrollView>
 
     </LinearLayout>
 

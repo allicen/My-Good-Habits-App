@@ -4,11 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class Adapter(private val items: MutableList<Item>): RecyclerView.Adapter<ViewHolder>(){
+class Adapter(private val items: MutableList<AddItem>): RecyclerView.Adapter<ViewHolder>(){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
 
-        val view = inflater.inflate(R.layout.item, parent, false)
+        val view = inflater.inflate(R.layout.add_item, parent, false)
 
         return ViewHolder(view)
     }
