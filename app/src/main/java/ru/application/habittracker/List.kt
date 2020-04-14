@@ -5,13 +5,14 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.list.*
 import kotlinx.android.synthetic.main.main.*
 import java.util.ArrayList
 
 class List : AppCompatActivity() {
 
-    lateinit var habitList: ArrayList<String>
+    lateinit var habitList: ArrayList<HabitItem>
     var emptyList = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,39 +33,46 @@ class List : AppCompatActivity() {
         empty_list.visibility = TextView.VISIBLE
     }
 
-    fun showItems(item: String) {
-        val infLater = layoutInflater
+    fun showItems(items: ArrayList<HabitItem>) {
+//        val infLater = layoutInflater
+//
+//        for (item in items) {
+//            val view = infLater.inflate(R.layout.item, list_item, false)
+//            val vTitle = view.findViewById<TextView>(R.id.item_title)
+//            vTitle.text = item.title
+//            list_item.addView(view)
+//        }
 
-        val view = infLater.inflate(R.layout.item, list_item, false)
-        val vTitle = view.findViewById<TextView>(R.id.item_title)
-        vTitle.text = item
-        list_item.addView(view)
+        habit_list.adapter = RecAdapter(items)
+        habit_list.layoutManager = LinearLayoutManager(this)
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        val string = data?.getStringExtra("test").toString()
+        val getHabit = data?.getParcelableExtra<HabitItem>("test")
 
-        if (string.isNotEmpty()) {
-            habitList.add(string)
+        if (getHabit != null) {
+            habitList.add(getHabit)
             empty_list.visibility = TextView.GONE
-            showItems(string)
+            showItems(arrayListOf(getHabit))
         }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        outState.putStringArrayList("array", habitList)
+        outState.putParcelableArrayList("array", habitList)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
+
         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-        habitList = savedInstanceState.getStringArrayList("array")
+        habitList = savedInstanceState.getParcelableArrayList("array")
         for (item in habitList) {
-            showItems(item)
+            showItems(arrayListOf(item))
         }
 
         if (habitList.size != 0) {

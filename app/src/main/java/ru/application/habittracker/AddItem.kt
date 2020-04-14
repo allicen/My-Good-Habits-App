@@ -31,9 +31,11 @@ class AddItem: AppCompatActivity() {
             itemTitle = title_item.text.toString()
             itemDescription = description_item.text.toString()
 
+            val item = HabitItem(itemTitle, itemDescription)
+
             val intent = Intent(this, List::class.java)
                 .apply {
-                    putExtra("test", itemTitle)
+                    putExtra("test", item)
                 }
             setResult(0, intent)
 
