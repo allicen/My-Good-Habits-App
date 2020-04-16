@@ -13,7 +13,6 @@ import java.util.ArrayList
 class List : AppCompatActivity() {
 
     lateinit var habitList: ArrayList<HabitItem>
-    var emptyList = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,31 +32,27 @@ class List : AppCompatActivity() {
         empty_list.visibility = TextView.VISIBLE
     }
 
+    override fun onResume() {
+        super.onResume()
+    }
+
     fun showItems(items: ArrayList<HabitItem>) {
-//        val infLater = layoutInflater
-//
-//        for (item in items) {
-//            val view = infLater.inflate(R.layout.item, list_item, false)
-//            val vTitle = view.findViewById<TextView>(R.id.item_title)
-//            vTitle.text = item.title
-//            list_item.addView(view)
-//        }
-
-        habit_list.adapter = RecAdapter(items)
+        val adapter = RecAdapter(items)
+        habit_list.adapter = adapter
         habit_list.layoutManager = LinearLayoutManager(this)
-
+        adapter.notifyDataSetChanged()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         val getHabit = data?.getParcelableExtra<HabitItem>("test")
-
         if (getHabit != null) {
             habitList.add(getHabit)
             empty_list.visibility = TextView.GONE
-            showItems(arrayListOf(getHabit))
+            title_list.visibility = TextView.GONE
         }
+        showItems(habitList)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -71,12 +66,11 @@ class List : AppCompatActivity() {
 
         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         habitList = savedInstanceState.getParcelableArrayList("array")
-        for (item in habitList) {
-            showItems(arrayListOf(item))
-        }
+        showItems(habitList)
 
         if (habitList.size != 0) {
             empty_list.visibility = TextView.GONE
+            title_list.visibility = TextView.GONE
         }
     }
 }

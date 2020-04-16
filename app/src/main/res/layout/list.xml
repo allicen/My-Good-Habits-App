@@ -7,6 +7,7 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:showIn="@layout/main"
+        android:background="@color/list_background"
         android:orientation="vertical"
         tools:context=".List">
 
@@ -35,7 +36,7 @@
 
     <LinearLayout
             android:orientation="vertical"
-            android:padding="20dp"
+            android:padding="12dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -66,20 +67,10 @@
 
         </LinearLayout>
 
-<!--        <ScrollView-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent">-->
-<!--            <LinearLayout-->
-<!--                    android:id="@+id/list_item"-->
-<!--                    android:orientation="vertical"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"/>-->
-<!--        </ScrollView>-->
-
         <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/habit_list"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="match_parent"/>
 
     </LinearLayout>
 

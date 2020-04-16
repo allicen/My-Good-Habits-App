@@ -7,9 +7,18 @@ import java.io.Serializable
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class HabitItem (
     val title: String,
-    val description: String
+    val description: String,
+    val type: String,
+    val priority: String,
+    val count: String,
+    val period: String
+
 ): Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
         parcel.readString(),
         parcel.readString()
     )
@@ -17,6 +26,10 @@ class HabitItem (
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(title)
         parcel.writeString(description)
+        parcel.writeString(type)
+        parcel.writeString(priority)
+        parcel.writeString(count)
+        parcel.writeString(period)
     }
 
     override fun describeContents(): Int {

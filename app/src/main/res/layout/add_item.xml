@@ -57,7 +57,7 @@
                     android:layout_height="wrap_content" />
 
             <Spinner
-                    android:id="@+id/priority_value"
+                    android:id="@+id/priority_item"
                     android:padding="10sp"
                     android:entries="@array/priority"
                     android:background="@color/color_secondary"
@@ -72,7 +72,7 @@
 
 
                 <org.apmem.tools.layouts.FlowLayout
-                        android:id="@+id/radio_group"
+                        android:id="@+id/radio_group_item"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content">
 
@@ -120,7 +120,7 @@
                 </org.apmem.tools.layouts.FlowLayout>
 
             <EditText
-                    android:id="@+id/count"
+                    android:id="@+id/count_item"
                     android:hint="@string/habit_count"
                     android:importantForAutofill="no"
                     android:inputType="number"
@@ -128,7 +128,7 @@
                     android:layout_height="wrap_content"/>
 
             <EditText
-                    android:id="@+id/period"
+                    android:id="@+id/period_item"
                     android:hint="@string/habit_period"
                     android:importantForAutofill="no"
                     android:inputType="text"

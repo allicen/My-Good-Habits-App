@@ -2,6 +2,7 @@
     <string name="app_name">Habit+</string>
     <string name="app_name_rus">Трекер привычек</string>
     <string name="title_list">Список привычек</string>
+    <string name="your_habits">Ваши привычки</string>
     <string name="empty_list">Вы еще не добавили ни одной привычки</string>
     <string name="add_habit">Добавить привычку</string>
     <string name="habit_title">Заголовок привычки</string>

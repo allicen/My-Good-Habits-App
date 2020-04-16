@@ -6,4 +6,5 @@
     <color name="color_secondary_variant">#FFBE40</color>
 
     <color name="white">#FFFFFF</color>
+    <color name="list_background">#f2f2f1</color>
 </resources>
