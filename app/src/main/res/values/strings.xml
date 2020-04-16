@@ -28,4 +28,6 @@
         <item>Важно</item>
         <item>Очень важно</item>
     </string-array>
+
+    <string name="error_empty_title">Заголовок привычки обязателен!</string>
 </resources>

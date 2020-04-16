@@ -19,7 +19,6 @@ class RecAdapter(private val items: ArrayList<HabitItem>): RecyclerView.Adapter<
 
     override fun onBindViewHolder(holder: RecHolder, position: Int) {
         val item = items[position]
-
         holder.bind(item)
     }
 }

@@ -19,40 +19,62 @@ class List : AppCompatActivity() {
         setContentView(R.layout.main)
 
         habitList = ArrayList()
+        val changeItem = HabitItem("", "", "", "", "", "")
 
         fab.setOnClickListener {
             Log.e("tag", "Открыто окно создания привычки")
             val addHabit = Intent(this, AddItem::class.java)
                 .apply {
-                    putExtra("test", "")
+                    putExtra("changeItem", changeItem)
+                    putExtra("position", -1)
                 }
             startActivityForResult(addHabit, 0)
         }
 
+        println("######### onCreate")
         empty_list.visibility = TextView.VISIBLE
     }
 
     override fun onResume() {
+        println("######### onResume")
         super.onResume()
+    }
+
+    override fun onStart() {
+        println("######### onStart")
+        super.onStart()
+    }
+
+    override fun onPause() {
+        println("######### onPause")
+        super.onPause()
     }
 
     fun showItems(items: ArrayList<HabitItem>) {
         val adapter = RecAdapter(items)
         habit_list.adapter = adapter
         habit_list.layoutManager = LinearLayoutManager(this)
-        adapter.notifyDataSetChanged()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        val position = data?.getIntExtra("position", -1) ?: 0
         val getHabit = data?.getParcelableExtra<HabitItem>("test")
         if (getHabit != null) {
-            habitList.add(getHabit)
+            if (position == -1) {
+                habitList.add(getHabit)
+            }
+            else {
+                habitList[position] = getHabit
+            }
+
             empty_list.visibility = TextView.GONE
             title_list.visibility = TextView.GONE
         }
         showItems(habitList)
+
+        println("######### onActivityResult")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
