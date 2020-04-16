@@ -43,24 +43,28 @@
             <EditText
                     android:id="@+id/title_item"
                     android:hint="@string/habit_title"
+                    android:inputType="textCapWords"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:importantForAutofill="no"
-                    android:inputType="text"/>
+                    android:importantForAutofill="no"/>
 
             <EditText
                     android:id="@+id/description_item"
                     android:hint="@string/habit_description"
                     android:importantForAutofill="no"
-                    android:inputType="text"
+                    android:inputType="textCapWords"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
             <Spinner
                     android:id="@+id/priority_item"
+                    android:spinnerMode="dialog"
+                    android:prompt="@string/spinner_header"
                     android:padding="10sp"
                     android:entries="@array/priority"
-                    android:background="@color/color_secondary"
+                    android:layout_marginTop="@dimen/spinner_margin"
+                    android:layout_marginBottom="@dimen/spinner_margin"
+                    android:background="@drawable/spinner_background"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
@@ -69,7 +73,6 @@
                     android:text="@string/habit_type"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
-
 
                 <org.apmem.tools.layouts.FlowLayout
                         android:id="@+id/radio_group_item"
@@ -138,6 +141,15 @@
             <Button
                     android:id="@+id/save"
                     android:text="@string/save"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+            <TextView
+                    android:id="@+id/delete"
+                    android:text="@string/delete"
+                    android:layout_marginTop="20sp"
+                    android:visibility="gone"
+                    android:gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 

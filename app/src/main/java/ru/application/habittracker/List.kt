@@ -26,28 +26,13 @@ class List : AppCompatActivity() {
             val addHabit = Intent(this, AddItem::class.java)
                 .apply {
                     putExtra("changeItem", changeItem)
-                    putExtra("position", -1)
+                    putExtra("position", -10)
                 }
             startActivityForResult(addHabit, 0)
         }
 
         println("######### onCreate")
         empty_list.visibility = TextView.VISIBLE
-    }
-
-    override fun onResume() {
-        println("######### onResume")
-        super.onResume()
-    }
-
-    override fun onStart() {
-        println("######### onStart")
-        super.onStart()
-    }
-
-    override fun onPause() {
-        println("######### onPause")
-        super.onPause()
     }
 
     fun showItems(items: ArrayList<HabitItem>) {
@@ -61,17 +46,21 @@ class List : AppCompatActivity() {
 
         val position = data?.getIntExtra("position", -1) ?: 0
         val getHabit = data?.getParcelableExtra<HabitItem>("test")
+
         if (getHabit != null) {
-            if (position == -1) {
+            if (position == -10) {
                 habitList.add(getHabit)
             }
             else {
                 habitList[position] = getHabit
             }
-
-            empty_list.visibility = TextView.GONE
-            title_list.visibility = TextView.GONE
+        } else {
+            if(habitList.size >= position+1) {
+                habitList.removeAt(position) // Криво работает. Удаляет при возврате назад
+            }
         }
+
+        hideShowText()
         showItems(habitList)
 
         println("######### onActivityResult")
@@ -90,9 +79,36 @@ class List : AppCompatActivity() {
         habitList = savedInstanceState.getParcelableArrayList("array")
         showItems(habitList)
 
-        if (habitList.size != 0) {
+        hideShowText()
+    }
+
+    fun hideShowText() {
+        if (habitList.isEmpty()) {
+            empty_list.visibility = TextView.VISIBLE
+            title_list.visibility = TextView.VISIBLE
+        } else {
             empty_list.visibility = TextView.GONE
             title_list.visibility = TextView.GONE
         }
+    }
+
+    override fun onResume() {
+        println("######### onResume")
+        super.onResume()
+    }
+
+    override fun onStart() {
+        println("######### onStart")
+        super.onStart()
+    }
+
+    override fun onPause() {
+        println("######### onPause")
+        super.onPause()
+    }
+
+    override fun onDestroy() {
+        println("######### onDestroy")
+        super.onDestroy()
     }
 }

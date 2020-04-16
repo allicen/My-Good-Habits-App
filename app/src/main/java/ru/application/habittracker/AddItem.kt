@@ -40,7 +40,7 @@ class AddItem: AppCompatActivity() {
         family.setOnClickListener{ checkedRadioButton(it) }
         life.setOnClickListener{ checkedRadioButton(it) }
 
-        val position = intent.getIntExtra("position", -1)
+        val position = intent.getIntExtra("position", -10)
         val changeItem = intent.getParcelableExtra<HabitItem>("changeItem")
 
         title_item.setText(changeItem.title, TextView.BufferType.EDITABLE)
@@ -64,6 +64,10 @@ class AddItem: AppCompatActivity() {
             }
         }
 
+        if (position !=-1) {
+            delete.visibility = TextView.VISIBLE
+        }
+
         save.setOnClickListener {
             itemTitle = title_item.text.toString().trim()
             itemDescription = description_item.text.toString().trim()
@@ -80,12 +84,21 @@ class AddItem: AppCompatActivity() {
                         putExtra("position", position)
                     }
                 setResult(0, intent)
-
                 finish()
+
             } else {
                 Snackbar.make(it, resources.getString(R.string.error_empty_title), Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
             }
+        }
+
+        delete.setOnClickListener {
+            val delete = Intent(this, List::class.java)
+                .apply {
+                    putExtra("position", position)
+                }
+            setResult(0, intent)
+            finish()
         }
     }
 
