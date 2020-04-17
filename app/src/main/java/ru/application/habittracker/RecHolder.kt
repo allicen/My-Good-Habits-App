@@ -5,10 +5,8 @@ package ru.application.habittracker
 import android.app.Activity
 import android.content.Intent
 import android.view.View
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import kotlin.collections.List
 
 class RecHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
@@ -31,13 +29,15 @@ class RecHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         itemView.setOnClickListener{
             val changeItem = HabitItem(item.title, item.description, item.type, item.priority, item.count, item.period)
 
-            val changeHabit = Intent(itemView.context, AddItem::class.java)
+            // вынести в интерфейс List
+            val changeHabit = Intent(itemView.context, AddItemActivity::class.java)
                 .apply {
                     putExtra("changeItem", changeItem)
                     putExtra("position", adapterPosition)
                 }
 
             (itemView.context as Activity).startActivityForResult(changeHabit, 0)
+            //
         }
     }
 }

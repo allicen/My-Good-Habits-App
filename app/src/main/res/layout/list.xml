@@ -9,7 +9,7 @@
         tools:showIn="@layout/main"
         android:background="@color/list_background"
         android:orientation="vertical"
-        tools:context=".List">
+        tools:context=".ListActivity">
 
     <LinearLayout
             android:orientation="horizontal"

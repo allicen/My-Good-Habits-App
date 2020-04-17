@@ -8,7 +8,7 @@
             android:label="@string/app_name"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <activity android:name=".List"
+        <activity android:name=".ListActivity"
                   android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -17,6 +17,6 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".AddItem"/>
+                android:name=".AddItemActivity"/>
     </application>
 </manifest>

@@ -10,23 +10,27 @@ import kotlinx.android.synthetic.main.list.*
 import kotlinx.android.synthetic.main.main.*
 import java.util.ArrayList
 
-class List : AppCompatActivity() {
+class ListActivity : AppCompatActivity() {
 
     lateinit var habitList: ArrayList<HabitItem>
+    lateinit var adapter: RecAdapter
+    var position: Int = -10
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
 
         habitList = ArrayList()
+        adapter = RecAdapter(habitList)
+
         val changeItem = HabitItem("", "", "", "", "", "")
 
         fab.setOnClickListener {
             Log.e("tag", "Открыто окно создания привычки")
-            val addHabit = Intent(this, AddItem::class.java)
+            val addHabit = Intent(this, AddItemActivity::class.java)
                 .apply {
                     putExtra("changeItem", changeItem)
-                    putExtra("position", -10)
+                    putExtra("position", position)
                 }
             startActivityForResult(addHabit, 0)
         }
@@ -36,7 +40,8 @@ class List : AppCompatActivity() {
     }
 
     fun showItems(items: ArrayList<HabitItem>) {
-        val adapter = RecAdapter(items)
+        /// надо адаптер определить выше и переопределять тут adapter.set() и остальные методы также использовать тут
+        adapter = RecAdapter(items)
         habit_list.adapter = adapter
         habit_list.layoutManager = LinearLayoutManager(this)
     }
@@ -44,7 +49,7 @@ class List : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        val position = data?.getIntExtra("position", -1) ?: 0
+        position = data?.getIntExtra("position", -1) ?: -10
         val getHabit = data?.getParcelableExtra<HabitItem>("test")
 
         if (getHabit != null) {
@@ -55,7 +60,7 @@ class List : AppCompatActivity() {
                 habitList[position] = getHabit
             }
         } else {
-            if(habitList.size >= position+1) {
+            if(position >= 0) {
                 habitList.removeAt(position) // Криво работает. Удаляет при возврате назад
             }
         }

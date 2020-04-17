@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.add_item.*
 import kotlin.collections.List
 
 
-class AddItem: AppCompatActivity() {
+class AddItemActivity: AppCompatActivity() {
     lateinit var types: List<Map<RadioButton, String>>
 
     lateinit var itemTitle: String

@@ -2,7 +2,6 @@ package ru.application.habittracker
 
 import android.os.Parcel
 import android.os.Parcelable
-import java.io.Serializable
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class HabitItem (
