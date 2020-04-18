@@ -40,7 +40,7 @@ class AddItemActivity: AppCompatActivity() {
         family.setOnClickListener{ checkedRadioButton(it) }
         life.setOnClickListener{ checkedRadioButton(it) }
 
-        val position = intent.getIntExtra("position", -10)
+        val position = intent.getIntExtra("position", Constants.ITEM_POSITION_DEFAULT)
         val changeItem = intent.getParcelableExtra<HabitItem>("changeItem")
 
         title_item.setText(changeItem.title, TextView.BufferType.EDITABLE)
@@ -64,7 +64,7 @@ class AddItemActivity: AppCompatActivity() {
             }
         }
 
-        if (position !=-1) {
+        if (position != Constants.ITEM_POSITION_DEFAULT) {
             delete.visibility = TextView.VISIBLE
         }
 
@@ -76,11 +76,17 @@ class AddItemActivity: AppCompatActivity() {
             itemPeriod = period_item.text.toString().trim()
 
             if (itemTitle != "") {
-                val item = HabitItem(itemTitle, itemDescription, itemType, itemPriority, itemCount, itemPeriod)
+                val item = HabitItem(
+                    title = itemTitle,
+                    description = itemDescription,
+                    type = itemType,
+                    priority = itemPriority,
+                    count = itemCount,
+                    period = itemPeriod)
 
                 val intent = Intent(this, List::class.java)
                     .apply {
-                        putExtra("test", item)
+                        putExtra("one_habit", item)
                         putExtra("position", position)
                     }
                 setResult(0, intent)
@@ -102,8 +108,12 @@ class AddItemActivity: AppCompatActivity() {
         }
     }
 
-    fun checkedRadioButton (radioButton: View) {
 
+    /**
+     * Метод для переключения радиокнопок
+     * @param radioButton Радиокнопки
+     * */
+    private fun checkedRadioButton (radioButton: View) {
         for (type in types) {
             for ((key, value) in type) {
                 if (key != radioButton) {

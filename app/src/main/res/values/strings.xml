@@ -20,6 +20,7 @@
     <string name="health">Здоровье</string>
     <string name="family">Семья</string>
     <string name="life">Быт</string>
+
     <string name="add">Добавить</string>
     <string name="spinner_header">Выберите приоритет:</string>
 

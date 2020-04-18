@@ -11,10 +11,9 @@ import kotlinx.android.synthetic.main.main.*
 import java.util.ArrayList
 
 class ListActivity : AppCompatActivity() {
-
     lateinit var habitList: ArrayList<HabitItem>
     lateinit var adapter: RecAdapter
-    var position: Int = -10
+    var position: Int = Constants.ITEM_POSITION_DEFAULT
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,7 +22,13 @@ class ListActivity : AppCompatActivity() {
         habitList = ArrayList()
         adapter = RecAdapter(habitList)
 
-        val changeItem = HabitItem("", "", "", "", "", "")
+        val changeItem = HabitItem(
+            title = "",
+            description = "",
+            type = "",
+            period = "",
+            count = "",
+            priority = "")
 
         fab.setOnClickListener {
             Log.e("tag", "Открыто окно создания привычки")
@@ -39,9 +44,20 @@ class ListActivity : AppCompatActivity() {
         empty_list.visibility = TextView.VISIBLE
     }
 
-    fun showItems(items: ArrayList<HabitItem>) {
-        /// надо адаптер определить выше и переопределять тут adapter.set() и остальные методы также использовать тут
-        adapter = RecAdapter(items)
+    /**
+     * Метод для работы с адаптером
+     * @param items Список привычек
+     * @param pos Позиция привычки для удаления
+     * */
+    private fun showItems(items: ArrayList<HabitItem> = arrayListOf(), pos: Int = position) {
+        if (pos >= 0) {
+            adapter.notifyItemRemoved(pos)
+        }
+
+        if (items.size > 0) {
+            adapter = RecAdapter(items)
+        }
+
         habit_list.adapter = adapter
         habit_list.layoutManager = LinearLayoutManager(this)
     }
@@ -49,25 +65,28 @@ class ListActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        position = data?.getIntExtra("position", -1) ?: -10
-        val getHabit = data?.getParcelableExtra<HabitItem>("test")
+        position = data?.getIntExtra("position", Constants.ITEM_POSITION_DEFAULT) ?: Constants.ITEM_POSITION_DEFAULT
+        val getHabit = data?.getParcelableExtra<HabitItem>("one_habit")
 
         if (getHabit != null) {
-            if (position == -10) {
+            if (position == Constants.ITEM_POSITION_DEFAULT) {
                 habitList.add(getHabit)
             }
             else {
-                habitList[position] = getHabit
+                if (position >= 0) {
+                    habitList[position] = getHabit
+                }
             }
+            showItems()
         } else {
             if(position >= 0) {
-                habitList.removeAt(position) // Криво работает. Удаляет при возврате назад
+                habitList.removeAt(position)
+                showItems(pos = position)
             }
         }
 
         hideShowText()
-        showItems(habitList)
-
+        position = Constants.ITEM_POSITION_DEFAULT
         println("######### onActivityResult")
     }
 
@@ -82,12 +101,11 @@ class ListActivity : AppCompatActivity() {
 
         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
         habitList = savedInstanceState.getParcelableArrayList("array")
-        showItems(habitList)
-
+        showItems(items = habitList)
         hideShowText()
     }
 
-    fun hideShowText() {
+    private fun hideShowText() {
         if (habitList.isEmpty()) {
             empty_list.visibility = TextView.VISIBLE
             title_list.visibility = TextView.VISIBLE

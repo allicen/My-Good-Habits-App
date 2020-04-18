@@ -4,11 +4,14 @@ package ru.application.habittracker
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Parcel
+import android.os.Parcelable
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class RecHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+@Suppress("UNREACHABLE_CODE")
+class RecHolder(itemView: View): RecyclerView.ViewHolder(itemView), ListInterface {
 
     fun bind(item: HabitItem){
         val title: TextView = itemView.findViewById(R.id.item_title)
@@ -27,17 +30,15 @@ class RecHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         period.text = item.period
 
         itemView.setOnClickListener{
-            val changeItem = HabitItem(item.title, item.description, item.type, item.priority, item.count, item.period)
+            val changeItem = HabitItem(
+                title = item.title,
+                description = item.description,
+                type = item.type,
+                priority = item.priority,
+                count = item.count,
+                period = item.period)
 
-            // вынести в интерфейс List
-            val changeHabit = Intent(itemView.context, AddItemActivity::class.java)
-                .apply {
-                    putExtra("changeItem", changeItem)
-                    putExtra("position", adapterPosition)
-                }
-
-            (itemView.context as Activity).startActivityForResult(changeHabit, 0)
-            //
+            getIntent(itemView, changeItem, adapterPosition)
         }
     }
 }

@@ -43,7 +43,7 @@
             <EditText
                     android:id="@+id/title_item"
                     android:hint="@string/habit_title"
-                    android:inputType="textCapWords"
+                    android:inputType="textCapSentences"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:importantForAutofill="no"/>
@@ -52,7 +52,7 @@
                     android:id="@+id/description_item"
                     android:hint="@string/habit_description"
                     android:importantForAutofill="no"
-                    android:inputType="textCapWords"
+                    android:inputType="textCapSentences"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
