@@ -1,3 +1,35 @@
 <resources>
-    <string name="app_name">Habit Tracker</string>
+    <string name="app_name">Habit+</string>
+    <string name="app_name_rus">Трекер привычек</string>
+    <string name="title_list">Список привычек</string>
+    <string name="your_habits">Ваши привычки</string>
+    <string name="empty_list">Вы еще не добавили ни одной привычки</string>
+    <string name="add_habit">Добавить привычку</string>
+    <string name="habit_title">Заголовок привычки</string>
+    <string name="habit_description">Описание привычки</string>
+    <string name="habit_priority">Приоритет привычки</string>
+    <string name="habit_type">Тип привычки:</string>
+    <string name="habit_count">Сколько раз выполнить</string>
+    <string name="habit_period">За период</string>
+
+    <string name="submit">Отправить</string>
+    <string name="save">Сохранить</string>
+
+    <string name="work">Работа</string>
+    <string name="study">Учеба</string>
+    <string name="health">Здоровье</string>
+    <string name="family">Семья</string>
+    <string name="life">Быт</string>
+
+    <string name="add">Добавить</string>
+    <string name="spinner_header">Выберите приоритет:</string>
+
+    <string-array name="priority">
+        <item>Не важно</item>
+        <item>Важно</item>
+        <item>Очень важно</item>
+    </string-array>
+
+    <string name="error_empty_title">Заголовок привычки обязателен!</string>
+    <string name="delete"><u>Удалить</u></string>
 </resources>
