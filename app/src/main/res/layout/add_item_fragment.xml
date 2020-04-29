@@ -8,7 +8,6 @@
         android:layout_height="match_parent">
 
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
-
         <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -74,53 +73,27 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 
-                <org.apmem.tools.layouts.FlowLayout
-                        android:id="@+id/radio_group_item"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content">
+                <RadioGroup
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <RadioButton
-                            android:text="@string/work"
-                            android:id="@+id/work"
-                            android:tag="@string/work"
+                            android:text="@string/good"
+                            android:id="@+id/good"
                             android:checked="true"
                             android:layout_width="wrap_content"
                             android:layout_weight="1"
                             android:layout_height="wrap_content"/>
 
                     <RadioButton
-                            android:text="@string/study"
-                            android:id="@+id/study"
-                            android:tag="@string/study"
+                            android:text="@string/bad"
+                            android:id="@+id/bad"
                             android:layout_width="wrap_content"
                             android:layout_weight="1"
                             android:layout_height="wrap_content"/>
 
-                    <RadioButton
-                            android:text="@string/health"
-                            android:id="@+id/health"
-                            android:tag="@string/health"
-                            android:layout_width="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"/>
-
-                    <RadioButton
-                            android:text="@string/family"
-                            android:id="@+id/family"
-                            android:tag="@string/family"
-                            android:layout_width="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"/>
-
-                    <RadioButton
-                            android:text="@string/life"
-                            android:id="@+id/life"
-                            android:tag="@string/life"
-                            android:layout_width="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"/>
-
-                </org.apmem.tools.layouts.FlowLayout>
+                </RadioGroup>
 
             <EditText
                     android:id="@+id/count_item"

@@ -32,4 +32,6 @@
 
     <string name="error_empty_title">Заголовок привычки обязателен!</string>
     <string name="delete"><u>Удалить</u></string>
+    <string name="good">Хорошие</string>
+    <string name="bad">Плохие</string>
 </resources>

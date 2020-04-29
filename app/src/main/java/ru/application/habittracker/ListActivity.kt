@@ -6,8 +6,8 @@ import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.list.*
-import kotlinx.android.synthetic.main.main.*
+import kotlinx.android.synthetic.main.list_fragment.*
+import kotlinx.android.synthetic.main.list_activity.*
 import java.util.ArrayList
 
 class ListActivity : AppCompatActivity() {
@@ -17,31 +17,16 @@ class ListActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.main)
+        setContentView(R.layout.list_activity)
 
-        habitList = ArrayList()
+                habitList = ArrayList()
         adapter = RecAdapter(habitList)
 
-        val changeItem = HabitItem(
-            title = "",
-            description = "",
-            type = "",
-            period = "",
-            count = "",
-            priority = "")
+        if (savedInstanceState == null) {
+            val fragment = ListFragment.newInstance(habitList = habitList, adapter = adapter, position = position)
 
-        fab.setOnClickListener {
-            Log.e("tag", "Открыто окно создания привычки")
-            val addHabit = Intent(this, AddItemActivity::class.java)
-                .apply {
-                    putExtra("changeItem", changeItem)
-                    putExtra("position", position)
-                }
-            startActivityForResult(addHabit, 0)
+            supportFragmentManager.beginTransaction().add(R.id.list_activity, fragment).commit()
         }
-
-        println("######### onCreate")
-        empty_list.visibility = TextView.VISIBLE
     }
 
     /**

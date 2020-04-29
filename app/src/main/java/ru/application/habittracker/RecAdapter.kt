@@ -3,8 +3,9 @@ package ru.application.habittracker
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import java.io.Serializable
 
-class RecAdapter(private val items: ArrayList<HabitItem>): RecyclerView.Adapter<RecHolder>(){
+class RecAdapter(private val items: ArrayList<HabitItem>): RecyclerView.Adapter<RecHolder>(), Serializable {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecHolder {
         val inflater = LayoutInflater.from(parent.context)
 
