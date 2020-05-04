@@ -41,4 +41,8 @@ class RecHolder(itemView: View): RecyclerView.ViewHolder(itemView), ListInterfac
             getIntent(itemView, changeItem, adapterPosition)
         }
     }
+
+    override fun updateHabitListFromFragmentData(data: HabitItem):ArrayList<HabitItem> {
+        TODO("Not yet implemented")
+    }
 }

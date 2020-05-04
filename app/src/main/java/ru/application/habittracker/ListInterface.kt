@@ -14,4 +14,6 @@ interface ListInterface {
 
         (itemView.context as Activity).startActivityForResult(changeHabit, 0)
     }
+
+    fun updateHabitListFromFragmentData(data: HabitItem): ArrayList<HabitItem>
 }
