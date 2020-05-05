@@ -6,7 +6,7 @@
               android:layout_height="match_parent"
               app:layout_behavior="@string/appbar_scrolling_view_behavior"
               tools:showIn="@layout/list_activity"
-              tools:context=".ListActivity">
+              tools:context=".MainActivity">
 
     <LinearLayout
             android:layout_width="match_parent"

@@ -1,6 +1,5 @@
 package ru.application.habittracker
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -37,16 +36,8 @@ class AddItemFragment: Fragment() {
         println("########create Item")
 
         val bundle = this.arguments
-        position = bundle?.getInt("position", 0) ?: 0
-        changeItem = bundle?.getParcelable("changeItem") ?: HabitItem(
-            title = "",
-            description = "",
-            type = "",
-            period = "",
-            count = "",
-            priority = "")
-
-        println("######$position")
+        position = bundle?.getInt("position", 0) ?: Constants.ITEM_POSITION_DEFAULT
+        changeItem = bundle?.getParcelable("changeItem") ?: Constants.EMPTY_ITEM
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -88,10 +79,12 @@ class AddItemFragment: Fragment() {
             }
         }
 
+        // Скрыть/Показать ссылку для удаления привычки
         if (position != Constants.ITEM_POSITION_DEFAULT) {
             delete.visibility = TextView.VISIBLE
         }
 
+        // Сохранение привычки
         save.setOnClickListener {
             itemTitle = title_item.text.toString().trim()
             itemDescription = description_item.text.toString().trim()
@@ -110,12 +103,10 @@ class AddItemFragment: Fragment() {
 
                 val bundle = Bundle()
                 bundle.putInt("position", position)
+                bundle.putBoolean("delete", false)
                 bundle.putParcelable("item", item)
-                bundle.putString("mark", "fragment")
                 val listFragment = ListFragment()
                 listFragment.arguments = bundle
-
-                //println("****** args ${listFragment}")
 
                 activity?.supportFragmentManager?.beginTransaction()
                     ?.hide(this)?.replace(R.id.list_activity, listFragment)?.addToBackStack("main")?.commit()
@@ -124,6 +115,20 @@ class AddItemFragment: Fragment() {
                 Snackbar.make(it, resources.getString(R.string.error_empty_title), Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
             }
+        }
+
+
+        // Удаление привычки
+        delete.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putInt("position", position)
+            bundle.putBoolean("delete", true)
+
+            val listFragment = ListFragment()
+            listFragment.arguments = bundle
+
+            activity?.supportFragmentManager?.beginTransaction()
+                ?.hide(this)?.replace(R.id.list_activity, listFragment)?.addToBackStack("main")?.commit()
         }
     }
 

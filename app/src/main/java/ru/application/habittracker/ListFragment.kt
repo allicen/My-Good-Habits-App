@@ -17,6 +17,7 @@ import java.io.Serializable
 
 class ListFragment: Fragment(), Serializable {
     var position: Int = Constants.ITEM_POSITION_DEFAULT
+    var deleteElem: Boolean = false
     var callback : ListInterface? = null
 
     lateinit var oneItem: HabitItem
@@ -31,7 +32,6 @@ class ListFragment: Fragment(), Serializable {
             val fragment = ListFragment()
             val bundle = Bundle()
             bundle.putParcelableArrayList("habitList", habitList)
-            bundle.putString("mark", "activity")
             fragment.arguments = bundle
             return fragment
         }
@@ -45,12 +45,13 @@ class ListFragment: Fragment(), Serializable {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         habitList = ArrayList()
-        oneItem = emptyItem ()
+        oneItem = Constants.EMPTY_ITEM
 
         val bundle = this.arguments
         if (bundle != null) {
             position = bundle.getInt("position", 0)
-            oneItem = bundle.getParcelable("item") ?: emptyItem ()
+            deleteElem = bundle.getBoolean("delete", false)
+            oneItem = bundle.getParcelable("item") ?: Constants.EMPTY_ITEM
             habitList = bundle.getParcelableArrayList("habitList") ?: ArrayList()
         }
     }
@@ -74,8 +75,8 @@ class ListFragment: Fragment(), Serializable {
         super.onViewCreated(view, savedInstanceState)
 
         arguments?.let {
-            if (oneItem.title != "") {
-                val data = callback?.updateHabitListFromFragmentData(oneItem)
+            if (oneItem.title != "" || deleteElem) {
+                val data = callback?.updateHabitListFromFragmentData(oneItem, position, deleteElem)
                 hideStartText(data?.size ?: 0)
                 data?.let { showItems(it) }
             }
@@ -85,10 +86,7 @@ class ListFragment: Fragment(), Serializable {
         fab.setOnClickListener {
             Log.e("tag", "Открыто окно создания привычки")
 
-            val bundle = Bundle()
-            bundle.putInt("position", position)
             val addItemFragment = AddItemFragment.newInstance()
-            addItemFragment.arguments = bundle
 
             if (add_item_form_land != null) {
                 @Suppress("PLUGIN_WARNING")
@@ -103,6 +101,10 @@ class ListFragment: Fragment(), Serializable {
         }
     }
 
+    /**
+     * Показать/скрыть начальный текст
+     * */
+
     fun hideStartText (habitListSize: Int) {
         if (habitListSize == 0) {
             emptyList.visibility = TextView.VISIBLE
@@ -113,15 +115,6 @@ class ListFragment: Fragment(), Serializable {
         }
     }
 
-    fun emptyItem (): HabitItem {
-        return HabitItem(
-            title = "",
-            description = "",
-            type = "",
-            period = "",
-            count = "",
-            priority = "")
-    }
 
     /**
      * Метод для работы с адаптером
@@ -129,11 +122,16 @@ class ListFragment: Fragment(), Serializable {
      * @param pos Позиция привычки для удаления
      * */
     private fun showItems(items: ArrayList<HabitItem>, pos: Int = position) {
+
         if (!isVisible) {
             return
         }
 
-        if (pos >= 0) {
+        if (pos >= 0 && !deleteElem) {
+            vRecView.adapter?.notifyItemChanged(pos)
+        }
+
+        if (pos >= 0 && deleteElem) {
             vRecView.adapter?.notifyItemRemoved(pos)
         }
 
@@ -141,7 +139,6 @@ class ListFragment: Fragment(), Serializable {
             vRecView.adapter = RecAdapter(items)
         }
 
-        vRecView.adapter = RecAdapter(items)
         vRecView.layoutManager = LinearLayoutManager(activity)
     }
 }

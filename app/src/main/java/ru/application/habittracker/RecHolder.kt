@@ -1,16 +1,9 @@
-@file:Suppress("CAST_NEVER_SUCCEEDS")
-
 package ru.application.habittracker
 
-import android.app.Activity
-import android.content.Intent
-import android.os.Parcel
-import android.os.Parcelable
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-@Suppress("UNREACHABLE_CODE")
 class RecHolder(itemView: View): RecyclerView.ViewHolder(itemView), ListInterface {
 
     fun bind(item: HabitItem){
@@ -20,7 +13,6 @@ class RecHolder(itemView: View): RecyclerView.ViewHolder(itemView), ListInterfac
         val priority: TextView = itemView.findViewById(R.id.item_priority)
         val count: TextView = itemView.findViewById(R.id.item_count)
         val period: TextView = itemView.findViewById(R.id.period_item)
-
 
         title.text = item.title
         description.text = item.description
@@ -38,11 +30,11 @@ class RecHolder(itemView: View): RecyclerView.ViewHolder(itemView), ListInterfac
                 count = item.count,
                 period = item.period)
 
-            getIntent(itemView, changeItem, adapterPosition)
+            updateHabitItem(itemView, changeItem, adapterPosition)
         }
     }
 
-    override fun updateHabitListFromFragmentData(data: HabitItem):ArrayList<HabitItem> {
+    override fun updateHabitListFromFragmentData(data: HabitItem, position: Int, delete: Boolean):ArrayList<HabitItem> {
         TODO("Not yet implemented")
     }
 }
