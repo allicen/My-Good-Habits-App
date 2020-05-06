@@ -1,5 +1,6 @@
 package ru.application.habittracker
 
+import android.R.attr.button
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -82,18 +83,24 @@ class ListFragment: Fragment(), Serializable {
             }
         }
 
-        @Suppress("PLUGIN_WARNING")
         fab.setOnClickListener {
             Log.e("tag", "Открыто окно создания привычки")
 
             val addItemFragment = AddItemFragment.newInstance()
+            val listFragment = activity?.supportFragmentManager?.findFragmentByTag("list") as ListFragment
 
             if (add_item_form_land != null) {
+
+                if (activity?.supportFragmentManager?.findFragmentByTag("addItem") != null) {
+                    activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.add_item_form_land, addItemFragment, "addItem")?.addToBackStack(null)?.commit()
+                } else {
+                    activity?.supportFragmentManager?.beginTransaction()?.add(R.id.add_item_form_land, addItemFragment, "addItem")?.commit()
+                }
+
                 @Suppress("PLUGIN_WARNING")
                 add_item_form_land.visibility = View.VISIBLE
 
             } else {
-                val listFragment = activity?.supportFragmentManager?.findFragmentByTag("list") as ListFragment
 
                 activity?.supportFragmentManager?.beginTransaction()
                     ?.hide(listFragment)?.replace(R.id.list_activity, addItemFragment)?.addToBackStack("main")?.commit()

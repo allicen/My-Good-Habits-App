@@ -1,7 +1,9 @@
 package ru.application.habittracker
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.list_fragment.*
 import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity(), ListInterface {
@@ -73,9 +75,17 @@ class MainActivity : AppCompatActivity(), ListInterface {
      * @param addItemFragment Одна привычка
      * */
     fun getFragmentWithUpdateItem(addItemFragment: AddItemFragment) {
-        val listFragment = supportFragmentManager.findFragmentByTag("list") as ListFragment
 
-        supportFragmentManager.beginTransaction()
-            .hide(listFragment).replace(R.id.list_activity, addItemFragment).addToBackStack("main").commit()
+        if (add_item_form_land == null) {
+            val listFragment = supportFragmentManager.findFragmentByTag("list") as ListFragment
+
+            supportFragmentManager.beginTransaction()
+                .hide(listFragment).replace(R.id.list_activity, addItemFragment).addToBackStack("main").commit()
+        } else {
+            supportFragmentManager.beginTransaction().replace(R.id.add_item_form_land, addItemFragment, "addItem").addToBackStack(null).commit()
+
+            @Suppress("PLUGIN_WARNING")
+            add_item_form_land.visibility = View.VISIBLE
+        }
     }
 }
