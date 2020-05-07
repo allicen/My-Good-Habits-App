@@ -34,4 +34,7 @@
     <string name="delete"><u>Удалить</u></string>
     <string name="good">Хорошие</string>
     <string name="bad">Плохие</string>
+    <string name="menu_home">На главную</string>
+    <string name="menu_about">О приложении</string>
+    <string name="hello">Добро подаловать!</string>
 </resources>

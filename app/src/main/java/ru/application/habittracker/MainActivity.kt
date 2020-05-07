@@ -1,14 +1,23 @@
 package ru.application.habittracker
 
 import android.os.Bundle
+import android.view.Menu
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.list_fragment.*
 import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity(), ListInterface {
     var habitList: ArrayList<HabitItem> = ArrayList()
-    var emptyItem: HabitItem = Constants.EMPTY_ITEM
+    private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,6 +26,31 @@ class MainActivity : AppCompatActivity(), ListInterface {
         if (savedInstanceState == null) {
             getFragmentWithList()
         }
+
+        // навигация
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+        val drawerLayout: DrawerLayout = findViewById(R.id.list_activity)
+        val navView: NavigationView = findViewById(R.id.nav_view)
+        val navController = findNavController(R.id.nav_host_fragment)
+
+        appBarConfiguration = AppBarConfiguration(setOf(
+            R.id.nav_about), drawerLayout)
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        navView.setupWithNavController(navController)
+    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.main, menu)
+        return true
+    }
+
+
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = findNavController(R.id.nav_host_fragment)
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
 
@@ -66,8 +100,13 @@ class MainActivity : AppCompatActivity(), ListInterface {
      * Работа с фрагментами
      * */
     fun getFragmentWithList() {
-        val fragment = ListFragment.newInstance(habitList)
-        supportFragmentManager.beginTransaction().add(R.id.list_activity, fragment, "list").commitAllowingStateLoss()
+        val listFragment = ListFragment.newInstance(habitList)
+
+        if (supportFragmentManager.findFragmentByTag("list") == null) {
+            supportFragmentManager.beginTransaction().add(R.id.list_activity, listFragment, "list").addToBackStack("main").commitAllowingStateLoss()
+        } else {
+            supportFragmentManager.beginTransaction().replace(R.id.list_activity, listFragment, "list").addToBackStack("main").commitAllowingStateLoss()
+        }
     }
 
     /**
@@ -77,12 +116,19 @@ class MainActivity : AppCompatActivity(), ListInterface {
     fun getFragmentWithUpdateItem(addItemFragment: AddItemFragment) {
 
         if (add_item_form_land == null) {
-            val listFragment = supportFragmentManager.findFragmentByTag("list") as ListFragment
+            val listFragment = ListFragment.newInstance(habitList)
 
             supportFragmentManager.beginTransaction()
-                .hide(listFragment).replace(R.id.list_activity, addItemFragment).addToBackStack("main").commit()
+                .remove(listFragment).replace(R.id.list_activity, addItemFragment).addToBackStack("main").commitAllowingStateLoss()
         } else {
-            supportFragmentManager.beginTransaction().replace(R.id.add_item_form_land, addItemFragment, "addItem").addToBackStack(null).commit()
+
+            fab.visibility = View.GONE
+
+            if (supportFragmentManager.findFragmentByTag("addItem") != null) {
+                supportFragmentManager.beginTransaction().replace(R.id.add_item_form_land, addItemFragment, "addItem").addToBackStack("main").commit()
+            } else {
+                supportFragmentManager.beginTransaction().add(R.id.add_item_form_land, addItemFragment, "addItem").addToBackStack("main").commit()
+            }
 
             @Suppress("PLUGIN_WARNING")
             add_item_form_land.visibility = View.VISIBLE

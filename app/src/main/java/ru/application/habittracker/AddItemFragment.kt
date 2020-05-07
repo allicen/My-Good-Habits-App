@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.add_item_fragment.*
+import kotlinx.android.synthetic.main.list_fragment.*
 
 class AddItemFragment: Fragment() {
 
@@ -108,8 +109,21 @@ class AddItemFragment: Fragment() {
                 val listFragment = ListFragment()
                 listFragment.arguments = bundle
 
-                activity?.supportFragmentManager?.beginTransaction()
-                    ?.hide(this)?.replace(R.id.list_activity, listFragment)?.addToBackStack("main")?.commit()
+                if (add_item_form_land == null) {
+                    activity?.supportFragmentManager?.beginTransaction()
+                        ?.replace(R.id.list_activity, listFragment)?.addToBackStack("main")?.commit()
+                } else {
+
+                    if (activity?.supportFragmentManager?.findFragmentByTag("list") == null) {
+                        activity?.supportFragmentManager?.beginTransaction()?.add(R.id.list_activity, listFragment, "list")?.addToBackStack("main")?.commitAllowingStateLoss()
+                    } else {
+                        activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.list_activity, listFragment, "list")?.addToBackStack("main")?.commitAllowingStateLoss()
+                    }
+
+                    @Suppress("PLUGIN_WARNING")
+                    add_item_form_land.visibility = View.GONE
+                }
+
 
             } else {
                 Snackbar.make(it, resources.getString(R.string.error_empty_title), Snackbar.LENGTH_LONG)
@@ -124,11 +138,11 @@ class AddItemFragment: Fragment() {
             bundle.putInt("position", position)
             bundle.putBoolean("delete", true)
 
-            val listFragment = ListFragment()
+            val listFragment = ListFragment.newInstance(arrayListOf())
             listFragment.arguments = bundle
 
             activity?.supportFragmentManager?.beginTransaction()
-                ?.hide(this)?.replace(R.id.list_activity, listFragment)?.addToBackStack("main")?.commit()
+                ?.remove(this)?.replace(R.id.list_activity, listFragment)?.addToBackStack("main")?.commit()
         }
     }
 

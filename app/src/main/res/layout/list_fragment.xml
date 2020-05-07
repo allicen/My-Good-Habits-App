@@ -29,6 +29,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
+
                 <TextView
                         android:id="@+id/title_list"
                         android:text="@string/title_list"
@@ -55,6 +56,28 @@
                             android:layout_height="wrap_content"/>
 
                 </LinearLayout>
+
+                <FrameLayout
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                    <com.google.android.material.tabs.TabLayout
+                            android:id="@+id/list_tabs_layout"
+                            android:layout_width="match_parent"
+                            android:background="@color/color_primary"
+                            app:tabTextColor="@color/white"
+                            app:tabSelectedTextColor="@color/color_secondary"
+                            app:tabGravity="fill"
+                            android:layout_height="42dp"/>
+
+                    <androidx.viewpager.widget.ViewPager
+                            android:id="@+id/list_tabs_viewpager"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@android:color/white" />
+                </FrameLayout>
+
+
 
                 <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/habit_list"
