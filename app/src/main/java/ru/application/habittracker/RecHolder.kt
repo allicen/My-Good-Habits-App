@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class RecHolder(itemView: View): RecyclerView.ViewHolder(itemView), ListInterface {
 
-    fun bind(item: HabitItem){
+    fun bind(item: HabitItem, orientationScreenOrActive: String){
         val title: TextView = itemView.findViewById(R.id.item_title)
         val description: TextView = itemView.findViewById(R.id.item_description)
         val type: TextView = itemView.findViewById(R.id.item_type)
@@ -30,7 +30,7 @@ class RecHolder(itemView: View): RecyclerView.ViewHolder(itemView), ListInterfac
                 count = item.count,
                 period = item.period)
 
-            updateHabitItem(itemView, changeItem, adapterPosition)
+            updateHabitItem(itemView, changeItem, adapterPosition, orientationScreenOrActive)
         }
     }
 

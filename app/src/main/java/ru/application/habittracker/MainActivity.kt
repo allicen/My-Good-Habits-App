@@ -1,8 +1,10 @@
 package ru.application.habittracker
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
@@ -12,6 +14,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
+import kotlinx.android.synthetic.main.item.*
 import kotlinx.android.synthetic.main.list_fragment.*
 import kotlin.collections.ArrayList
 
@@ -31,12 +34,12 @@ class MainActivity : AppCompatActivity(), ListInterface {
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        val drawerLayout: DrawerLayout = findViewById(R.id.list_activity)
+        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
 
         appBarConfiguration = AppBarConfiguration(setOf(
-            R.id.nav_about), drawerLayout)
+            R.id.nav_home, R.id.nav_about, R.id.nav_test), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }
@@ -88,7 +91,9 @@ class MainActivity : AppCompatActivity(), ListInterface {
                     habitList[position] = data
                 }
                 else -> {
-                    habitList.add(data)
+                    if (data != Constants.EMPTY_ITEM) {
+                        habitList.add(data)
+                    }
                 }
             }
         }
@@ -122,10 +127,10 @@ class MainActivity : AppCompatActivity(), ListInterface {
                 .remove(listFragment).replace(R.id.list_activity, addItemFragment).addToBackStack("main").commitAllowingStateLoss()
         } else {
 
-            fab.visibility = View.GONE
+            //fab.visibility = View.GONE
 
             if (supportFragmentManager.findFragmentByTag("addItem") != null) {
-                supportFragmentManager.beginTransaction().replace(R.id.add_item_form_land, addItemFragment, "addItem").addToBackStack("main").commit()
+                supportFragmentManager.beginTransaction().add(R.id.add_item_form_land, addItemFragment, "addItem").addToBackStack("main").commit()
             } else {
                 supportFragmentManager.beginTransaction().add(R.id.add_item_form_land, addItemFragment, "addItem").addToBackStack("main").commit()
             }

@@ -4,6 +4,7 @@
               android:padding="10dp"
               android:layout_marginBottom="@dimen/list_item_margin"
               android:background="@drawable/my_nine_patch"
+              android:id="@+id/one_item"
               android:layout_width="match_parent"
               android:layout_height="wrap_content">
     <LinearLayout

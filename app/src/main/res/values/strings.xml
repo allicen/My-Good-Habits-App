@@ -37,4 +37,5 @@
     <string name="menu_home">На главную</string>
     <string name="menu_about">О приложении</string>
     <string name="hello">Добро подаловать!</string>
+    <string name="menu">Меню</string>
 </resources>

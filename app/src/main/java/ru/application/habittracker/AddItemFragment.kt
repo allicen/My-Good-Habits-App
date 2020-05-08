@@ -4,9 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RadioButton
-import android.widget.TextView
+import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.navigation.ui.AppBarConfiguration
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.add_item_fragment.*
 import kotlinx.android.synthetic.main.list_fragment.*
@@ -20,6 +20,7 @@ class AddItemFragment: Fragment() {
     }
 
     lateinit var types: List<Map<RadioButton, String>>
+    lateinit var orientationScreenOrActive: String
 
     lateinit var itemTitle: String
     lateinit var itemDescription: String
@@ -27,8 +28,12 @@ class AddItemFragment: Fragment() {
     lateinit var itemPriority: String
     lateinit var itemCount: String
     lateinit var itemPeriod: String
+    lateinit var headerTitle: LinearLayout
+    lateinit var titleImage: ImageView
+    lateinit var titleText: TextView
+    lateinit var burgerMenu: ImageView
 
-    var position: Int = 0
+    var position: Int = Constants.ITEM_POSITION_DEFAULT
     lateinit var changeItem: HabitItem
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,18 +42,36 @@ class AddItemFragment: Fragment() {
         println("########create Item")
 
         val bundle = this.arguments
-        position = bundle?.getInt("position", 0) ?: Constants.ITEM_POSITION_DEFAULT
+        position = bundle?.getInt("position", Constants.ITEM_POSITION_DEFAULT) ?: Constants.ITEM_POSITION_DEFAULT
         changeItem = bundle?.getParcelable("changeItem") ?: Constants.EMPTY_ITEM
+        orientationScreenOrActive = bundle?.getString("orientationScreenOrActive") ?: "land"
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.add_item_fragment, container, false)
+
+        headerTitle = view.findViewById(R.id.header_title)
+        titleImage = view.findViewById(R.id.title_image)
+        titleText = view.findViewById(R.id.title_text)
+        burgerMenu = view.findViewById(R.id.menu_burger)
 
         return view
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        when (orientationScreenOrActive) {
+            "edit" -> {
+                titleText.text = "Редактировать привычку"
+            }
+            "add" -> {
+                titleText.text = "Добавить привычку"
+            }
+            else -> {
+                headerTitle.visibility = View.GONE
+            }
+        }
 
         itemType = good.text.toString() // Значение по умолчанию
         types = listOf(
@@ -106,24 +129,12 @@ class AddItemFragment: Fragment() {
                 bundle.putInt("position", position)
                 bundle.putBoolean("delete", false)
                 bundle.putParcelable("item", item)
+
                 val listFragment = ListFragment()
                 listFragment.arguments = bundle
 
-                if (add_item_form_land == null) {
-                    activity?.supportFragmentManager?.beginTransaction()
+                activity?.supportFragmentManager?.beginTransaction()
                         ?.replace(R.id.list_activity, listFragment)?.addToBackStack("main")?.commit()
-                } else {
-
-                    if (activity?.supportFragmentManager?.findFragmentByTag("list") == null) {
-                        activity?.supportFragmentManager?.beginTransaction()?.add(R.id.list_activity, listFragment, "list")?.addToBackStack("main")?.commitAllowingStateLoss()
-                    } else {
-                        activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.list_activity, listFragment, "list")?.addToBackStack("main")?.commitAllowingStateLoss()
-                    }
-
-                    @Suppress("PLUGIN_WARNING")
-                    add_item_form_land.visibility = View.GONE
-                }
-
 
             } else {
                 Snackbar.make(it, resources.getString(R.string.error_empty_title), Snackbar.LENGTH_LONG)
