@@ -6,10 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
-import androidx.navigation.ui.AppBarConfiguration
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.add_item_fragment.*
-import kotlinx.android.synthetic.main.list_fragment.*
 
 class AddItemFragment: Fragment() {
 
@@ -61,7 +59,7 @@ class AddItemFragment: Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        when (orientationScreenOrActive) {
+        when (orientationScreenOrActive) { // Заголовки
             "edit" -> {
                 titleText.text = "Редактировать привычку"
             }

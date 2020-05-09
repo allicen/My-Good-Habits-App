@@ -1,10 +1,8 @@
 package ru.application.habittracker
 
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
-import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
@@ -14,9 +12,9 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
-import kotlinx.android.synthetic.main.item.*
 import kotlinx.android.synthetic.main.list_fragment.*
 import kotlin.collections.ArrayList
+var orientationScreenOrActive: String = ""
 
 class MainActivity : AppCompatActivity(), ListInterface {
     var habitList: ArrayList<HabitItem> = ArrayList()
@@ -118,7 +116,19 @@ class MainActivity : AppCompatActivity(), ListInterface {
      * Получить фрагмент с привычкой для формы редактирования
      * @param addItemFragment Одна привычка
      * */
-    fun getFragmentWithUpdateItem(addItemFragment: AddItemFragment) {
+    fun getFragmentWithUpdateItem(addItemFragment: AddItemFragment, adapterPosition: Int, changeItem: HabitItem) {
+
+        if (add_item_form_land != null) {
+            orientationScreenOrActive = "land"
+        } else {
+            orientationScreenOrActive = "edit"
+        }
+
+        val bundle = Bundle()
+        bundle.putString("orientationScreenOrActive", orientationScreenOrActive)
+        bundle.putInt("position", adapterPosition)
+        bundle.putParcelable("changeItem", changeItem)
+        addItemFragment.arguments = bundle
 
         if (add_item_form_land == null) {
             val listFragment = ListFragment.newInstance(habitList)
@@ -126,8 +136,6 @@ class MainActivity : AppCompatActivity(), ListInterface {
             supportFragmentManager.beginTransaction()
                 .remove(listFragment).replace(R.id.list_activity, addItemFragment).addToBackStack("main").commitAllowingStateLoss()
         } else {
-
-            //fab.visibility = View.GONE
 
             if (supportFragmentManager.findFragmentByTag("addItem") != null) {
                 supportFragmentManager.beginTransaction().add(R.id.add_item_form_land, addItemFragment, "addItem").addToBackStack("main").commit()

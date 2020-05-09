@@ -1,6 +1,5 @@
 package ru.application.habittracker
 
-import android.R.attr.button
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -12,9 +11,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.ViewPager
-import com.google.android.material.tabs.TabLayout
-import kotlinx.android.synthetic.main.item.*
 import kotlinx.android.synthetic.main.list_fragment.*
 import java.io.Serializable
 
@@ -70,12 +66,6 @@ class ListFragment: Fragment(), Serializable {
         emptyList = view.findViewById(R.id.empty_list)
         titleList = view.findViewById(R.id.title_list)
 
-        if (add_item_form_land == null) {
-            orientationScreenOrActive = "edit"
-        } else {
-            orientationScreenOrActive = "land"
-        }
-
         vRecView.adapter = RecAdapter(habitList, orientationScreenOrActive) // основной список
         vRecView.layoutManager = LinearLayoutManager(activity)
 
@@ -98,8 +88,6 @@ class ListFragment: Fragment(), Serializable {
                 data?.let { showItems(it) }
             }
         }
-
-        orientationScreenOrActive = ""
 
         fab.setOnClickListener {
             Log.e("tag", "Открыто окно создания привычки")
