@@ -131,8 +131,9 @@ class AddItemFragment: Fragment() {
                 val listFragment = ListFragment()
                 listFragment.arguments = bundle
 
-                activity?.supportFragmentManager?.beginTransaction()
-                        ?.replace(R.id.list_activity, listFragment)?.addToBackStack("main")?.commit()
+
+                activity?.supportFragmentManager?.beginTransaction()?.remove(this)
+                        ?.replace(R.id.container_habits_fragment, listFragment, "list")?.addToBackStack("main")?.commit()
 
             } else {
                 Snackbar.make(it, resources.getString(R.string.error_empty_title), Snackbar.LENGTH_LONG)
@@ -150,8 +151,8 @@ class AddItemFragment: Fragment() {
             val listFragment = ListFragment.newInstance(arrayListOf())
             listFragment.arguments = bundle
 
-            activity?.supportFragmentManager?.beginTransaction()
-                ?.remove(this)?.replace(R.id.list_activity, listFragment)?.addToBackStack("main")?.commit()
+            activity?.supportFragmentManager?.beginTransaction()?.remove(this)
+                ?.replace(R.id.container_habits_fragment, listFragment)?.addToBackStack("main")?.commit()
         }
     }
 

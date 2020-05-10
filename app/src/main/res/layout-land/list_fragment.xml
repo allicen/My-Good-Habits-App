@@ -6,7 +6,7 @@
               android:layout_height="match_parent"
               android:orientation="horizontal"
               app:layout_behavior="@string/appbar_scrolling_view_behavior"
-              tools:showIn="@layout/list_activity"
+              tools:showIn="@layout/main_activity"
               tools:context=".MainActivity"
               tools:ignore="DisableBaselineAlignment">
 
@@ -20,7 +20,7 @@
                 android:id="@+id/list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:showIn="@layout/list_activity"
+                tools:showIn="@layout/main_activity"
                 android:background="@color/list_background"
                 android:orientation="vertical">
 

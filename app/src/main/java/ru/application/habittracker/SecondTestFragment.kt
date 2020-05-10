@@ -13,7 +13,7 @@ class SecondTestFragment: Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.text_fragment, container, false)
+        val view = inflater.inflate(R.layout.sec_test_fr, container, false)
 
         return view
     }

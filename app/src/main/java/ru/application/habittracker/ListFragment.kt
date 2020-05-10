@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.list_fragment.*
@@ -71,23 +72,20 @@ class ListFragment: Fragment(), Serializable {
 
         hideStartText(habitList.size)
 
+//        val data = callback?.updateHabitListFromFragmentData(Constants.EMPTY_ITEM, position, deleteElem)
+//        hideStartText(data?.size ?: 0)
+//        data?.let { showItems(it) }
+
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        arguments?.let {
-            if (oneItem != Constants.EMPTY_ITEM || deleteElem) {
-                val data = callback?.updateHabitListFromFragmentData(oneItem, position, deleteElem)
-                hideStartText(data?.size ?: 0)
-                data?.let { showItems(it) }
-            } else {
-                val data = callback?.updateHabitListFromFragmentData(Constants.EMPTY_ITEM, position, deleteElem)
-                hideStartText(data?.size ?: 0)
-                data?.let { showItems(it) }
-            }
-        }
+        // Добавление списка привычек на экран
+        val data = callback?.updateHabitListFromFragmentData(oneItem, position, deleteElem)
+        hideStartText(data?.size ?: 0)
+        data?.let { showItems(it) }
 
         fab.setOnClickListener {
             Log.e("tag", "Открыто окно создания привычки")
@@ -107,16 +105,17 @@ class ListFragment: Fragment(), Serializable {
 
             if (add_item_form_land != null) {
 
-                if (activity?.supportFragmentManager?.findFragmentByTag("addItem") != null) {
+                if (childFragmentManager.findFragmentByTag("addItem") != null) {
                     activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.add_item_form_land, addItemFragment, "addItem")?.addToBackStack("main")?.commit()
                 } else {
                     activity?.supportFragmentManager?.beginTransaction()?.add(R.id.add_item_form_land, addItemFragment, "addItem")?.addToBackStack("main")?.commit()
                 }
 
             } else {
-
-                activity?.supportFragmentManager?.beginTransaction()?.remove(this)
-                    ?.replace(R.id.list_activity, addItemFragment)?.addToBackStack("main")?.commit()
+                activity?.supportFragmentManager?.beginTransaction()
+                    ?.remove(this)
+                    ?.replace(R.id.container_habits_fragment, addItemFragment, "addItem")
+                    ?.addToBackStack("main")?.commit()
             }
         }
         oneItem = Constants.EMPTY_ITEM

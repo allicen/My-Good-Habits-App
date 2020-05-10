@@ -1,8 +1,9 @@
 package ru.application.habittracker
 
 import android.os.Bundle
-import android.view.Menu
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
@@ -22,35 +23,26 @@ class MainActivity : AppCompatActivity(), ListInterface {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.list_activity)
 
-        if (savedInstanceState == null) {
-            getFragmentWithList()
-        }
+            setContentView(R.layout.main_activity)
 
-        // навигация
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
+            // навигация
+            val toolbar: Toolbar = findViewById(R.id.toolbar)
+            setSupportActionBar(toolbar)
 
-        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
-        val navView: NavigationView = findViewById(R.id.nav_view)
-        val navController = findNavController(R.id.nav_host_fragment)
+            val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
+            val navView: NavigationView = findViewById(R.id.nav_view)
+            val navController = findNavController(R.id.container_fragment)
 
-        appBarConfiguration = AppBarConfiguration(setOf(
-            R.id.nav_home, R.id.nav_about, R.id.nav_test), drawerLayout)
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
-    }
-
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.main, menu)
-        return true
+            appBarConfiguration = AppBarConfiguration(setOf(
+                R.id.nav_home, R.id.nav_about, R.id.nav_test), drawerLayout)
+            setupActionBarWithNavController(navController, appBarConfiguration)
+            navView.setupWithNavController(navController)
     }
 
 
     override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment)
+        val navController = findNavController(R.id.container_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
@@ -96,6 +88,8 @@ class MainActivity : AppCompatActivity(), ListInterface {
             }
         }
 
+        println("habitlist***********$habitList")
+
         return habitList
     }
 
@@ -106,10 +100,14 @@ class MainActivity : AppCompatActivity(), ListInterface {
         val listFragment = ListFragment.newInstance(habitList)
 
         if (supportFragmentManager.findFragmentByTag("list") == null) {
-            supportFragmentManager.beginTransaction().add(R.id.list_activity, listFragment, "list").addToBackStack("main").commitAllowingStateLoss()
+            supportFragmentManager.beginTransaction().add(R.id.container_habits_fragment, listFragment, "list").addToBackStack("main").commitAllowingStateLoss()
         } else {
-            supportFragmentManager.beginTransaction().replace(R.id.list_activity, listFragment, "list").addToBackStack("main").commitAllowingStateLoss()
+            supportFragmentManager.beginTransaction().replace(R.id.container_habits_fragment, listFragment, "list").addToBackStack("main").commitAllowingStateLoss()
         }
+
+
+
+
     }
 
     /**
@@ -134,7 +132,7 @@ class MainActivity : AppCompatActivity(), ListInterface {
             val listFragment = ListFragment.newInstance(habitList)
 
             supportFragmentManager.beginTransaction()
-                .remove(listFragment).replace(R.id.list_activity, addItemFragment).addToBackStack("main").commitAllowingStateLoss()
+                .remove(listFragment).replace(R.id.container_habits_fragment, addItemFragment).addToBackStack("main").commitAllowingStateLoss()
         } else {
 
             if (supportFragmentManager.findFragmentByTag("addItem") != null) {
