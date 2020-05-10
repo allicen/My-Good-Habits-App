@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
@@ -142,7 +143,7 @@ class MainActivity : AppCompatActivity(), ListInterface {
             }
 
             @Suppress("PLUGIN_WARNING")
-            add_item_form_land.visibility = View.VISIBLE
+            findViewById<FrameLayout>(R.id.add_item_form_land).visibility = View.VISIBLE
         }
     }
 }

@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -110,6 +111,8 @@ class ListFragment: Fragment(), Serializable {
                 } else {
                     activity?.supportFragmentManager?.beginTransaction()?.add(R.id.add_item_form_land, addItemFragment, "addItem")?.addToBackStack("main")?.commit()
                 }
+
+                view.findViewById<FrameLayout>(R.id.add_item_form_land).visibility = View.VISIBLE
 
             } else {
                 activity?.supportFragmentManager?.beginTransaction()
