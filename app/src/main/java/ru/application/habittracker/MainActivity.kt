@@ -2,8 +2,6 @@ package ru.application.habittracker
 
 import android.os.Bundle
 import android.view.View
-import android.view.Window
-import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -14,31 +12,32 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
-import kotlinx.android.synthetic.main.list_fragment.*
+import kotlinx.android.synthetic.main.fragment_list.*
 import kotlin.collections.ArrayList
 var orientationScreenOrActive: String = ""
 
-class MainActivity : AppCompatActivity(), ListInterface {
-    var habitList: ArrayList<HabitItem> = ArrayList()
+class MainActivity : AppCompatActivity(), ListInterface, GetHabitsListInterface {
+    var goodHabitsList: ArrayList<HabitItem> = ArrayList()
+    var badHabitsList: ArrayList<HabitItem> = ArrayList()
     private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-            setContentView(R.layout.main_activity)
+        setContentView(R.layout.activity_main)
 
-            // навигация
-            val toolbar: Toolbar = findViewById(R.id.toolbar)
-            setSupportActionBar(toolbar)
+        // навигация
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
 
-            val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
-            val navView: NavigationView = findViewById(R.id.nav_view)
-            val navController = findNavController(R.id.container_fragment)
+        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
+        val navView: NavigationView = findViewById(R.id.nav_view)
+        val navController = findNavController(R.id.container_fragment)
 
-            appBarConfiguration = AppBarConfiguration(setOf(
-                R.id.nav_home, R.id.nav_about, R.id.nav_test), drawerLayout)
-            setupActionBarWithNavController(navController, appBarConfiguration)
-            navView.setupWithNavController(navController)
+        appBarConfiguration = AppBarConfiguration(setOf(
+            R.id.nav_home, R.id.nav_about, R.id.nav_test), drawerLayout)
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        navView.setupWithNavController(navController)
     }
 
 
@@ -51,7 +50,9 @@ class MainActivity : AppCompatActivity(), ListInterface {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        outState.putParcelableArrayList("array", habitList)
+        outState.putParcelableArrayList("goodHabitsList", goodHabitsList)
+
+        outState.putParcelableArrayList("badHabitsList", badHabitsList)
     }
 
 
@@ -59,7 +60,10 @@ class MainActivity : AppCompatActivity(), ListInterface {
         super.onRestoreInstanceState(savedInstanceState)
 
         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-        habitList = savedInstanceState.getParcelableArrayList("array")
+        goodHabitsList = savedInstanceState.getParcelableArrayList("goodHabitsList")
+        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+        badHabitsList = savedInstanceState.getParcelableArrayList("badHabitsList")
+
         getFragmentWithList()
     }
 
@@ -71,44 +75,63 @@ class MainActivity : AppCompatActivity(), ListInterface {
      * @param delete Метка удаления привычки
      * @return Обновленный список привычек
      * **/
-    override fun updateHabitListFromFragmentData(data: HabitItem, position: Int, delete: Boolean): ArrayList<HabitItem> {
+    override fun updateHabitListFromFragmentData(data: HabitItem, position: Int, delete: Boolean, changeType: Boolean): ArrayList<HabitItem> {
+        if (data.type == "") {
+            return ArrayList()
+        }
 
-        if (position < habitList.size) {
+        val arrayHabitList = when (data.type) {
+            Constants.TYPE_HABITS[0] -> goodHabitsList
+            else -> badHabitsList
+        }
+
+        if (position < arrayHabitList.size || changeType) {
             when {
-                position >= 0 && delete -> {
-                    habitList.removeAt(position)
+                position >= 0 && delete && !changeType -> {
+                    arrayHabitList.removeAt(position)
                 }
-                position >= 0 && !delete -> {
-                    habitList[position] = data
+                position >= 0 && !delete && !changeType-> {
+                    arrayHabitList[position] = data
+                }
+                position >= 0 && !delete && changeType-> {
+                    if (arrayHabitList == goodHabitsList) {
+                        arrayHabitList.add(data)
+                        badHabitsList.removeAt(position)
+                    } else {
+                        arrayHabitList.add(data)
+                        goodHabitsList.removeAt(position)
+                    }
                 }
                 else -> {
                     if (data != Constants.EMPTY_ITEM) {
-                        habitList.add(data)
+                        arrayHabitList.add(data)
                     }
                 }
             }
         }
 
-        println("habitlist***********$habitList")
-
-        return habitList
+        return arrayHabitList
     }
+
+    override fun getGoodHabitsList(type: String): ArrayList<HabitItem> {
+        return when (type) {
+            "good" -> goodHabitsList
+            else -> badHabitsList
+        }
+    }
+
 
     /**
      * Работа с фрагментами
      * */
     fun getFragmentWithList() {
-        val listFragment = ListFragment.newInstance(habitList)
+        val listFragment = ListFragment.newInstance()
 
         if (supportFragmentManager.findFragmentByTag("list") == null) {
             supportFragmentManager.beginTransaction().add(R.id.container_habits_fragment, listFragment, "list").addToBackStack("main").commitAllowingStateLoss()
         } else {
             supportFragmentManager.beginTransaction().replace(R.id.container_habits_fragment, listFragment, "list").addToBackStack("main").commitAllowingStateLoss()
         }
-
-
-
-
     }
 
     /**
@@ -130,7 +153,7 @@ class MainActivity : AppCompatActivity(), ListInterface {
         addItemFragment.arguments = bundle
 
         if (add_item_form_land == null) {
-            val listFragment = ListFragment.newInstance(habitList)
+            val listFragment = ListFragment.newInstance()
 
             supportFragmentManager.beginTransaction()
                 .remove(listFragment).replace(R.id.container_habits_fragment, addItemFragment).addToBackStack("main").commitAllowingStateLoss()

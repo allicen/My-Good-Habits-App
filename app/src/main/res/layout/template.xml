@@ -6,13 +6,13 @@
               android:layout_height="match_parent"
               android:background="@color/white"
               app:layout_behavior="@string/appbar_scrolling_view_behavior"
-              tools:showIn="@layout/main_activity"
+              tools:showIn="@layout/activity_main"
               tools:context=".MainActivity">
 
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:showIn="@layout/main_activity"
+            tools:showIn="@layout/activity_main"
             android:background="@color/list_background"
             android:orientation="vertical">
 
@@ -51,10 +51,10 @@
 
             </LinearLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/habit_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
+<!--            <androidx.recyclerview.widget.RecyclerView-->
+<!--                    android:id="@+id/habit_list"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"/>-->
 
         </LinearLayout>
 

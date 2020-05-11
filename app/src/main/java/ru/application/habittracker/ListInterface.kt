@@ -20,6 +20,4 @@ interface ListInterface {
 
         (itemView.context as MainActivity).getFragmentWithUpdateItem(itemFragment, adapterPosition, changeItem)
     }
-
-    fun updateHabitListFromFragmentData(data: HabitItem, position: Int, delete: Boolean = false): ArrayList<HabitItem>
 }

@@ -1,12 +1,15 @@
 package ru.application.habittracker
 
+import android.graphics.Color
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class RecHolder(itemView: View): RecyclerView.ViewHolder(itemView), ListInterface {
 
     fun bind(item: HabitItem, orientationScreenOrActive: String){
+
         val title: TextView = itemView.findViewById(R.id.item_title)
         val description: TextView = itemView.findViewById(R.id.item_description)
         val type: TextView = itemView.findViewById(R.id.item_type)
@@ -30,11 +33,7 @@ class RecHolder(itemView: View): RecyclerView.ViewHolder(itemView), ListInterfac
                 count = item.count,
                 period = item.period)
 
-            updateHabitItem(itemView, changeItem, adapterPosition, orientationScreenOrActive)
+            updateHabitItem(itemView, changeItem, bindingAdapterPosition, orientationScreenOrActive)
         }
-    }
-
-    override fun updateHabitListFromFragmentData(data: HabitItem, position: Int, delete: Boolean):ArrayList<HabitItem> {
-        TODO("Not yet implemented")
     }
 }

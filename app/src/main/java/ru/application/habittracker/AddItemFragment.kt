@@ -4,10 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.RadioButton
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.add_item_fragment.*
+import kotlinx.android.synthetic.main.fragment_add_item.*
+
 
 class AddItemFragment: Fragment() {
 
@@ -32,6 +36,7 @@ class AddItemFragment: Fragment() {
     lateinit var burgerMenu: ImageView
 
     var position: Int = Constants.ITEM_POSITION_DEFAULT
+    var changeType: Boolean = false
     lateinit var changeItem: HabitItem
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,10 +48,11 @@ class AddItemFragment: Fragment() {
         position = bundle?.getInt("position", Constants.ITEM_POSITION_DEFAULT) ?: Constants.ITEM_POSITION_DEFAULT
         changeItem = bundle?.getParcelable("changeItem") ?: Constants.EMPTY_ITEM
         orientationScreenOrActive = bundle?.getString("orientationScreenOrActive") ?: "land"
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.add_item_fragment, container, false)
+        val view = inflater.inflate(R.layout.fragment_add_item, container, false)
 
         headerTitle = view.findViewById(R.id.header_title)
         titleImage = view.findViewById(R.id.title_image)
@@ -71,14 +77,14 @@ class AddItemFragment: Fragment() {
             }
         }
 
-        itemType = good.text.toString() // Значение по умолчанию
-        types = listOf(
-            mapOf(bad to bad.text.toString()),
-            mapOf(bad to bad.text.toString()))
-
-        // радиокнопки
-        good.setOnClickListener{ checkedRadioButton(it) }
-        bad.setOnClickListener{ checkedRadioButton(it) }
+        itemType = ""
+        type_habit.setOnCheckedChangeListener{ _, _ ->
+            if (good.isChecked) {
+                itemType = Constants.TYPE_HABITS[0]
+            } else {
+                itemType = Constants.TYPE_HABITS[1]
+            }
+        }
 
         title_item.setText(changeItem.title, TextView.BufferType.EDITABLE)
         description_item.setText(changeItem.description, TextView.BufferType.EDITABLE)
@@ -92,6 +98,10 @@ class AddItemFragment: Fragment() {
                 }
             }
         }
+
+        types = listOf( // Типы радиокнопок
+            mapOf(good to good.text.toString()),
+            mapOf(bad to bad.text.toString()))
 
         if (changeItem.type != "") { // Выбор типа привычки по тексту
             for (type in types) {
@@ -108,67 +118,70 @@ class AddItemFragment: Fragment() {
 
         // Сохранение привычки
         save.setOnClickListener {
-            itemTitle = title_item.text.toString().trim()
-            itemDescription = description_item.text.toString().trim()
-            itemPriority = priority_item.selectedItem.toString()
-            itemCount = count_item.text.toString()
-            itemPeriod = period_item.text.toString().trim()
-
-            if (itemTitle != "") {
-                val item = HabitItem(
-                    title = itemTitle,
-                    description = itemDescription,
-                    type = itemType,
-                    priority = itemPriority,
-                    count = itemCount,
-                    period = itemPeriod)
-
-                val bundle = Bundle()
-                bundle.putInt("position", position)
-                bundle.putBoolean("delete", false)
-                bundle.putParcelable("item", item)
-
-                val listFragment = ListFragment()
-                listFragment.arguments = bundle
-
-
-                activity?.supportFragmentManager?.beginTransaction()?.remove(this)
-                        ?.replace(R.id.container_habits_fragment, listFragment, "list")?.addToBackStack("main")?.commit()
-
-            } else {
-                Snackbar.make(it, resources.getString(R.string.error_empty_title), Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-            }
+            pushData (false)
         }
 
 
         // Удаление привычки
         delete.setOnClickListener {
-            val bundle = Bundle()
-            bundle.putInt("position", position)
-            bundle.putBoolean("delete", true)
-
-            val listFragment = ListFragment.newInstance(arrayListOf())
-            listFragment.arguments = bundle
-
-            activity?.supportFragmentManager?.beginTransaction()?.remove(this)
-                ?.replace(R.id.container_habits_fragment, listFragment)?.addToBackStack("main")?.commit()
+            pushData (true)
         }
+
     }
 
+
     /**
-     * Метод для переключения радиокнопок
-     * @param radioButton Радиокнопки
+     * Метод для получения одной привычки
+     * @return Привычка с полями
      * */
-    private fun checkedRadioButton (radioButton: View) {
-        for (type in types) {
-            for ((key, value) in type) {
-                if (key != radioButton) {
-                    key.isChecked = false
-                } else {
-                    itemType = value
-                }
+
+    fun getItem (): HabitItem {
+        itemTitle = title_item.text.toString().trim()
+        itemDescription = description_item.text.toString().trim()
+        itemPriority = priority_item.selectedItem.toString()
+        itemCount = count_item.text.toString()
+        itemPeriod = period_item.text.toString().trim()
+
+        return HabitItem(
+            title = itemTitle,
+            description = itemDescription,
+            type = itemType,
+            priority = itemPriority,
+            count = itemCount,
+            period = itemPeriod)
+    }
+
+
+    /**
+     * Метод для сохранения и удаления привычки
+     * @param delete Удалить или нет запись
+     * */
+
+    fun pushData (delete: Boolean) {
+        val item: HabitItem = getItem ()
+        changeType = changeItem.type != item.type
+
+        if (item.title != "") {
+            if (item.type == "") {
+                Snackbar.make(view!!, resources.getString(R.string.error_empty_type), Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show()
+            } else {
+                val bundle = Bundle()
+                bundle.putInt("position", position)
+                bundle.putBoolean("delete", delete)
+                bundle.putParcelable("item", item)
+                bundle.putBoolean("changeType", changeType)
+
+                val listFragment = ListFragment.newInstance()
+                listFragment.arguments = bundle
+
+                activity?.supportFragmentManager?.beginTransaction()?.remove(this)
+                    ?.replace(R.id.container_habits_fragment, listFragment, "list")?.addToBackStack("main")?.commit()
             }
+
+        } else {
+            Snackbar.make(view!!, resources.getString(R.string.error_empty_title), Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show()
         }
     }
 }

@@ -12,7 +12,7 @@ class ContainerHabitsFragment: Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View
-            = inflater.inflate(R.layout.container_habits_fragment, container, false)
+            = inflater.inflate(R.layout.fragment_container_habits, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

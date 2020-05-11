@@ -60,6 +60,7 @@
                         android:layout_height="wrap_content"/>
 
                 <RadioGroup
+                        android:id="@+id/type_habit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
@@ -67,7 +68,6 @@
                     <RadioButton
                             android:text="@string/good"
                             android:id="@+id/good"
-                            android:checked="true"
                             android:layout_width="wrap_content"
                             android:layout_weight="1"
                             android:layout_height="wrap_content"/>

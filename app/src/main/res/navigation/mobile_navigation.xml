@@ -10,13 +10,13 @@
             android:id="@+id/nav_home"
             android:name="ru.application.habittracker.ContainerHabitsFragment"
             android:tag="list"
-            tools:layout="@layout/container_habits_fragment"/>
+            tools:layout="@layout/fragment_container_habits"/>
 
     <fragment
             android:id="@+id/nav_about"
             android:name="ru.application.habittracker.TextFragment"
             android:tag="list"
-            tools:layout="@layout/text_fragment"/>
+            tools:layout="@layout/fragment_text"/>
     <fragment
             android:id="@+id/nav_test"
             android:name="ru.application.habittracker.SecondTestFragment"

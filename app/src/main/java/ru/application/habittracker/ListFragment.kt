@@ -10,39 +10,40 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.list_fragment.*
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayout
+import kotlinx.android.synthetic.main.fragment_list.*
 import java.io.Serializable
+import kotlin.math.max
 
 
 class ListFragment: Fragment(), Serializable {
     var position: Int = Constants.ITEM_POSITION_DEFAULT
     var deleteElem: Boolean = false
-    var callback : ListInterface? = null
+    var callback : GetHabitsListInterface? = null
     var orientationScreenOrActive: String = ""
+    var changeType: Boolean = false
 
     lateinit var oneItem: HabitItem
 
-    lateinit var vRecView: RecyclerView
     lateinit var emptyList: LinearLayout
     lateinit var titleList: TextView
     lateinit var habitList: ArrayList<HabitItem>
 
+    lateinit var tabs: LinearLayout
+    lateinit var tabsLayout: TabLayout
+    lateinit var tabsViewpager: ViewPager
+
     companion object {
-        fun newInstance(habitList: ArrayList<HabitItem>) : ListFragment {
+        fun newInstance() : ListFragment {
             val fragment = ListFragment()
-            val bundle = Bundle()
-            bundle.putParcelableArrayList("habitList", habitList)
-            fragment.arguments = bundle
             return fragment
         }
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        callback = activity as ListInterface
+        callback = activity as GetHabitsListInterface
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,24 +59,24 @@ class ListFragment: Fragment(), Serializable {
             deleteElem = bundle.getBoolean("delete", false)
             oneItem = bundle.getParcelable("item") ?: Constants.EMPTY_ITEM
             habitList = bundle.getParcelableArrayList("habitList") ?: ArrayList()
+            changeType = bundle.getBoolean("changeType", false)
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.list_fragment, container, false)
+        val view = inflater.inflate(R.layout.fragment_list, container, false)
 
-        vRecView = view.findViewById(R.id.habit_list)
         emptyList = view.findViewById(R.id.empty_list)
         titleList = view.findViewById(R.id.title_list)
+        tabs = view.findViewById(R.id.tabs)
+        tabsViewpager = view.findViewById(R.id.tabs_viewpager)
+        tabsLayout = view.findViewById(R.id.tabs_layout)
 
-        vRecView.adapter = RecAdapter(habitList, orientationScreenOrActive) // основной список
-        vRecView.layoutManager = LinearLayoutManager(activity)
+        tabsViewpager.adapter = TabAdapter(childFragmentManager) // табы
+        tabsLayout.setupWithViewPager(tabsViewpager)
+
 
         hideStartText(habitList.size)
-
-//        val data = callback?.updateHabitListFromFragmentData(Constants.EMPTY_ITEM, position, deleteElem)
-//        hideStartText(data?.size ?: 0)
-//        data?.let { showItems(it) }
 
         return view
     }
@@ -83,10 +84,14 @@ class ListFragment: Fragment(), Serializable {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Добавление списка привычек на экран
-        val data = callback?.updateHabitListFromFragmentData(oneItem, position, deleteElem)
-        hideStartText(data?.size ?: 0)
-        data?.let { showItems(it) }
+        // Добавление списка привычек в список
+        callback?.updateHabitListFromFragmentData(oneItem, position, deleteElem, changeType)
+
+        val goodHabits = callback?.getGoodHabitsList("good")
+        val badHabits = callback?.getGoodHabitsList("bad")
+        val sizeList = max(goodHabits?.size ?: 0, badHabits?.size ?: 0)
+
+        hideStartText(sizeList)
 
         fab.setOnClickListener {
             Log.e("tag", "Открыто окно создания привычки")
@@ -132,42 +137,11 @@ class ListFragment: Fragment(), Serializable {
         if (habitListSize == 0) {
             emptyList.visibility = TextView.VISIBLE
             titleList.visibility = TextView.VISIBLE
+            tabs.visibility = LinearLayout.GONE
         } else {
             emptyList.visibility = TextView.GONE
             titleList.visibility = TextView.GONE
+            tabs.visibility = LinearLayout.VISIBLE
         }
-    }
-
-
-    /**
-     * Метод для работы с адаптером
-     * @param items Список привычек
-     * @param pos Позиция привычки для удаления
-     * */
-    private fun showItems(items: ArrayList<HabitItem>, pos: Int = position) {
-
-        if (!isVisible) {
-            return
-        }
-
-        if (add_item_form_land == null) {
-            orientationScreenOrActive = "edit"
-        } else {
-            orientationScreenOrActive = "land"
-        }
-
-        if (pos >= 0 && !deleteElem) {
-            vRecView.adapter?.notifyItemChanged(pos)
-        }
-
-        if (pos >= 0 && deleteElem) {
-            vRecView.adapter?.notifyItemRemoved(pos)
-        }
-
-        if (items.size > 0) {
-            vRecView.adapter = RecAdapter(items, orientationScreenOrActive)
-        }
-
-        vRecView.layoutManager = LinearLayoutManager(activity)
     }
 }
