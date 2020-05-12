@@ -6,14 +6,19 @@ import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.FragmentManager
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import kotlinx.android.synthetic.main.fragment_add_item.*
 import kotlinx.android.synthetic.main.fragment_list.*
-import kotlin.collections.ArrayList
+
+
 var orientationScreenOrActive: String = ""
 
 class MainActivity : AppCompatActivity(), ListInterface, GetHabitsListInterface {
@@ -38,12 +43,24 @@ class MainActivity : AppCompatActivity(), ListInterface, GetHabitsListInterface 
             R.id.nav_home, R.id.nav_about, R.id.nav_test), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        setUpBottomNav(navController)
     }
 
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.container_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    private fun setUpBottomNav(navController: NavController) {
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav_view)
+        bottomNav?.setupWithNavController(navController)
+    }
+
+    override fun onBackPressed() { // Обработка кнопки назад
+        val lastFragments: FragmentManager = supportFragmentManager
+        if (lastFragments.backStackEntryCount > 1) lastFragments.popBackStack() else finish()
     }
 
 
