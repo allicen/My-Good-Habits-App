@@ -16,6 +16,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.fragment_add_item.*
+import kotlinx.android.synthetic.main.fragment_container_habits.*
 import kotlinx.android.synthetic.main.fragment_list.*
 
 
@@ -40,7 +41,7 @@ class MainActivity : AppCompatActivity(), ListInterface, GetHabitsListInterface 
         val navController = findNavController(R.id.container_fragment)
 
         appBarConfiguration = AppBarConfiguration(setOf(
-            R.id.nav_home, R.id.nav_about, R.id.nav_test), drawerLayout)
+            R.id.nav_home, R.id.nav_about), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
@@ -144,10 +145,12 @@ class MainActivity : AppCompatActivity(), ListInterface, GetHabitsListInterface 
     fun getFragmentWithList() {
         val listFragment = ListFragment.newInstance()
 
-        if (supportFragmentManager.findFragmentByTag("list") == null) {
-            supportFragmentManager.beginTransaction().add(R.id.container_habits_fragment, listFragment, "list").addToBackStack("main").commitAllowingStateLoss()
-        } else {
-            supportFragmentManager.beginTransaction().replace(R.id.container_habits_fragment, listFragment, "list").addToBackStack("main").commitAllowingStateLoss()
+        if (container_habits_fragment != null) {
+            if (supportFragmentManager.findFragmentByTag("list") == null) {
+                supportFragmentManager.beginTransaction().add(R.id.container_habits_fragment, listFragment, "list").addToBackStack("main").commitAllowingStateLoss()
+            } else {
+                supportFragmentManager.beginTransaction().replace(R.id.container_habits_fragment, listFragment, "list").addToBackStack("main").commitAllowingStateLoss()
+            }
         }
     }
 

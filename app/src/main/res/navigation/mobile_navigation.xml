@@ -15,12 +15,7 @@
     <fragment
             android:id="@+id/nav_about"
             android:name="ru.application.habittracker.TextFragment"
-            android:tag="list"
+            android:tag="text"
             tools:layout="@layout/fragment_text"/>
-    <fragment
-            android:id="@+id/nav_test"
-            android:name="ru.application.habittracker.SecondTestFragment"
-            android:tag="list"
-            tools:layout="@layout/sec_test_fr"/>
 
 </navigation>

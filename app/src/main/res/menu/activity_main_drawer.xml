@@ -7,16 +7,11 @@
 
         <item
                 android:id="@+id/nav_home"
-                android:icon="@drawable/ic_menu_gallery"
-                android:title="Главная"/>
+                android:icon="@drawable/ic_home_black_24dp"
+                android:title="@string/habits"/>
         <item
                 android:id="@+id/nav_about"
-                android:icon="@drawable/ic_menu_gallery"
+                android:icon="@drawable/ic_info_outline_black_24dp"
                 android:title="@string/menu_about"/>
-
-        <item
-                android:id="@+id/nav_test"
-                android:icon="@drawable/ic_menu_gallery"
-                android:title="Тест"/>
     </group>
 </menu>

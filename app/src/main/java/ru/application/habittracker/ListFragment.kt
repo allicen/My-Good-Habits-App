@@ -36,8 +36,7 @@ class ListFragment: Fragment(), Serializable {
 
     companion object {
         fun newInstance() : ListFragment {
-            val fragment = ListFragment()
-            return fragment
+            return ListFragment()
         }
     }
 
@@ -74,7 +73,6 @@ class ListFragment: Fragment(), Serializable {
 
         tabsViewpager.adapter = TabAdapter(childFragmentManager) // табы
         tabsLayout.setupWithViewPager(tabsViewpager)
-
 
         hideStartText(habitList.size)
 
