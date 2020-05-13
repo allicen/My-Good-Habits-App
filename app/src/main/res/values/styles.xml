@@ -8,4 +8,8 @@
         <item name="android:colorPrimaryDark" tools:targetApi="lollipop" tools:ignore="PrivateResource">@color/cardview_dark_background</item>
     </style>
 
+    <style name="tab_layout" parent="Widget.Design.TabLayout">
+        <item name="tabIndicatorColor">#cecece</item>
+    </style>
+
 </resources>

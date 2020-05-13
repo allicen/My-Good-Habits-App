@@ -1,17 +1,23 @@
 package ru.application.habittracker
 
-import android.app.Activity
-import android.content.Intent
+import android.os.Bundle
 import android.view.View
 
 interface ListInterface {
-    fun getIntent(itemView: View, changeItem: HabitItem, adapterPosition: Int) {
-        val changeHabit = Intent(itemView.context, AddItemActivity::class.java)
-            .apply {
-                putExtra("changeItem", changeItem)
-                putExtra("position", adapterPosition)
-            }
+    fun updateHabitItem(
+        itemView: View,
+        changeItem: HabitItem,
+        adapterPosition: Int,
+        orientationScreenOrActive: String
+    ) {
 
-        (itemView.context as Activity).startActivityForResult(changeHabit, 0)
+        val bundle = Bundle()
+        bundle.putInt("position", adapterPosition)
+        bundle.putParcelable("changeItem", changeItem)
+
+        val itemFragment = AddItemFragment.newInstance()
+        itemFragment.arguments = bundle
+
+        (itemView.context as MainActivity).getFragmentWithUpdateItem(itemFragment, adapterPosition, changeItem)
     }
 }
