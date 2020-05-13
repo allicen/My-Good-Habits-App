@@ -71,9 +71,6 @@ class ListFragment: Fragment(), Serializable {
         tabsViewpager = view.findViewById(R.id.tabs_viewpager)
         tabsLayout = view.findViewById(R.id.tabs_layout)
 
-        tabsViewpager.adapter = TabAdapter(childFragmentManager) // табы
-        tabsLayout.setupWithViewPager(tabsViewpager)
-
         hideStartText(habitList.size)
 
         return view
@@ -85,9 +82,12 @@ class ListFragment: Fragment(), Serializable {
         // Добавление списка привычек в список
         callback?.updateHabitListFromFragmentData(oneItem, position, deleteElem, changeType)
 
-        val goodHabits = callback?.getGoodHabitsList("good")
-        val badHabits = callback?.getGoodHabitsList("bad")
-        val sizeList = max(goodHabits?.size ?: 0, badHabits?.size ?: 0)
+        val goodHabits = callback?.getGoodHabitsList("good") ?: ArrayList()
+        val badHabits = callback?.getGoodHabitsList("bad") ?: ArrayList()
+        val sizeList = max(goodHabits.size, badHabits.size)
+
+        tabsViewpager.adapter = TabAdapter(childFragmentManager, goodHabits.size, badHabits.size) // табы
+        tabsLayout.setupWithViewPager(tabsViewpager)
 
         hideStartText(sizeList)
 
@@ -127,10 +127,10 @@ class ListFragment: Fragment(), Serializable {
         oneItem = Constants.EMPTY_ITEM
     }
 
+
     /**
      * Показать/скрыть начальный текст
      * */
-
     fun hideStartText (habitListSize: Int) {
         if (habitListSize == 0) {
             emptyList.visibility = TextView.VISIBLE

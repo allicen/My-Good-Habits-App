@@ -4,7 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 
-class TabAdapter (fragmentManager: FragmentManager): FragmentPagerAdapter(fragmentManager) {
+class TabAdapter (fragmentManager: FragmentManager, private val goodHabitsCount: Int, private val badHabitsCount: Int): FragmentPagerAdapter(fragmentManager) {
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
@@ -17,8 +17,8 @@ class TabAdapter (fragmentManager: FragmentManager): FragmentPagerAdapter(fragme
 
     override fun getPageTitle(position: Int): CharSequence? {
         return when (position) {
-            0 -> "Хорошие"
-            else -> "Плохие"
+            0 -> "Хорошие ($goodHabitsCount)"
+            else -> "Плохие ($badHabitsCount)"
         }
     }
 }

@@ -65,7 +65,7 @@ class AddItemFragment: Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        when (orientationScreenOrActive) { // Заголовки
+        when (orientationScreenOrActive) { // Заголовки окна
             "edit" -> {
                 titleText.text = "Редактировать привычку"
             }
@@ -78,7 +78,7 @@ class AddItemFragment: Fragment() {
         }
 
         itemType = ""
-        type_habit.setOnCheckedChangeListener{ _, _ ->
+        type_habit.setOnCheckedChangeListener{ _, _ -> // Радиокнопки
             if (good.isChecked) {
                 itemType = Constants.TYPE_HABITS[0]
             } else {

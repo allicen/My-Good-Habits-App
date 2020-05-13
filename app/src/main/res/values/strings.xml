@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Habit+</string>
     <string name="app_name_rus">Трекер привычек</string>
+    <string name="app_about_rus">Мобильный трекер привычек</string>
     <string name="title_list">Список привычек</string>
     <string name="your_habits">Ваши привычки</string>
     <string name="empty_list">Вы еще не добавили ни одной привычки</string>
@@ -45,4 +46,8 @@
     </string>
     <string name="about_app_version">Версия: 1.0.0</string>
     <string name="habits">Привычки</string>
+    <string name="empty_list_good_habits">Хорошие привычки не добавлены</string>
+    <string name="empty_list_bad_habits">Плохие привычки не добавлены</string>
+    <string name="delim">раз /</string>
+    <string name="reply">повторить</string>
 </resources>
