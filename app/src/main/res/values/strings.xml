@@ -32,7 +32,9 @@
     </string-array>
 
     <string name="error_empty_title">Заголовок привычки обязателен!</string>
-    <string name="delete"><u>Удалить</u></string>
+    <string name="delete">
+        <u>Удалить</u>
+    </string>
     <string name="good">Хорошие</string>
     <string name="bad">Плохие</string>
     <string name="menu_home">На главную</string>
@@ -47,7 +49,7 @@
     <string name="about_app_version">Версия: 1.0.0</string>
     <string name="habits">Привычки</string>
     <string name="empty_list_good_habits">Хорошие привычки не добавлены</string>
-    <string name="empty_list_bad_habits">Плохие привычки не добавлены</string>
+    <string name="empty_list_bad_habits">Привычки не добавлены</string>
     <string name="delim">раз /</string>
     <string name="reply">повторить</string>
 </resources>

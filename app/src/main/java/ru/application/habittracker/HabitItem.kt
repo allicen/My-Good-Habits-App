@@ -4,13 +4,14 @@ import android.os.Parcel
 import android.os.Parcelable
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-class HabitItem (
+class HabitItem(
     val title: String,
     val description: String,
     val type: String,
     val priority: String,
     val count: String,
-    val period: String
+    val period: String,
+    val hash: Int
 
 ): Parcelable {
     constructor(parcel: Parcel) : this(
@@ -19,7 +20,8 @@ class HabitItem (
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
-        parcel.readString()
+        parcel.readString(),
+        parcel.readInt()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -29,6 +31,7 @@ class HabitItem (
         parcel.writeString(priority)
         parcel.writeString(count)
         parcel.writeString(period)
+        parcel.writeInt(hash)
     }
 
     override fun describeContents(): Int {

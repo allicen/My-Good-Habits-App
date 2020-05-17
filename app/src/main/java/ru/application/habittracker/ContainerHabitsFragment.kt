@@ -4,10 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 
 class ContainerHabitsFragment: Fragment() {
+
+    companion object {
+        fun newInstance() : ContainerHabitsFragment {
+            return ContainerHabitsFragment()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,12 +26,7 @@ class ContainerHabitsFragment: Fragment() {
 
         val listFragment = ListFragment.newInstance()
 
-        if (activity?.supportFragmentManager?.findFragmentByTag("list") != null) {
-            activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.container_habits_fragment, listFragment, "list")
+        activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.container_habits_fragment, listFragment, "list")
                 ?.addToBackStack("main")?.commitAllowingStateLoss()
-        } else {
-            activity?.supportFragmentManager?.beginTransaction()?.add(R.id.container_habits_fragment, listFragment, "list")
-                ?.addToBackStack("main")?.commitAllowingStateLoss()
-        }
     }
 }

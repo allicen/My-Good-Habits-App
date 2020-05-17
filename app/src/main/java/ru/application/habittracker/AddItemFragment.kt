@@ -36,8 +36,8 @@ class AddItemFragment: Fragment() {
     lateinit var burgerMenu: ImageView
 
     var position: Int = Constants.ITEM_POSITION_DEFAULT
-    var changeType: Boolean = false
     lateinit var changeItem: HabitItem
+    var hash: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,8 +47,8 @@ class AddItemFragment: Fragment() {
         val bundle = this.arguments
         position = bundle?.getInt("position", Constants.ITEM_POSITION_DEFAULT) ?: Constants.ITEM_POSITION_DEFAULT
         changeItem = bundle?.getParcelable("changeItem") ?: Constants.EMPTY_ITEM
+        hash = changeItem.hash
         orientationScreenOrActive = bundle?.getString("orientationScreenOrActive") ?: "land"
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -121,7 +121,6 @@ class AddItemFragment: Fragment() {
             pushData (false)
         }
 
-
         // Удаление привычки
         delete.setOnClickListener {
             pushData (true)
@@ -142,13 +141,19 @@ class AddItemFragment: Fragment() {
         itemCount = count_item.text.toString()
         itemPeriod = period_item.text.toString().trim()
 
+        if (hash == 0) {
+            hash = Constants.hash + 1
+            Constants.hash = hash
+        }
+
         return HabitItem(
             title = itemTitle,
             description = itemDescription,
             type = itemType,
             priority = itemPriority,
             count = itemCount,
-            period = itemPeriod)
+            period = itemPeriod,
+            hash = hash)
     }
 
 
@@ -159,7 +164,6 @@ class AddItemFragment: Fragment() {
 
     fun pushData (delete: Boolean) {
         val item: HabitItem = getItem ()
-        changeType = changeItem.type != item.type
 
         if (item.title != "") {
             if (item.type == "") {
@@ -170,15 +174,13 @@ class AddItemFragment: Fragment() {
                 bundle.putInt("position", position)
                 bundle.putBoolean("delete", delete)
                 bundle.putParcelable("item", item)
-                bundle.putBoolean("changeType", changeType)
 
                 val listFragment = ListFragment.newInstance()
                 listFragment.arguments = bundle
 
                 activity?.supportFragmentManager?.beginTransaction()?.remove(this)
-                    ?.replace(R.id.container_habits_fragment, listFragment, "list")?.addToBackStack("main")?.commit()
+                    ?.replace(R.id.container_habits_fragment, listFragment, "list")?.addToBackStack("addItem")?.commit()
             }
-
         } else {
             Snackbar.make(view!!, resources.getString(R.string.error_empty_title), Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()

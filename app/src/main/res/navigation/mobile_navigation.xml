@@ -3,19 +3,30 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/mobile_navigation"
-            app:startDestination="@+id/nav_home"
-            tools:ignore="UnusedNavigation">
+            tools:ignore="UnusedNavigation" app:startDestination="@id/habit_container">
 
     <fragment
-            android:id="@+id/nav_home"
+            android:id="@+id/habit_container"
             android:name="ru.application.habittracker.ContainerHabitsFragment"
             android:tag="list"
-            tools:layout="@layout/fragment_container_habits"/>
+            tools:layout="@layout/fragment_container_habits">
+        <action android:id="@+id/action_habit_container_to_listFragment" app:destination="@id/listFragment"/>
+    </fragment>
 
     <fragment
             android:id="@+id/nav_about"
             android:name="ru.application.habittracker.TextFragment"
             android:tag="text"
             tools:layout="@layout/fragment_text"/>
+    <fragment android:id="@+id/listFragment" android:name="ru.application.habittracker.ListFragment"
+              android:label="ListFragment">
+        <action android:id="@+id/action_listFragment_to_habitListFragment" app:destination="@id/habitListFragment"/>
+    </fragment>
+    <fragment android:id="@+id/habitListFragment" android:name="ru.application.habittracker.HabitListFragment"
+              android:label="HabitListFragment">
+        <action android:id="@+id/action_habitListFragment_to_addItemFragment" app:destination="@id/addItemFragment"/>
+    </fragment>
+    <fragment android:id="@+id/addItemFragment" android:name="ru.application.habittracker.AddItemFragment"
+              android:label="AddItemFragment"/>
 
 </navigation>
