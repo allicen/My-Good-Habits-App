@@ -22,7 +22,6 @@ class ListFragment: Fragment(), Serializable {
     var deleteElem: Boolean = false
     var callback : GetHabitsListInterface? = null
     var orientationScreenOrActive: String = ""
-    var changeType: Boolean = false
 
     lateinit var oneItem: HabitItem
 
@@ -58,7 +57,9 @@ class ListFragment: Fragment(), Serializable {
             deleteElem = bundle.getBoolean("delete", false)
             oneItem = bundle.getParcelable("item") ?: Constants.EMPTY_ITEM
             habitList = bundle.getParcelableArrayList("habitList") ?: ArrayList()
-            changeType = bundle.getBoolean("changeType", false)
+
+            // Добавление привычки в список
+            habitList = callback?.updateHabitListFromFragmentData(oneItem, position, deleteElem) ?: ArrayList()
         }
     }
 
@@ -79,14 +80,16 @@ class ListFragment: Fragment(), Serializable {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Добавление списка привычек в список
-        callback?.updateHabitListFromFragmentData(oneItem, position, deleteElem, changeType)
+        // Получение списка привычек
+        habitList = callback?.getHabitsList() ?: ArrayList()
 
-        val goodHabits = callback?.getGoodHabitsList("good") ?: ArrayList()
-        val badHabits = callback?.getGoodHabitsList("bad") ?: ArrayList()
-        val sizeList = max(goodHabits.size, badHabits.size)
+        // Количество привычек
+        val goodHabitsCount = habitList.filter { it.type == Constants.TYPE_HABITS[0] }.count()
+        val badHabitsCount = habitList.filter { it.type == Constants.TYPE_HABITS[1] }.count()
+        val sizeList = max(goodHabitsCount, badHabitsCount)
 
-        tabsViewpager.adapter = TabAdapter(childFragmentManager, goodHabits.size, badHabits.size) // табы
+        // Табы
+        tabsViewpager.adapter = TabAdapter(childFragmentManager, goodHabitsCount, badHabitsCount)
         tabsLayout.setupWithViewPager(tabsViewpager)
 
         hideStartText(sizeList)
@@ -110,9 +113,9 @@ class ListFragment: Fragment(), Serializable {
             if (add_item_form_land != null) {
 
                 if (childFragmentManager.findFragmentByTag("addItem") != null) {
-                    activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.add_item_form_land, addItemFragment, "addItem")?.addToBackStack("main")?.commit()
+                    activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.add_item_form_land, addItemFragment, "addItem")?.addToBackStack("list")?.commit()
                 } else {
-                    activity?.supportFragmentManager?.beginTransaction()?.add(R.id.add_item_form_land, addItemFragment, "addItem")?.addToBackStack("main")?.commit()
+                    activity?.supportFragmentManager?.beginTransaction()?.add(R.id.add_item_form_land, addItemFragment, "addItem")?.addToBackStack("list")?.commit()
                 }
 
                 view.findViewById<FrameLayout>(R.id.add_item_form_land).visibility = View.VISIBLE
@@ -121,7 +124,7 @@ class ListFragment: Fragment(), Serializable {
                 activity?.supportFragmentManager?.beginTransaction()
                     ?.remove(this)
                     ?.replace(R.id.container_habits_fragment, addItemFragment, "addItem")
-                    ?.addToBackStack("main")?.commit()
+                    ?.addToBackStack("list")?.commit()
             }
         }
         oneItem = Constants.EMPTY_ITEM

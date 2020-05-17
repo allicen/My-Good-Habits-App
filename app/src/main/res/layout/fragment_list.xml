@@ -4,92 +4,87 @@
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
+              android:id="@+id/list_tab_fragment"
               app:layout_behavior="@string/appbar_scrolling_view_behavior"
               tools:showIn="@layout/activity_main"
               tools:context=".MainActivity">
 
-    <FrameLayout
-            android:id="@+id/list_fragment"
+    <LinearLayout
+            android:id="@+id/list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            tools:showIn="@layout/activity_main"
+            android:background="@color/list_background"
+            android:orientation="vertical"
+            tools:ignore="UselessParent">
+
+        <include  layout="@layout/header" />
 
         <LinearLayout
-                android:id="@+id/list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:showIn="@layout/activity_main"
-                android:background="@color/list_background"
                 android:orientation="vertical"
-                tools:ignore="UselessParent">
+                android:padding="12dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <include  layout="@layout/header" />
+
+            <TextView
+                    android:id="@+id/title_list"
+                    android:text="@string/title_list"
+                    android:textStyle="bold"
+                    android:paddingTop="10sp"
+                    android:paddingBottom="10sp"
+                    android:textSize="20sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:ignore="MissingConstraints"/>
 
             <LinearLayout
-                    android:orientation="vertical"
-                    android:padding="12dp"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
+                    android:layout_height="wrap_content"
+                    android:id="@+id/empty_list"
+                    android:visibility="visible"
+                    android:orientation="vertical">
 
                 <TextView
-                        android:id="@+id/title_list"
-                        android:text="@string/title_list"
-                        android:textStyle="bold"
-                        android:paddingTop="10sp"
-                        android:paddingBottom="10sp"
-                        android:textSize="20sp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        tools:ignore="MissingConstraints"/>
-
-                <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/empty_list"
-                        android:visibility="visible"
-                        android:orientation="vertical">
-
-                    <TextView
-                            android:text="@string/empty_list"
-                            android:includeFontPadding="false"
-                            android:layout_marginTop="20sp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                        android:id="@+id/tabs"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-
-                    <com.google.android.material.tabs.TabLayout
-                            android:id="@+id/tabs_layout"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            app:tabMode="fixed" />
-
-                    <androidx.viewpager.widget.ViewPager
-                            android:id="@+id/tabs_viewpager"
-                            android:layout_width="match_parent"
-                            android:layout_height="0px"
-                            android:layout_weight="1"/>
-
-                </LinearLayout>
+                        android:text="@string/empty_list"
+                        android:includeFontPadding="false"
+                        android:layout_marginTop="20sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
 
             </LinearLayout>
+
+            <LinearLayout
+                    android:id="@+id/tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                <com.google.android.material.tabs.TabLayout
+                        android:id="@+id/tabs_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:tabMode="fixed" />
+
+                <androidx.viewpager.widget.ViewPager
+                        android:id="@+id/tabs_viewpager"
+                        android:layout_width="match_parent"
+                        android:layout_height="0px"
+                        android:layout_weight="1"/>
+
+            </LinearLayout>
+
         </LinearLayout>
+    </LinearLayout>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_marginVertical="16dp"
-                android:layout_marginHorizontal="16dp"
-                android:src="@drawable/ic_add_black_24dp"
-                tools:targetApi="o"/>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginVertical="16dp"
+            android:layout_marginHorizontal="16dp"
+            android:src="@drawable/ic_add_black_24dp"
+            tools:targetApi="o"/>
 
-    </FrameLayout>
 </FrameLayout>

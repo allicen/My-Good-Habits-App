@@ -22,31 +22,32 @@ import kotlinx.android.synthetic.main.fragment_list.*
 var orientationScreenOrActive: String = ""
 
 class MainActivity : AppCompatActivity(), ListInterface, GetHabitsListInterface {
-    var goodHabitsList: ArrayList<HabitItem> = ArrayList()
-    var badHabitsList: ArrayList<HabitItem> = ArrayList()
+    var habitList: ArrayList<HabitItem> = ArrayList()
     private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
+        val containerFragment = ContainerHabitsFragment.newInstance()
+        supportFragmentManager.beginTransaction().add(R.id.container_fragment_frame, containerFragment).addToBackStack("container").commitAllowingStateLoss()
 
         // Навигация
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
+        val drawerLayout: DrawerLayout = findViewById(R.id.activity_main)
         val navView: NavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.container_fragment)
 
+
         appBarConfiguration = AppBarConfiguration(setOf( // Боковая навигация
-            R.id.nav_home, R.id.nav_about), drawerLayout)
+            R.id.habit_container, R.id.nav_about), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
         setUpBottomNav(navController)
     }
-
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.container_fragment)
@@ -60,12 +61,11 @@ class MainActivity : AppCompatActivity(), ListInterface, GetHabitsListInterface 
 
     override fun onBackPressed() { // Обработка кнопки назад
         val lastFragments: FragmentManager = supportFragmentManager
-        val fragmentByTag = supportFragmentManager.getBackStackEntryAt(supportFragmentManager.backStackEntryCount - 1).name
-        if (lastFragments.backStackEntryCount > 0 && (fragmentByTag == "main" && container_habits_fragment != null)) {
+
+        if (lastFragments.backStackEntryCount > 2) {
             lastFragments.popBackStack()
         } else {
             finish()
-            startActivity(intent)
         }
     }
 
@@ -73,8 +73,7 @@ class MainActivity : AppCompatActivity(), ListInterface, GetHabitsListInterface 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        outState.putParcelableArrayList("goodHabitsList", goodHabitsList)
-        outState.putParcelableArrayList("badHabitsList", badHabitsList)
+        outState.putParcelableArrayList("habitList", habitList)
     }
 
 
@@ -82,9 +81,7 @@ class MainActivity : AppCompatActivity(), ListInterface, GetHabitsListInterface 
         super.onRestoreInstanceState(savedInstanceState)
 
         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-        goodHabitsList = savedInstanceState.getParcelableArrayList("goodHabitsList")
-        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-        badHabitsList = savedInstanceState.getParcelableArrayList("badHabitsList")
+        habitList = savedInstanceState.getParcelableArrayList("habitList")
 
         getFragmentWithList()
     }
@@ -97,56 +94,46 @@ class MainActivity : AppCompatActivity(), ListInterface, GetHabitsListInterface 
      * @param delete Метка удаления привычки
      * @return Обновленный список привычек
      * **/
-    override fun updateHabitListFromFragmentData(data: HabitItem, position: Int, delete: Boolean, changeType: Boolean): ArrayList<HabitItem> {
+    override fun updateHabitListFromFragmentData(data: HabitItem, position: Int, delete: Boolean): ArrayList<HabitItem> {
         if (data.type == "") {
             return ArrayList()
         }
 
-        val arrayHabitList = when (data.type) { // Получить входящей привычки
-            Constants.TYPE_HABITS[0] -> goodHabitsList
-            else -> badHabitsList
-        }
-
-        if (position < arrayHabitList.size || changeType) {
+        if (position < habitList.size) {
             when {
-                position >= 0 && delete && !changeType -> { // Удаление привычки
-                    arrayHabitList.removeAt(position)
+                position >= 0 && delete -> { // Удаление привычки
+                    for ((index, element) in habitList.withIndex()) {
+                        if (element.hash == data.hash) {
+                            habitList.removeAt(index)
+                            break
+                        }
+                    }
                 }
-                position >= 0 && !delete && !changeType-> { // Редактирование привычки
-                    arrayHabitList[position] = data
-                }
-                position >= 0 && !delete && changeType-> { // Смена типа привычки (Сохранение в другой тип)
-                    if (arrayHabitList == goodHabitsList) {
-                        arrayHabitList.add(data)
-                        badHabitsList.removeAt(position)
-                    } else {
-                        arrayHabitList.add(data)
-                        goodHabitsList.removeAt(position)
+                position >= 0 && !delete -> { // Редактирование привычки
+                    for ((index, element) in habitList.withIndex()) {
+                        if (element.hash == data.hash) {
+                            habitList[index] = data
+                            break
+                        }
                     }
                 }
                 else -> { // Добавление привычки
                     if (data != Constants.EMPTY_ITEM) {
-                        arrayHabitList.add(data)
+                        habitList.add(data)
                     }
                 }
             }
         }
 
-        return arrayHabitList
+        return habitList
     }
 
 
     /**
      * Получение списка хороших или плохих привычек
-     * @param type Тип привычек
-     * @return Список привычек с нужным типом
      * */
-
-    override fun getGoodHabitsList(type: String): ArrayList<HabitItem> {
-        return when (type) {
-            "good" -> goodHabitsList
-            else -> badHabitsList
-        }
+    override fun getHabitsList(): ArrayList<HabitItem> {
+        return habitList
     }
 
 
@@ -164,6 +151,7 @@ class MainActivity : AppCompatActivity(), ListInterface, GetHabitsListInterface 
             }
         }
     }
+
 
     /**
      * Получить фрагмент с привычкой для формы редактирования

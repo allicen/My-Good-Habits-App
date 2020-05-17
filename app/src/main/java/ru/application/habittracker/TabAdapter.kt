@@ -7,10 +7,7 @@ import androidx.fragment.app.FragmentPagerAdapter
 class TabAdapter (fragmentManager: FragmentManager, private val goodHabitsCount: Int, private val badHabitsCount: Int): FragmentPagerAdapter(fragmentManager) {
 
     override fun getItem(position: Int): Fragment {
-        return when (position) {
-            0 -> GoodHabitsFragment.newInstance()
-            else -> BadHabitsFragment.newInstance()
-        }
+        return HabitListFragment.newInstance(position)
     }
 
     override fun getCount(): Int = 2

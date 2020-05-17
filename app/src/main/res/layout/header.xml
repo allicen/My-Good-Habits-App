@@ -26,7 +26,7 @@
         <ImageView
                 android:id="@+id/title_image"
                 android:src="@drawable/ic_idea"
-                android:layout_marginLeft="@dimen/spinner_margin"
+                android:layout_marginStart="@dimen/spinner_margin"
                 android:layout_width="26dp"
                 android:layout_height="26dp"
                 android:contentDescription="@string/app_name_rus"/>

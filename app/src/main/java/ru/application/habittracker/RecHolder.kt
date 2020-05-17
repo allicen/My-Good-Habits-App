@@ -1,8 +1,6 @@
 package ru.application.habittracker
 
-import android.graphics.Color
 import android.view.View
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
@@ -16,6 +14,7 @@ class RecHolder(itemView: View): RecyclerView.ViewHolder(itemView), ListInterfac
         val priority: TextView = itemView.findViewById(R.id.item_priority)
         val count: TextView = itemView.findViewById(R.id.item_count)
         val period: TextView = itemView.findViewById(R.id.period_item)
+        val hash: TextView = itemView.findViewById(R.id.hash_item)
 
         title.text = item.title
         description.text = item.description
@@ -23,6 +22,7 @@ class RecHolder(itemView: View): RecyclerView.ViewHolder(itemView), ListInterfac
         priority.text = item.priority
         count.text = item.count
         period.text = item.period
+        hash.text = item.hash.toString()
 
         itemView.setOnClickListener{
             val changeItem = HabitItem(
@@ -31,7 +31,8 @@ class RecHolder(itemView: View): RecyclerView.ViewHolder(itemView), ListInterfac
                 type = item.type,
                 priority = item.priority,
                 count = item.count,
-                period = item.period)
+                period = item.period,
+                hash = item.hash)
 
             updateHabitItem(itemView, changeItem, bindingAdapterPosition, orientationScreenOrActive)
         }
