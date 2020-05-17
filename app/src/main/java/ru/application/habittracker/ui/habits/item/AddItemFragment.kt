@@ -1,4 +1,4 @@
-package ru.application.habittracker
+package ru.application.habittracker.ui.habits.item
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,6 +11,10 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_add_item.*
+import ru.application.habittracker.core.Constants
+import ru.application.habittracker.core.HabitItem
+import ru.application.habittracker.ui.habits.list.ListFragment
+import ru.application.habittracker.R
 
 
 class AddItemFragment: Fragment() {
@@ -45,7 +49,9 @@ class AddItemFragment: Fragment() {
         println("########create Item")
 
         val bundle = this.arguments
-        position = bundle?.getInt("position", Constants.ITEM_POSITION_DEFAULT) ?: Constants.ITEM_POSITION_DEFAULT
+        position = bundle?.getInt("position",
+            Constants.ITEM_POSITION_DEFAULT
+        ) ?: Constants.ITEM_POSITION_DEFAULT
         changeItem = bundle?.getParcelable("changeItem") ?: Constants.EMPTY_ITEM
         hash = changeItem.hash
         orientationScreenOrActive = bundle?.getString("orientationScreenOrActive") ?: "land"
@@ -153,7 +159,8 @@ class AddItemFragment: Fragment() {
             priority = itemPriority,
             count = itemCount,
             period = itemPeriod,
-            hash = hash)
+            hash = hash
+        )
     }
 
 

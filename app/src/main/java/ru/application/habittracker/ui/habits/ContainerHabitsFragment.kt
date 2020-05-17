@@ -1,10 +1,12 @@
-package ru.application.habittracker
+package ru.application.habittracker.ui.habits
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import ru.application.habittracker.R
+import ru.application.habittracker.ui.habits.list.ListFragment
 
 class ContainerHabitsFragment: Fragment() {
 

@@ -1,4 +1,4 @@
-package ru.application.habittracker
+package ru.application.habittracker.ui.habits.list
 
 import android.content.Context
 import android.os.Bundle
@@ -13,6 +13,12 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_list.*
+import ru.application.habittracker.*
+import ru.application.habittracker.core.Constants
+import ru.application.habittracker.core.GetHabitsListInterface
+import ru.application.habittracker.core.HabitItem
+import ru.application.habittracker.core.adapter.TabAdapter
+import ru.application.habittracker.ui.habits.item.AddItemFragment
 import java.io.Serializable
 import kotlin.math.max
 
@@ -53,7 +59,9 @@ class ListFragment: Fragment(), Serializable {
 
         val bundle = this.arguments
         if (bundle != null) {
-            position = bundle.getInt("position", Constants.ITEM_POSITION_DEFAULT)
+            position = bundle.getInt("position",
+                Constants.ITEM_POSITION_DEFAULT
+            )
             deleteElem = bundle.getBoolean("delete", false)
             oneItem = bundle.getParcelable("item") ?: Constants.EMPTY_ITEM
             habitList = bundle.getParcelableArrayList("habitList") ?: ArrayList()
@@ -89,7 +97,11 @@ class ListFragment: Fragment(), Serializable {
         val sizeList = max(goodHabitsCount, badHabitsCount)
 
         // Табы
-        tabsViewpager.adapter = TabAdapter(childFragmentManager, goodHabitsCount, badHabitsCount)
+        tabsViewpager.adapter = TabAdapter(
+            childFragmentManager,
+            goodHabitsCount,
+            badHabitsCount
+        )
         tabsLayout.setupWithViewPager(tabsViewpager)
 
         hideStartText(sizeList)
@@ -105,7 +117,9 @@ class ListFragment: Fragment(), Serializable {
 
             val bundle = Bundle()
             bundle.putString("orientationScreenOrActive", orientationScreenOrActive)
-            bundle.putInt("positions", Constants.ITEM_POSITION_DEFAULT)
+            bundle.putInt("positions",
+                Constants.ITEM_POSITION_DEFAULT
+            )
 
             val addItemFragment = AddItemFragment.newInstance()
             addItemFragment.arguments = bundle

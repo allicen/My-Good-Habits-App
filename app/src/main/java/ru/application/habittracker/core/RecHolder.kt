@@ -1,10 +1,12 @@
-package ru.application.habittracker
+package ru.application.habittracker.core
 
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import ru.application.habittracker.R
 
-class RecHolder(itemView: View): RecyclerView.ViewHolder(itemView), ListInterface {
+class RecHolder(itemView: View): RecyclerView.ViewHolder(itemView),
+    ListInterface {
 
     fun bind(item: HabitItem, orientationScreenOrActive: String){
 
@@ -32,7 +34,8 @@ class RecHolder(itemView: View): RecyclerView.ViewHolder(itemView), ListInterfac
                 priority = item.priority,
                 count = item.count,
                 period = item.period,
-                hash = item.hash)
+                hash = item.hash
+            )
 
             updateHabitItem(itemView, changeItem, bindingAdapterPosition, orientationScreenOrActive)
         }

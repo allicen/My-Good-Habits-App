@@ -1,4 +1,4 @@
-package ru.application.habittracker
+package ru.application.habittracker.core.adapter
 
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -7,6 +7,10 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import ru.application.habittracker.core.Constants
+import ru.application.habittracker.core.HabitItem
+import ru.application.habittracker.R
+import ru.application.habittracker.core.RecHolder
 import java.io.Serializable
 
 class RecAdapter(private val items: ArrayList<HabitItem>, private val orientationScreenOrActive: String): RecyclerView.Adapter<RecHolder>(), Serializable {

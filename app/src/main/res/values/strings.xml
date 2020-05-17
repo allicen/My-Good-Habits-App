@@ -42,11 +42,6 @@
     <string name="hello">Добро подаловать!</string>
     <string name="menu">Меню</string>
     <string name="error_empty_type">Выберите тип привычки!</string>
-    <string name="about_app_title">О приложении</string>
-    <string name="about_app_text">Приложение «Трекер привычек» позволит контролировать ваши привычки: вырабатывать
-        хорошие и отказываться от плохих.
-    </string>
-    <string name="about_app_version">Версия: 1.0.0</string>
     <string name="habits">Привычки</string>
     <string name="empty_list_good_habits">Хорошие привычки не добавлены</string>
     <string name="empty_list_bad_habits">Привычки не добавлены</string>

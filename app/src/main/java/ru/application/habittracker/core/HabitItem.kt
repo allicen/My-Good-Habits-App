@@ -1,4 +1,4 @@
-package ru.application.habittracker
+package ru.application.habittracker.core
 
 import android.os.Parcel
 import android.os.Parcelable

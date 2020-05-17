@@ -17,11 +17,19 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.fragment_container_habits.*
 import kotlinx.android.synthetic.main.fragment_list.*
+import ru.application.habittracker.core.Constants
+import ru.application.habittracker.core.GetHabitsListInterface
+import ru.application.habittracker.core.HabitItem
+import ru.application.habittracker.core.ListInterface
+import ru.application.habittracker.ui.habits.ContainerHabitsFragment
+import ru.application.habittracker.ui.habits.item.AddItemFragment
+import ru.application.habittracker.ui.habits.list.ListFragment
 
 
 var orientationScreenOrActive: String = ""
 
-class MainActivity : AppCompatActivity(), ListInterface, GetHabitsListInterface {
+class MainActivity : AppCompatActivity(), ListInterface,
+    GetHabitsListInterface {
     var habitList: ArrayList<HabitItem> = ArrayList()
     private lateinit var appBarConfiguration: AppBarConfiguration
 

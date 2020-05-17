@@ -1,4 +1,4 @@
-package ru.application.habittracker
+package ru.application.habittracker.ui.habits.list.tabs
 
 import android.content.Context
 import android.os.Bundle
@@ -9,8 +9,13 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import ru.application.habittracker.*
+import ru.application.habittracker.core.Constants
+import ru.application.habittracker.core.GetHabitsListInterface
+import ru.application.habittracker.core.HabitItem
+import ru.application.habittracker.core.adapter.RecAdapter
 
-class HabitListFragment: Fragment() {
+class TabsListFragment: Fragment() {
     var callback : GetHabitsListInterface? = null
     lateinit var habitsList: ArrayList<HabitItem>
     lateinit var goodHabits: ArrayList<HabitItem>
@@ -20,10 +25,10 @@ class HabitListFragment: Fragment() {
     var positionTab: Int = 0
 
     companion object {
-        fun newInstance(positionTab: Int): HabitListFragment {
+        fun newInstance(positionTab: Int): TabsListFragment {
             val bundle = Bundle()
             bundle.putInt("positionTab", positionTab)
-            val fragment = HabitListFragment()
+            val fragment = TabsListFragment()
             fragment.arguments = bundle
             return fragment
         }
@@ -59,14 +64,20 @@ class HabitListFragment: Fragment() {
 
         when (positionTab) { // Сортировка привычек по позиции таба
             0 -> {
-                vRecViewHabitsList.adapter = RecAdapter(goodHabits, orientationScreenOrActive)
+                vRecViewHabitsList.adapter = RecAdapter(
+                    goodHabits,
+                    orientationScreenOrActive
+                )
                 emptyListText.text = Constants.TYPE_HABITS_EMPTY[0]
                 if (goodHabits.size > 0) {
                     emptyListText.visibility = View.GONE
                 }
             }
             else -> {
-                vRecViewHabitsList.adapter = RecAdapter(badHabits, orientationScreenOrActive)
+                vRecViewHabitsList.adapter = RecAdapter(
+                    badHabits,
+                    orientationScreenOrActive
+                )
                 emptyListText.text = Constants.TYPE_HABITS_EMPTY[1]
                 if (badHabits.size > 0) {
                     emptyListText.visibility = View.GONE

@@ -1,7 +1,9 @@
-package ru.application.habittracker
+package ru.application.habittracker.core
 
 import android.os.Bundle
 import android.view.View
+import ru.application.habittracker.MainActivity
+import ru.application.habittracker.ui.habits.item.AddItemFragment
 
 interface ListInterface {
     fun updateHabitItem(

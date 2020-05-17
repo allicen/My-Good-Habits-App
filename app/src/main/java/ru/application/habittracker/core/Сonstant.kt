@@ -1,4 +1,6 @@
-package ru.application.habittracker
+package ru.application.habittracker.core
+
+import ru.application.habittracker.core.HabitItem
 
 class Constants {
     companion object{
@@ -14,7 +16,8 @@ class Constants {
             period = "",
             count = "",
             priority = "",
-            hash = 0)
+            hash = 0
+        )
 
         var hash = 0
     }
