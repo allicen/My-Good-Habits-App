@@ -21,6 +21,7 @@ import ru.application.habittracker.core.Constants
 import ru.application.habittracker.core.GetHabitsListInterface
 import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.core.ListInterface
+import ru.application.habittracker.data.Data
 import ru.application.habittracker.ui.habits.ContainerHabitsFragment
 import ru.application.habittracker.ui.habits.item.AddItemFragment
 import ru.application.habittracker.ui.habits.list.ListFragment
@@ -30,7 +31,6 @@ var orientationScreenOrActive: String = ""
 
 class MainActivity : AppCompatActivity(), ListInterface,
     GetHabitsListInterface {
-    var habitList: ArrayList<HabitItem> = ArrayList()
     private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,7 +81,7 @@ class MainActivity : AppCompatActivity(), ListInterface,
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        outState.putParcelableArrayList("habitList", habitList)
+        outState.putParcelableArrayList("habitList", Data.habitList)
     }
 
 
@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity(), ListInterface,
         super.onRestoreInstanceState(savedInstanceState)
 
         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-        habitList = savedInstanceState.getParcelableArrayList("habitList")
+        Data.habitList = savedInstanceState.getParcelableArrayList("habitList")
 
         getFragmentWithList()
     }
@@ -107,33 +107,33 @@ class MainActivity : AppCompatActivity(), ListInterface,
             return ArrayList()
         }
 
-        if (position < habitList.size) {
+        if (position < Data.habitList.size) {
             when {
                 position >= 0 && delete -> { // Удаление привычки
-                    for ((index, element) in habitList.withIndex()) {
+                    for ((index, element) in Data.habitList.withIndex()) {
                         if (element.hash == data.hash) {
-                            habitList.removeAt(index)
+                            Data.habitList.removeAt(index)
                             break
                         }
                     }
                 }
                 position >= 0 && !delete -> { // Редактирование привычки
-                    for ((index, element) in habitList.withIndex()) {
+                    for ((index, element) in Data.habitList.withIndex()) {
                         if (element.hash == data.hash) {
-                            habitList[index] = data
+                            Data.habitList[index] = data
                             break
                         }
                     }
                 }
                 else -> { // Добавление привычки
                     if (data != Constants.EMPTY_ITEM) {
-                        habitList.add(data)
+                        Data.habitList.add(data)
                     }
                 }
             }
         }
 
-        return habitList
+        return Data.habitList
     }
 
 
@@ -141,7 +141,7 @@ class MainActivity : AppCompatActivity(), ListInterface,
      * Получение списка хороших или плохих привычек
      * */
     override fun getHabitsList(): ArrayList<HabitItem> {
-        return habitList
+        return Data.habitList
     }
 
 
