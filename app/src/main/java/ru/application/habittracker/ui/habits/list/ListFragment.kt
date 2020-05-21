@@ -6,12 +6,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_list.*
@@ -76,8 +74,7 @@ class ListFragment: Fragment(), Serializable {
         }
 
         // Показать нижнюю панель
-        val bottomSheetShow = activity?.findViewById<LinearLayout>(R.id.bottom_sheet_layout)
-        bottomSheetShow?.visibility = View.VISIBLE
+        callback?.showBottomSheet ()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -135,22 +132,7 @@ class ListFragment: Fragment(), Serializable {
             val addItemFragment = AddItemFragment.newInstance()
             addItemFragment.arguments = bundle
 
-            if (add_item_form_land != null) {
-
-                if (childFragmentManager.findFragmentByTag("addItem") != null) {
-                    activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.add_item_form_land, addItemFragment, "addItem")?.addToBackStack("list")?.commit()
-                } else {
-                    activity?.supportFragmentManager?.beginTransaction()?.add(R.id.add_item_form_land, addItemFragment, "addItem")?.addToBackStack("list")?.commit()
-                }
-
-                view.findViewById<FrameLayout>(R.id.add_item_form_land).visibility = View.VISIBLE
-
-            } else {
-                activity?.supportFragmentManager?.beginTransaction()
-                    ?.remove(this)
-                    ?.replace(R.id.container_habits_fragment, addItemFragment, "addItem")
-                    ?.addToBackStack("list")?.commit()
-            }
+            callback?.openAddItemFragment(addItemFragment)
         }
         oneItem = Constants.EMPTY_ITEM
     }

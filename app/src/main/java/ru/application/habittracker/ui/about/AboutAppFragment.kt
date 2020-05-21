@@ -1,5 +1,6 @@
 package ru.application.habittracker.ui.about
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,17 +11,25 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import ru.application.habittracker.R
+import ru.application.habittracker.core.GetHabitsListInterface
 
 class AboutAppFragment: Fragment() {
 
     private lateinit var aboutAppViewModel: AboutAppViewModel
 
+    // Связь с активити
+    var callback : GetHabitsListInterface? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callback = activity as GetHabitsListInterface
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // Скрыть нижнюю панель
-        val bottomSheetShow = activity?.findViewById<LinearLayout>(R.id.bottom_sheet_layout)
-        bottomSheetShow?.visibility = View.GONE
+        callback?.hideBottomSheet()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

@@ -1,8 +1,13 @@
 package ru.application.habittracker.core
 
-import android.widget.LinearLayout
-import com.google.android.material.bottomsheet.BottomSheetBehavior
+import ru.application.habittracker.ui.habits.item.AddItemFragment
+import ru.application.habittracker.ui.habits.list.ListFragment
 
 interface GetHabitsListInterface : ListInterface {
     fun updateHabitListFromFragmentData(data: HabitItem, position: Int, delete: Boolean = false): ArrayList<HabitItem>
+    fun openListFragment(listFragment: ListFragment, addItemFragment: AddItemFragment)
+    fun openAddItemFragment(addItemFragment: AddItemFragment)
+    fun openContainerFragment(listFragment: ListFragment)
+    fun showBottomSheet ()
+    fun hideBottomSheet ()
 }

@@ -16,6 +16,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.bottom_sheet_fragment.*
 import kotlinx.android.synthetic.main.fragment_container_habits.*
@@ -35,6 +36,7 @@ var orientationScreenOrActive: String = ""
 class MainActivity : AppCompatActivity(), ListInterface,
     GetHabitsListInterface {
     private lateinit var appBarConfiguration: AppBarConfiguration
+    private lateinit var bottomSheetShow: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +60,7 @@ class MainActivity : AppCompatActivity(), ListInterface,
         navView.setupWithNavController(navController)
 
         // Нижняя панель фильтра
+        bottomSheetShow = findViewById<LinearLayout>(R.id.bottom_sheet_layout)
         val bottomSheetShow = findViewById<FrameLayout>(R.id.bottom_sheet) // нижняя видимая панель
         val bottomSheetText = findViewById<TextView>(R.id.show_bottom_panel) // Текст
         val bottomSheetImg = findViewById<ImageView>(R.id.show_bottom_panel_arrow) // Иконка
@@ -216,5 +219,41 @@ class MainActivity : AppCompatActivity(), ListInterface,
             @Suppress("PLUGIN_WARNING")
             findViewById<FrameLayout>(R.id.add_item_form_land).visibility = View.VISIBLE
         }
+    }
+
+    override fun openListFragment(listFragment: ListFragment, addItemFragment: AddItemFragment) {
+        supportFragmentManager.beginTransaction().remove(addItemFragment)
+            .replace(R.id.container_habits_fragment, listFragment, "list").addToBackStack("addItem").commit()
+    }
+
+    override fun openAddItemFragment(addItemFragment: AddItemFragment) {
+        if (add_item_form_land != null) {
+
+            if (supportFragmentManager.findFragmentByTag("addItem") != null) {
+                supportFragmentManager.beginTransaction().replace(R.id.add_item_form_land, addItemFragment, "addItem").addToBackStack("list").commit()
+            } else {
+                supportFragmentManager.beginTransaction().add(R.id.add_item_form_land, addItemFragment, "addItem").addToBackStack("list").commit()
+            }
+
+            findViewById<FrameLayout>(R.id.add_item_form_land).visibility = View.VISIBLE
+
+        } else {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.container_habits_fragment, addItemFragment, "addItem")
+                .addToBackStack("list").commit()
+        }
+    }
+
+    override fun openContainerFragment(listFragment: ListFragment) {
+        supportFragmentManager.beginTransaction().replace(R.id.container_habits_fragment, listFragment, "list")
+            .addToBackStack("main").commitAllowingStateLoss()
+    }
+
+    override fun showBottomSheet () {
+        bottomSheetShow.visibility = View.VISIBLE
+    }
+
+    override fun hideBottomSheet () {
+        bottomSheetShow.visibility = View.GONE
     }
 }
