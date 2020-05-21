@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -14,8 +15,16 @@ class AboutAppFragment: Fragment() {
 
     private lateinit var aboutAppViewModel: AboutAppViewModel
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // Скрыть нижнюю панель
+        val bottomSheetShow = activity?.findViewById<LinearLayout>(R.id.bottom_sheet_layout)
+        bottomSheetShow?.visibility = View.GONE
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        aboutAppViewModel = ViewModelProviders.of(this)[AboutAppViewModel::class.java]
+        aboutAppViewModel = ViewModelProviders.of(this)[AboutAppViewModel::class.java] // Модель
         val view = inflater.inflate(R.layout.fragment_about_app, container, false)
         val titleView: TextView = view.findViewById(R.id.about_app_title)
         val descriptionView: TextView = view.findViewById(R.id.about_app_description)

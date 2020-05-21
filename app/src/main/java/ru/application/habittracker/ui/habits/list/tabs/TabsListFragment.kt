@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.application.habittracker.*
@@ -14,6 +16,7 @@ import ru.application.habittracker.core.Constants
 import ru.application.habittracker.core.GetHabitsListInterface
 import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.core.adapter.RecAdapter
+import ru.application.habittracker.data.Data
 
 class TabsListFragment: Fragment() {
     var callback : GetHabitsListInterface? = null
@@ -23,6 +26,9 @@ class TabsListFragment: Fragment() {
     lateinit var vRecViewHabitsList: RecyclerView
     lateinit var emptyListText: TextView
     var positionTab: Int = 0
+
+    // Иницифлизация модели ленивым способом
+    private val tabListViewModel by lazy { ViewModelProviders.of(this).get(TabsListViewModel::class.java) }
 
     companion object {
         fun newInstance(positionTab: Int): TabsListFragment {
@@ -43,7 +49,7 @@ class TabsListFragment: Fragment() {
         super.onCreate(savedInstanceState)
 
         // Получаем список привычек и фильтруем его по типу
-        habitsList = callback?.getHabitsList() ?: ArrayList()
+        habitsList = Data.habitList
         goodHabits = habitsList.filter { it.type == Constants.TYPE_HABITS[0] } as ArrayList<HabitItem>
         badHabits = habitsList.filter { it.type == Constants.TYPE_HABITS[1] } as ArrayList<HabitItem>
 
@@ -64,20 +70,28 @@ class TabsListFragment: Fragment() {
 
         when (positionTab) { // Сортировка привычек по позиции таба
             0 -> {
-                vRecViewHabitsList.adapter = RecAdapter(
-                    goodHabits,
-                    orientationScreenOrActive
-                )
+                val adapter = RecAdapter(goodHabits, orientationScreenOrActive)
+                vRecViewHabitsList.adapter = adapter
+
+                //подписываем адаптер на получение списка
+                tabListViewModel.getListHabits().observe(this, Observer {
+                    it?.let { adapter.getActualList() }
+                })
+
                 emptyListText.text = Constants.TYPE_HABITS_EMPTY[0]
                 if (goodHabits.size > 0) {
                     emptyListText.visibility = View.GONE
                 }
             }
             else -> {
-                vRecViewHabitsList.adapter = RecAdapter(
-                    badHabits,
-                    orientationScreenOrActive
-                )
+                val adapter = RecAdapter(badHabits, orientationScreenOrActive)
+                vRecViewHabitsList.adapter = adapter
+
+                //подписываем адаптер на получение списка
+                tabListViewModel.getListHabits().observe(this, Observer {
+                    it?.let { adapter.getActualList() }
+                })
+
                 emptyListText.text = Constants.TYPE_HABITS_EMPTY[1]
                 if (badHabits.size > 0) {
                     emptyListText.visibility = View.GONE

@@ -42,6 +42,10 @@ class RecAdapter(private val items: ArrayList<HabitItem>, private val orientatio
         return items.size
     }
 
+    fun getActualList() {
+        notifyDataSetChanged()
+    }
+
     override fun onBindViewHolder(holder: RecHolder, position: Int) {
         val item = items[position]
 

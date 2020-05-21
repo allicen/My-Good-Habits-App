@@ -5,6 +5,8 @@
     <color name="color_secondary">#FEA800</color>
     <color name="color_secondary_variant">#FFBE40</color>
     <color name="spinner_background">#feebc5</color>
+    <color name="blue_light">#e0eafe</color>
+    <color name="blue_middle">#60B9FF</color>
 
     <color name="white">#FFFFFF</color>
     <color name="gray_light">#cecece</color>

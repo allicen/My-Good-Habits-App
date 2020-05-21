@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/bottom_sheet_layout"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:behavior_hideable="false"
+        app:behavior_peekHeight="90dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        tools:showIn="@layout/activity_main"
+        android:orientation="vertical">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <FrameLayout
+                android:layout_gravity="bottom|end"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <LinearLayout
+                    android:layout_gravity="bottom|end"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <FrameLayout
+                        android:background="@color/blue_middle"
+                        android:layout_width="match_parent"
+                        android:layout_height="3dp"/>
+
+                <FrameLayout
+                        android:id="@+id/bottom_sheet"
+                        android:background="@color/cardview_dark_background"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:paddingLeft="20sp"
+                        android:paddingRight="20sp"
+                        android:layout_gravity="bottom|end">
+
+                    <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            tools:ignore="UseCompoundDrawables,UselessParent">
+
+                        <ImageView
+                                android:id="@+id/show_bottom_panel_arrow"
+                                android:src="@drawable/ic_keyboard_arrow_up"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_marginLeft="10dp"
+                                android:layout_marginTop="20dp"
+                                android:contentDescription="Arrow up"
+                                tools:ignore="RtlHardcoded"/>
+
+                        <TextView
+                                android:id="@+id/show_bottom_panel"
+                                android:textColor="@color/blue_middle"
+                                android:text="Открыть фильтр"
+                                android:layout_marginTop="20sp"
+                                android:layout_marginLeft="10dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"/>
+
+                    </LinearLayout>
+
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/fab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginBottom="35dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:src="@drawable/ic_add_black_24dp"
+                    tools:targetApi="o"/>
+
+        </FrameLayout>
+        <LinearLayout
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="1000dp">
+
+            <EditText
+                    android:hint="Заголовок привычки"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>

@@ -3,18 +3,21 @@ package ru.application.habittracker
 import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentManager
-import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.navigation.NavigationView
+import kotlinx.android.synthetic.main.bottom_sheet_fragment.*
 import kotlinx.android.synthetic.main.fragment_container_habits.*
 import kotlinx.android.synthetic.main.fragment_list.*
 import ru.application.habittracker.core.Constants
@@ -54,7 +57,22 @@ class MainActivity : AppCompatActivity(), ListInterface,
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        setUpBottomNav(navController)
+        // Нижняя панель фильтра
+        val bottomSheetShow = findViewById<FrameLayout>(R.id.bottom_sheet) // нижняя видимая панель
+        val bottomSheetText = findViewById<TextView>(R.id.show_bottom_panel) // Текст
+        val bottomSheetImg = findViewById<ImageView>(R.id.show_bottom_panel_arrow) // Иконка
+        val bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_layout) // Вся панель
+        bottomSheetShow.setOnClickListener {
+            if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED)
+                bottomSheetText.text = "Скрыть фильтр"
+                bottomSheetImg.setImageResource(R.drawable.ic_keyboard_arrow_down)
+            } else {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED)
+                bottomSheetText.text = "Открыть фильтр"
+                bottomSheetImg.setImageResource(R.drawable.ic_keyboard_arrow_up)
+            }
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -62,13 +80,17 @@ class MainActivity : AppCompatActivity(), ListInterface,
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
-    private fun setUpBottomNav(navController: NavController) { // Навигация снизу
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav_view)
-        bottomNav?.setupWithNavController(navController)
-    }
+//    private fun setUpBottomNav(navController: NavController) { // Навигация снизу
+//        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav_view)
+//        bottomNav?.setupWithNavController(navController)
+//    }
 
     override fun onBackPressed() { // Обработка кнопки назад
         val lastFragments: FragmentManager = supportFragmentManager
+
+        // Показать нижнюю панель
+        val bottomSheetShow = findViewById<LinearLayout>(R.id.bottom_sheet_layout)
+        bottomSheetShow?.visibility = View.VISIBLE
 
         if (lastFragments.backStackEntryCount > 2) {
             lastFragments.popBackStack()
@@ -126,7 +148,12 @@ class MainActivity : AppCompatActivity(), ListInterface,
                     }
                 }
                 else -> { // Добавление привычки
-                    if (data != Constants.EMPTY_ITEM) {
+                    val habitsHash = mutableListOf<Int>() // Hash добавленных привычек
+                    for (habit in Data.habitList) {
+                        habitsHash.add(habit.hash)
+                    }
+
+                    if (data != Constants.EMPTY_ITEM && data.hash !in habitsHash) {
                         Data.habitList.add(data)
                     }
                 }
@@ -135,15 +162,6 @@ class MainActivity : AppCompatActivity(), ListInterface,
 
         return Data.habitList
     }
-
-
-    /**
-     * Получение списка хороших или плохих привычек
-     * */
-    override fun getHabitsList(): ArrayList<HabitItem> {
-        return Data.habitList
-    }
-
 
     /**
      * Получение фрагментов после запуска activity

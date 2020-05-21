@@ -11,6 +11,8 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_list.*
 import ru.application.habittracker.*
@@ -18,6 +20,7 @@ import ru.application.habittracker.core.Constants
 import ru.application.habittracker.core.GetHabitsListInterface
 import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.core.adapter.TabAdapter
+import ru.application.habittracker.data.Data
 import ru.application.habittracker.ui.habits.item.AddItemFragment
 import java.io.Serializable
 import kotlin.math.max
@@ -38,6 +41,8 @@ class ListFragment: Fragment(), Serializable {
     lateinit var tabs: LinearLayout
     lateinit var tabsLayout: TabLayout
     lateinit var tabsViewpager: ViewPager
+
+    lateinit var fab: FloatingActionButton
 
     companion object {
         fun newInstance() : ListFragment {
@@ -69,6 +74,10 @@ class ListFragment: Fragment(), Serializable {
             // Добавление привычки в список
             habitList = callback?.updateHabitListFromFragmentData(oneItem, position, deleteElem) ?: ArrayList()
         }
+
+        // Показать нижнюю панель
+        val bottomSheetShow = activity?.findViewById<LinearLayout>(R.id.bottom_sheet_layout)
+        bottomSheetShow?.visibility = View.VISIBLE
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -80,6 +89,8 @@ class ListFragment: Fragment(), Serializable {
         tabsViewpager = view.findViewById(R.id.tabs_viewpager)
         tabsLayout = view.findViewById(R.id.tabs_layout)
 
+        fab = activity?.findViewById(R.id.fab) ?: view.findViewById(R.id.fab)
+
         hideStartText(habitList.size)
 
         return view
@@ -89,7 +100,7 @@ class ListFragment: Fragment(), Serializable {
         super.onViewCreated(view, savedInstanceState)
 
         // Получение списка привычек
-        habitList = callback?.getHabitsList() ?: ArrayList()
+        habitList = Data.habitList
 
         // Количество привычек
         val goodHabitsCount = habitList.filter { it.type == Constants.TYPE_HABITS[0] }.count()

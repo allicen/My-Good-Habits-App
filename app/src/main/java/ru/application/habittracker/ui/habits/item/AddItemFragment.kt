@@ -4,17 +4,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.RadioButton
-import android.widget.TextView
+import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_add_item.*
 import ru.application.habittracker.core.Constants
 import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.ui.habits.list.ListFragment
 import ru.application.habittracker.R
+import ru.application.habittracker.ui.about.AboutAppViewModel
+import ru.application.habittracker.ui.habits.list.tabs.TabsListViewModel
 
 
 class AddItemFragment: Fragment() {
@@ -25,6 +27,10 @@ class AddItemFragment: Fragment() {
         }
     }
 
+    // Модель
+    private lateinit var addItemViewModel: AddItemViewModel
+
+
     lateinit var types: List<Map<RadioButton, String>>
     lateinit var orientationScreenOrActive: String
 
@@ -34,6 +40,7 @@ class AddItemFragment: Fragment() {
     lateinit var itemPriority: String
     lateinit var itemCount: String
     lateinit var itemPeriod: String
+
     lateinit var headerTitle: LinearLayout
     lateinit var titleImage: ImageView
     lateinit var titleText: TextView
@@ -46,6 +53,11 @@ class AddItemFragment: Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Получение модели
+        addItemViewModel = requireActivity().run {
+            ViewModelProviders.of(this, AddItemViewModelFactory()).get(AddItemViewModel::class.java)
+        }
+
         println("########create Item")
 
         val bundle = this.arguments
@@ -55,6 +67,10 @@ class AddItemFragment: Fragment() {
         changeItem = bundle?.getParcelable("changeItem") ?: Constants.EMPTY_ITEM
         hash = changeItem.hash
         orientationScreenOrActive = bundle?.getString("orientationScreenOrActive") ?: "land"
+
+        // Скрыть нижнюю панель
+        val bottomSheetShow = activity?.findViewById<LinearLayout>(R.id.bottom_sheet_layout)
+        bottomSheetShow?.visibility = View.GONE
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -171,6 +187,15 @@ class AddItemFragment: Fragment() {
 
     fun pushData (delete: Boolean) {
         val item: HabitItem = getItem ()
+
+        // Получение данных из модели
+        addItemViewModel.title.observe(this, Observer { itemTitle = it })
+        addItemViewModel.description.observe(this, Observer { itemDescription = it })
+        addItemViewModel.type.observe(this, Observer { itemType = it })
+        addItemViewModel.priority.observe(this, Observer { itemPriority = it })
+        addItemViewModel.count.observe(this, Observer { itemCount = it })
+        addItemViewModel.period.observe(this, Observer { itemPeriod = it })
+        addItemViewModel.hash.observe(this, Observer { hash = it })
 
         if (item.title != "") {
             if (item.type == "") {
