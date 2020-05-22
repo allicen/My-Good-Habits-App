@@ -2,10 +2,7 @@ package ru.application.habittracker
 
 import android.os.Bundle
 import android.view.View
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
@@ -15,10 +12,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
-import kotlinx.android.synthetic.main.bottom_sheet_fragment.*
 import kotlinx.android.synthetic.main.fragment_container_habits.*
 import kotlinx.android.synthetic.main.fragment_list.*
 import ru.application.habittracker.core.Constants
@@ -27,6 +21,7 @@ import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.core.ListInterface
 import ru.application.habittracker.data.Data
 import ru.application.habittracker.ui.habits.ContainerHabitsFragment
+import ru.application.habittracker.ui.habits.filter.FilterFragment
 import ru.application.habittracker.ui.habits.item.AddItemFragment
 import ru.application.habittracker.ui.habits.list.ListFragment
 
@@ -36,7 +31,7 @@ var orientationScreenOrActive: String = ""
 class MainActivity : AppCompatActivity(), ListInterface,
     GetHabitsListInterface {
     private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var bottomSheetShow: LinearLayout
+    //private lateinit var bottomSheetShow: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,23 +54,9 @@ class MainActivity : AppCompatActivity(), ListInterface,
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        // Нижняя панель фильтра
-        bottomSheetShow = findViewById<LinearLayout>(R.id.bottom_sheet_layout)
-        val bottomSheetShow = findViewById<FrameLayout>(R.id.bottom_sheet) // нижняя видимая панель
-        val bottomSheetText = findViewById<TextView>(R.id.show_bottom_panel) // Текст
-        val bottomSheetImg = findViewById<ImageView>(R.id.show_bottom_panel_arrow) // Иконка
-        val bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet_layout) // Вся панель
-        bottomSheetShow.setOnClickListener {
-            if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED)
-                bottomSheetText.text = "Скрыть фильтр"
-                bottomSheetImg.setImageResource(R.drawable.ic_keyboard_arrow_down)
-            } else {
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED)
-                bottomSheetText.text = "Открыть фильтр"
-                bottomSheetImg.setImageResource(R.drawable.ic_keyboard_arrow_up)
-            }
-        }
+        // Фрагмент для фильтра
+        val filterFragment = FilterFragment.newInstance()
+        supportFragmentManager.beginTransaction().add(R.id.activity_main, filterFragment, "filter").addToBackStack("filter").commitAllowingStateLoss()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -250,10 +231,11 @@ class MainActivity : AppCompatActivity(), ListInterface,
     }
 
     override fun showBottomSheet () {
-        bottomSheetShow.visibility = View.VISIBLE
+        //bottomSheetShow.visibility = View.VISIBLE
     }
 
     override fun hideBottomSheet () {
-        bottomSheetShow.visibility = View.GONE
+        //bottomSheetShow.visibility = View.GONE
     }
+
 }

@@ -47,4 +47,7 @@
     <string name="empty_list_bad_habits">Привычки не добавлены</string>
     <string name="delim">раз /</string>
     <string name="reply">повторить</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

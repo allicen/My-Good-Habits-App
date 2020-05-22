@@ -68,9 +68,7 @@
                                 android:layout_height="wrap_content"/>
 
                     </LinearLayout>
-
                 </FrameLayout>
-
             </LinearLayout>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -94,6 +92,7 @@
                 android:layout_height="1000dp">
 
             <EditText
+                    android:id="@+id/write_title"
                     android:hint="Заголовок привычки"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
