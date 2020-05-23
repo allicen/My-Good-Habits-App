@@ -27,9 +27,6 @@ class AboutAppFragment: Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Скрыть нижнюю панель
-        callback?.hideBottomSheet()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -45,7 +42,6 @@ class AboutAppFragment: Fragment() {
         aboutAppViewModel.description.observe(this, Observer {
             descriptionView.text = it
         })
-
         aboutAppViewModel.version.observe(this, Observer {
             versionView.text = it
         })

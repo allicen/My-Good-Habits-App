@@ -19,6 +19,7 @@ import ru.application.habittracker.core.GetHabitsListInterface
 import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.core.adapter.TabAdapter
 import ru.application.habittracker.data.Data
+import ru.application.habittracker.ui.habits.filter.FilterFragment
 import ru.application.habittracker.ui.habits.item.AddItemFragment
 import java.io.Serializable
 import kotlin.math.max
@@ -28,7 +29,6 @@ class ListFragment: Fragment(), Serializable {
     var position: Int = Constants.ITEM_POSITION_DEFAULT
     var deleteElem: Boolean = false
     var callback : GetHabitsListInterface? = null
-    var orientationScreenOrActive: String = ""
 
     lateinit var oneItem: HabitItem
 
@@ -39,8 +39,6 @@ class ListFragment: Fragment(), Serializable {
     lateinit var tabs: LinearLayout
     lateinit var tabsLayout: TabLayout
     lateinit var tabsViewpager: ViewPager
-
-    lateinit var fab: FloatingActionButton
 
     companion object {
         fun newInstance() : ListFragment {
@@ -72,9 +70,6 @@ class ListFragment: Fragment(), Serializable {
             // Добавление привычки в список
             habitList = callback?.updateHabitListFromFragmentData(oneItem, position, deleteElem) ?: ArrayList()
         }
-
-        // Показать нижнюю панель
-        callback?.showBottomSheet ()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -85,8 +80,6 @@ class ListFragment: Fragment(), Serializable {
         tabs = view.findViewById(R.id.tabs)
         tabsViewpager = view.findViewById(R.id.tabs_viewpager)
         tabsLayout = view.findViewById(R.id.tabs_layout)
-
-        fab = activity?.findViewById(R.id.fab) ?: view.findViewById(R.id.fab)
 
         hideStartText(habitList.size)
 
@@ -114,26 +107,10 @@ class ListFragment: Fragment(), Serializable {
 
         hideStartText(sizeList)
 
-        fab.setOnClickListener {
-            Log.e("tag", "Открыто окно создания привычки")
+        // Фрагмент для фильтра
+        val filterFragment = FilterFragment.newInstance()
+        childFragmentManager.beginTransaction().add(R.id.list_tab_fragment, filterFragment, "filter").addToBackStack("filter").commitAllowingStateLoss()
 
-            if (add_item_form_land != null) {
-                orientationScreenOrActive = "land"
-            } else {
-                orientationScreenOrActive = "add"
-            }
-
-            val bundle = Bundle()
-            bundle.putString("orientationScreenOrActive", orientationScreenOrActive)
-            bundle.putInt("positions",
-                Constants.ITEM_POSITION_DEFAULT
-            )
-
-            val addItemFragment = AddItemFragment.newInstance()
-            addItemFragment.arguments = bundle
-
-            callback?.openAddItemFragment(addItemFragment)
-        }
         oneItem = Constants.EMPTY_ITEM
     }
 

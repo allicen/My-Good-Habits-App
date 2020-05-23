@@ -31,12 +31,13 @@ var orientationScreenOrActive: String = ""
 class MainActivity : AppCompatActivity(), ListInterface,
     GetHabitsListInterface {
     private lateinit var appBarConfiguration: AppBarConfiguration
-    //private lateinit var bottomSheetShow: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
+
+        // Контейнер для фрагментов по работе с привычками
         val containerFragment = ContainerHabitsFragment.newInstance()
         supportFragmentManager.beginTransaction().add(R.id.container_fragment_frame, containerFragment).addToBackStack("container").commitAllowingStateLoss()
 
@@ -53,10 +54,6 @@ class MainActivity : AppCompatActivity(), ListInterface,
             R.id.habit_container, R.id.nav_about), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-        // Фрагмент для фильтра
-        val filterFragment = FilterFragment.newInstance()
-        supportFragmentManager.beginTransaction().add(R.id.activity_main, filterFragment, "filter").addToBackStack("filter").commitAllowingStateLoss()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -230,12 +227,10 @@ class MainActivity : AppCompatActivity(), ListInterface,
             .addToBackStack("main").commitAllowingStateLoss()
     }
 
-    override fun showBottomSheet () {
-        //bottomSheetShow.visibility = View.VISIBLE
+    override fun isLand(): Boolean {
+        if (add_item_form_land == null) {
+            return false
+        }
+        return true
     }
-
-    override fun hideBottomSheet () {
-        //bottomSheetShow.visibility = View.GONE
-    }
-
 }

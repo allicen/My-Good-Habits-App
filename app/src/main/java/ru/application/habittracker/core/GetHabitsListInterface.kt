@@ -8,6 +8,5 @@ interface GetHabitsListInterface : ListInterface {
     fun openListFragment(listFragment: ListFragment, addItemFragment: AddItemFragment)
     fun openAddItemFragment(addItemFragment: AddItemFragment)
     fun openContainerFragment(listFragment: ListFragment)
-    fun showBottomSheet ()
-    fun hideBottomSheet ()
+    fun isLand(): Boolean
 }

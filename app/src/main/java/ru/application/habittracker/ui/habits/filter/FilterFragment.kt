@@ -1,17 +1,24 @@
 package ru.application.habittracker.ui.habits.filter
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.android.synthetic.main.fragment_list.*
 import ru.application.habittracker.R
+import ru.application.habittracker.core.Constants
+import ru.application.habittracker.core.GetHabitsListInterface
 import ru.application.habittracker.data.Data
+import ru.application.habittracker.ui.habits.item.AddItemFragment
 
 class FilterFragment : Fragment() {
 
@@ -22,6 +29,10 @@ class FilterFragment : Fragment() {
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var writeTitle: EditText
 
+    lateinit var fab: FloatingActionButton
+    var orientationScreenOrActive: String = ""
+    var callback : GetHabitsListInterface? = null
+
 
     companion object{
         fun newInstance(): FilterFragment {
@@ -31,6 +42,11 @@ class FilterFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callback = activity as GetHabitsListInterface
     }
 
     override fun onCreateView(
@@ -44,6 +60,8 @@ class FilterFragment : Fragment() {
         bottomSheetText = view.findViewById(R.id.show_bottom_panel) // Текст
         bottomSheetImg = view.findViewById(R.id.show_bottom_panel_arrow) // Иконка
         writeTitle = view.findViewById(R.id.write_title)
+
+        fab = view.findViewById(R.id.fab)
 
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet) // Вся панель
 
@@ -76,6 +94,26 @@ class FilterFragment : Fragment() {
         })
 
 
+        fab.setOnClickListener {
+            Log.e("tag", "Открыто окно создания привычки")
+
+            if (callback?.isLand() == true) {
+                orientationScreenOrActive = "land"
+            } else {
+                orientationScreenOrActive = "add"
+            }
+
+            val bundle = Bundle()
+            bundle.putString("orientationScreenOrActive", orientationScreenOrActive)
+            bundle.putInt("positions",
+                Constants.ITEM_POSITION_DEFAULT
+            )
+
+            val addItemFragment = AddItemFragment.newInstance()
+            addItemFragment.arguments = bundle
+
+            callback?.openAddItemFragment(addItemFragment)
+        }
     }
 
     @SuppressLint("DefaultLocale")

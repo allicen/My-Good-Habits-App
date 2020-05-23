@@ -73,9 +73,6 @@ class AddItemFragment: Fragment() {
         changeItem = bundle?.getParcelable("changeItem") ?: Constants.EMPTY_ITEM
         hash = changeItem.hash
         orientationScreenOrActive = bundle?.getString("orientationScreenOrActive") ?: "land"
-
-        // Скрыть нижнюю панель
-        callback?.hideBottomSheet()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
