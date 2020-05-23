@@ -2,12 +2,14 @@ package ru.application.habittracker.ui.habits
 
 import android.content.Context
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import ru.application.habittracker.R
 import ru.application.habittracker.core.GetHabitsListInterface
+import ru.application.habittracker.data.Data
 import ru.application.habittracker.ui.habits.list.ListFragment
 
 class ContainerHabitsFragment: Fragment() {
@@ -35,7 +37,7 @@ class ContainerHabitsFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val listFragment = ListFragment.newInstance()
+        val listFragment = ListFragment.newInstance(Data.habitList)
 
         callback?.openContainerFragment(listFragment)
     }

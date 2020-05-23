@@ -31,9 +31,10 @@ class TabsListFragment: Fragment() {
     private val tabListViewModel by lazy { ViewModelProviders.of(this).get(TabsListViewModel::class.java) }
 
     companion object {
-        fun newInstance(positionTab: Int): TabsListFragment {
+        fun newInstance(positionTab: Int, habitsList: ArrayList<HabitItem>): TabsListFragment {
             val bundle = Bundle()
             bundle.putInt("positionTab", positionTab)
+            bundle.putParcelableArrayList("habitsList", habitsList)
             val fragment = TabsListFragment()
             fragment.arguments = bundle
             return fragment
@@ -49,7 +50,12 @@ class TabsListFragment: Fragment() {
         super.onCreate(savedInstanceState)
 
         // Получаем список привычек и фильтруем его по типу
-        habitsList = Data.habitList
+//        habitsList = Data.habitList
+
+        arguments?.let {
+            habitsList = it.getParcelableArrayList("habitsList") ?: ArrayList()
+        }
+
         goodHabits = habitsList.filter { it.type == Constants.TYPE_HABITS[0] } as ArrayList<HabitItem>
         badHabits = habitsList.filter { it.type == Constants.TYPE_HABITS[1] } as ArrayList<HabitItem>
 

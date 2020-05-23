@@ -3,12 +3,15 @@ package ru.application.habittracker.core.adapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.ui.habits.list.tabs.TabsListFragment
 
-class TabAdapter (fragmentManager: FragmentManager, private val goodHabitsCount: Int, private val badHabitsCount: Int): FragmentPagerAdapter(fragmentManager) {
+class TabAdapter (fragmentManager: FragmentManager,
+                  private val goodHabitsCount: Int,
+                  private val badHabitsCount: Int, private val habitsList: ArrayList<HabitItem>): FragmentPagerAdapter(fragmentManager) {
 
     override fun getItem(position: Int): Fragment {
-        return TabsListFragment.newInstance(position)
+        return TabsListFragment.newInstance(position, habitsList)
     }
 
     override fun getCount(): Int = 2

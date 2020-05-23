@@ -10,9 +10,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
-import kotlinx.android.synthetic.main.fragment_list.*
 import ru.application.habittracker.*
 import ru.application.habittracker.core.Constants
 import ru.application.habittracker.core.GetHabitsListInterface
@@ -20,7 +18,6 @@ import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.core.adapter.TabAdapter
 import ru.application.habittracker.data.Data
 import ru.application.habittracker.ui.habits.filter.FilterFragment
-import ru.application.habittracker.ui.habits.item.AddItemFragment
 import java.io.Serializable
 import kotlin.math.max
 
@@ -41,8 +38,12 @@ class ListFragment: Fragment(), Serializable {
     lateinit var tabsViewpager: ViewPager
 
     companion object {
-        fun newInstance() : ListFragment {
-            return ListFragment()
+        fun newInstance(habitList: ArrayList<HabitItem>) : ListFragment {
+            val bundle = Bundle()
+            bundle.putParcelableArrayList("habitList", habitList)
+            val fragment = ListFragment()
+            fragment.arguments = bundle
+            return fragment
         }
     }
 
@@ -53,7 +54,6 @@ class ListFragment: Fragment(), Serializable {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        habitList = ArrayList()
         oneItem = Constants.EMPTY_ITEM
 
         println("#########onCreate List")
@@ -69,6 +69,13 @@ class ListFragment: Fragment(), Serializable {
 
             // Добавление привычки в список
             habitList = callback?.updateHabitListFromFragmentData(oneItem, position, deleteElem) ?: ArrayList()
+        }
+
+        if (habitList.size == 0) {
+            // Получение списка привычек
+            arguments?.let {
+                habitList = it.getParcelableArrayList("habitList") ?: ArrayList()
+            }
         }
     }
 
@@ -89,9 +96,6 @@ class ListFragment: Fragment(), Serializable {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Получение списка привычек
-        habitList = Data.habitList
-
         // Количество привычек
         val goodHabitsCount = habitList.filter { it.type == Constants.TYPE_HABITS[0] }.count()
         val badHabitsCount = habitList.filter { it.type == Constants.TYPE_HABITS[1] }.count()
@@ -101,7 +105,7 @@ class ListFragment: Fragment(), Serializable {
         tabsViewpager.adapter = TabAdapter(
             childFragmentManager,
             goodHabitsCount,
-            badHabitsCount
+            badHabitsCount, habitList
         )
         tabsLayout.setupWithViewPager(tabsViewpager)
 
@@ -109,7 +113,11 @@ class ListFragment: Fragment(), Serializable {
 
         // Фрагмент для фильтра
         val filterFragment = FilterFragment.newInstance()
-        childFragmentManager.beginTransaction().add(R.id.list_tab_fragment, filterFragment, "filter").addToBackStack("filter").commitAllowingStateLoss()
+        if (childFragmentManager.findFragmentByTag("filter") == null) {
+            childFragmentManager.beginTransaction().add(R.id.list_tab_fragment, filterFragment, "filter").addToBackStack("filter").commitAllowingStateLoss()
+        } else {
+            childFragmentManager.beginTransaction().replace(R.id.list_tab_fragment, filterFragment, "filter").addToBackStack("filter").commitAllowingStateLoss()
+        }
 
         oneItem = Constants.EMPTY_ITEM
     }

@@ -12,7 +12,7 @@
     <LinearLayout
             android:id="@+id/list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             tools:showIn="@layout/activity_main"
             android:background="@color/list_background"
             android:orientation="vertical"
@@ -24,6 +24,7 @@
                 android:orientation="vertical"
                 android:layout_marginBottom="50dp"
                 android:padding="12dp"
+                android:id="@+id/tab_layout_replace"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -55,25 +56,7 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                    android:id="@+id/tabs"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                <com.google.android.material.tabs.TabLayout
-                        android:id="@+id/tabs_layout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:tabMode="fixed" />
-
-                <androidx.viewpager.widget.ViewPager
-                        android:id="@+id/tabs_viewpager"
-                        android:layout_width="match_parent"
-                        android:layout_height="0px"
-                        android:layout_weight="1"/>
-
-            </LinearLayout>
+            <include layout="@layout/tabs_content" />
 
         </LinearLayout>
     </LinearLayout>

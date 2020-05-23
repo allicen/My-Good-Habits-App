@@ -1,5 +1,6 @@
 package ru.application.habittracker
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.widget.*
@@ -21,25 +22,27 @@ import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.core.ListInterface
 import ru.application.habittracker.data.Data
 import ru.application.habittracker.ui.habits.ContainerHabitsFragment
-import ru.application.habittracker.ui.habits.filter.FilterFragment
+import ru.application.habittracker.ui.habits.filter.FilterResultFragment
 import ru.application.habittracker.ui.habits.item.AddItemFragment
 import ru.application.habittracker.ui.habits.list.ListFragment
-
 
 var orientationScreenOrActive: String = ""
 
 class MainActivity : AppCompatActivity(), ListInterface,
     GetHabitsListInterface {
     private lateinit var appBarConfiguration: AppBarConfiguration
+    var habitsList: ArrayList<HabitItem> = Data.habitList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
 
-        // Контейнер для фрагментов по работе с привычками
-        val containerFragment = ContainerHabitsFragment.newInstance()
-        supportFragmentManager.beginTransaction().add(R.id.container_fragment_frame, containerFragment).addToBackStack("container").commitAllowingStateLoss()
+        if (savedInstanceState == null) {
+            // Контейнер для фрагментов по работе с привычками
+            val containerFragment = ContainerHabitsFragment.newInstance()
+            supportFragmentManager.beginTransaction().add(R.id.container_fragment_frame, containerFragment).addToBackStack("container").commitAllowingStateLoss()
+        }
 
         // Навигация
         val toolbar: Toolbar = findViewById(R.id.toolbar)
@@ -69,9 +72,9 @@ class MainActivity : AppCompatActivity(), ListInterface,
     override fun onBackPressed() { // Обработка кнопки назад
         val lastFragments: FragmentManager = supportFragmentManager
 
-        // Показать нижнюю панель
-        val bottomSheetShow = findViewById<LinearLayout>(R.id.bottom_sheet_layout)
-        bottomSheetShow?.visibility = View.VISIBLE
+        val fragmentByTag = supportFragmentManager.getBackStackEntryAt(supportFragmentManager.backStackEntryCount - 1).name
+
+        println("back ********* $fragmentByTag")
 
         if (lastFragments.backStackEntryCount > 2) {
             lastFragments.popBackStack()
@@ -84,7 +87,7 @@ class MainActivity : AppCompatActivity(), ListInterface,
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        outState.putParcelableArrayList("habitList", Data.habitList)
+        outState.putParcelableArrayList("habitList", habitsList)
     }
 
 
@@ -92,7 +95,7 @@ class MainActivity : AppCompatActivity(), ListInterface,
         super.onRestoreInstanceState(savedInstanceState)
 
         @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-        Data.habitList = savedInstanceState.getParcelableArrayList("habitList")
+        habitsList = savedInstanceState.getParcelableArrayList("habitList")
 
         getFragmentWithList()
     }
@@ -147,15 +150,11 @@ class MainActivity : AppCompatActivity(), ListInterface,
     /**
      * Получение фрагментов после запуска activity
      * */
-    fun getFragmentWithList() {
-        val listFragment = ListFragment.newInstance()
+    override fun getFragmentWithList() {
+        val listFragment = ListFragment.newInstance(habitsList)
 
         if (container_habits_fragment != null) {
-            if (supportFragmentManager.findFragmentByTag("list") == null) {
-                supportFragmentManager.beginTransaction().add(R.id.container_habits_fragment, listFragment, "list").addToBackStack("container").commitAllowingStateLoss()
-            } else {
-                supportFragmentManager.beginTransaction().replace(R.id.container_habits_fragment, listFragment, "list").addToBackStack("container").commitAllowingStateLoss()
-            }
+            supportFragmentManager.beginTransaction().replace(R.id.container_habits_fragment, listFragment, "list").addToBackStack("container").commitAllowingStateLoss()
         }
     }
 
@@ -179,7 +178,7 @@ class MainActivity : AppCompatActivity(), ListInterface,
         addItemFragment.arguments = bundle
 
         if (add_item_form_land == null) {
-            val listFragment = ListFragment.newInstance()
+            val listFragment = ListFragment.newInstance(Data.habitList)
 
             if (container_habits_fragment != null) {
                 supportFragmentManager.beginTransaction()
@@ -232,5 +231,23 @@ class MainActivity : AppCompatActivity(), ListInterface,
             return false
         }
         return true
+    }
+
+    @SuppressLint("DefaultLocale", "SetTextI18n")
+    override fun getQueryFilter(query: String) {
+        var habits = Data.habitList
+        if (query.isNotEmpty()) {
+            habits = habits.filter { it.title.toLowerCase().indexOf(query) != -1 } as ArrayList
+        }
+
+        val tabs: LinearLayout = findViewById(R.id.tabs)
+
+        tabs.visibility = View.GONE
+
+        if (tab_layout_replace != null) {
+            val filterResult = FilterResultFragment.newInstance(habits, query)
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.tab_layout_replace, filterResult).addToBackStack("filter").commit()
+        }
     }
 }

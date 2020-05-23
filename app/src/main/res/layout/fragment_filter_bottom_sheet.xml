@@ -85,6 +85,7 @@
 
         </FrameLayout>
         <LinearLayout
+                android:id="@+id/filter_layout"
                 android:background="@color/white"
                 android:orientation="vertical"
                 android:paddingHorizontal="20dp"
@@ -95,6 +96,7 @@
             <EditText
                     android:id="@+id/write_title"
                     android:hint="Заголовок привычки"
+                    android:focusableInTouchMode="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
 

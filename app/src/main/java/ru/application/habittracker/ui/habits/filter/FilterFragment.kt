@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.fragment_list.*
@@ -19,6 +20,7 @@ import ru.application.habittracker.core.Constants
 import ru.application.habittracker.core.GetHabitsListInterface
 import ru.application.habittracker.data.Data
 import ru.application.habittracker.ui.habits.item.AddItemFragment
+import ru.application.habittracker.ui.habits.list.tabs.TabsListViewModel
 
 class FilterFragment : Fragment() {
 
@@ -28,6 +30,7 @@ class FilterFragment : Fragment() {
     private lateinit var bottomSheetImg: ImageView
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var writeTitle: EditText
+    lateinit var  filterLayout: LinearLayout
 
     lateinit var fab: FloatingActionButton
     var orientationScreenOrActive: String = ""
@@ -42,6 +45,8 @@ class FilterFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        println("########onCreate filter")
     }
 
     override fun onAttach(context: Context) {
@@ -59,6 +64,8 @@ class FilterFragment : Fragment() {
         bottomSheetShow = view.findViewById(R.id.bottom_sheet)
         bottomSheetText = view.findViewById(R.id.show_bottom_panel) // Текст
         bottomSheetImg = view.findViewById(R.id.show_bottom_panel_arrow) // Иконка
+
+        filterLayout = view.findViewById(R.id.filter_layout)
         writeTitle = view.findViewById(R.id.write_title)
 
         fab = view.findViewById(R.id.fab)
@@ -83,15 +90,22 @@ class FilterFragment : Fragment() {
             }
         }
 
-        // Ввод текста нижней панели
-        writeTitle.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable) {
-                habitTitleFilter(writeTitle.text.toString())
+        writeTitle.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                // Ввод текста нижней панели
+                writeTitle.addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(s: Editable) {
+                        callback?.getQueryFilter(writeTitle.text.toString())
+                    }
+                    override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+                    override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+                })
             }
+        }
 
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-        })
+
+
+
 
 
         fab.setOnClickListener {
@@ -115,10 +129,4 @@ class FilterFragment : Fragment() {
             callback?.openAddItemFragment(addItemFragment)
         }
     }
-
-    @SuppressLint("DefaultLocale")
-    fun habitTitleFilter(query: String) {
-        val habits = Data.habitList.filter { it.title.indexOf(query.toLowerCase()) != -1 }
-    }
-
 }

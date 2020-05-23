@@ -16,6 +16,7 @@ import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.ui.habits.list.ListFragment
 import ru.application.habittracker.R
 import ru.application.habittracker.core.GetHabitsListInterface
+import ru.application.habittracker.data.Data
 
 
 class AddItemFragment: Fragment() {
@@ -209,7 +210,7 @@ class AddItemFragment: Fragment() {
                 bundle.putBoolean("delete", delete)
                 bundle.putParcelable("item", item)
 
-                val listFragment = ListFragment.newInstance()
+                val listFragment = ListFragment.newInstance(Data.habitList)
                 listFragment.arguments = bundle
 
                 callback?.openListFragment(listFragment, this)

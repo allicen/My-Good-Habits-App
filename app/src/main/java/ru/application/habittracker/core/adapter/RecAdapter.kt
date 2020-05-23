@@ -43,6 +43,7 @@ class RecAdapter(private val items: ArrayList<HabitItem>, private val orientatio
     }
 
     fun getActualList() {
+        items.filter { it.title == "Хор" }
         notifyDataSetChanged()
     }
 
