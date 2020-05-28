@@ -5,7 +5,7 @@ import android.view.View
 import ru.application.habittracker.MainActivity
 import ru.application.habittracker.ui.habits.item.AddItemFragment
 
-interface ListInterface {
+interface HabitListUpdateInterface {
     fun updateHabitItem(
         itemView: View,
         changeItem: HabitItem,

@@ -2,7 +2,6 @@ package ru.application.habittracker.ui.habits.list
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,12 +10,11 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
-import ru.application.habittracker.*
 import ru.application.habittracker.core.Constants
-import ru.application.habittracker.core.GetHabitsListInterface
-import ru.application.habittracker.core.HabitItem
+import ru.application.habittracker.R
 import ru.application.habittracker.core.adapter.TabAdapter
-import ru.application.habittracker.data.Data
+import ru.application.habittracker.core.HabitItem
+import ru.application.habittracker.core.HabitListInterface
 import ru.application.habittracker.ui.habits.filter.FilterFragment
 import java.io.Serializable
 import kotlin.math.max
@@ -25,7 +23,7 @@ import kotlin.math.max
 class ListFragment: Fragment(), Serializable {
     var position: Int = Constants.ITEM_POSITION_DEFAULT
     var deleteElem: Boolean = false
-    var callback : GetHabitsListInterface? = null
+    var callback : HabitListInterface? = null
 
     lateinit var oneItem: HabitItem
 
@@ -49,7 +47,7 @@ class ListFragment: Fragment(), Serializable {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        callback = activity as GetHabitsListInterface
+        callback = activity as HabitListInterface
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

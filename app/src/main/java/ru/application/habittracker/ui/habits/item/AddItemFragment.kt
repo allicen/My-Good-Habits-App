@@ -11,12 +11,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_add_item.*
+import ru.application.habittracker.*
 import ru.application.habittracker.core.Constants
 import ru.application.habittracker.core.HabitItem
-import ru.application.habittracker.ui.habits.list.ListFragment
-import ru.application.habittracker.R
-import ru.application.habittracker.core.GetHabitsListInterface
+import ru.application.habittracker.core.HabitListInterface
 import ru.application.habittracker.data.Data
+import ru.application.habittracker.ui.habits.list.ListFragment
 
 
 class AddItemFragment: Fragment() {
@@ -31,7 +31,7 @@ class AddItemFragment: Fragment() {
     private lateinit var addItemViewModel: AddItemViewModel
 
     // Связь с активити
-    var callback : GetHabitsListInterface? = null
+    var callback : HabitListInterface? = null
 
     lateinit var types: List<Map<RadioButton, String>>
     lateinit var orientationScreenOrActive: String
@@ -54,7 +54,7 @@ class AddItemFragment: Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        callback = activity as GetHabitsListInterface
+        callback = activity as HabitListInterface
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +62,9 @@ class AddItemFragment: Fragment() {
 
         // Получение модели
         addItemViewModel = requireActivity().run {
-            ViewModelProviders.of(this, AddItemViewModelFactory()).get(AddItemViewModel::class.java)
+            ViewModelProviders.of(this,
+                AddItemViewModelFactory()
+            ).get(AddItemViewModel::class.java)
         }
 
         println("########create Item")
@@ -210,7 +212,8 @@ class AddItemFragment: Fragment() {
                 bundle.putBoolean("delete", delete)
                 bundle.putParcelable("item", item)
 
-                val listFragment = ListFragment.newInstance(Data.habitList)
+                val listFragment =
+                    ListFragment.newInstance(Data.habitList)
                 listFragment.arguments = bundle
 
                 callback?.openListFragment(listFragment, this)

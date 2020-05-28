@@ -24,6 +24,7 @@
                 android:layout_height="wrap_content">
 
             <LinearLayout
+                    android:id="@+id/bottom_panel"
                     android:layout_gravity="bottom|end"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
@@ -101,6 +102,5 @@
                     android:layout_height="wrap_content"/>
 
         </LinearLayout>
-
     </LinearLayout>
 </LinearLayout>

@@ -11,21 +11,22 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import ru.application.habittracker.*
 import ru.application.habittracker.core.Constants
-import ru.application.habittracker.core.GetHabitsListInterface
+import ru.application.habittracker.R
 import ru.application.habittracker.core.HabitItem
+import ru.application.habittracker.core.HabitListInterface
 import ru.application.habittracker.core.adapter.RecAdapter
-import ru.application.habittracker.data.Data
 
 class TabsListFragment: Fragment() {
-    var callback : GetHabitsListInterface? = null
+    var callback : HabitListInterface? = null
     lateinit var habitsList: ArrayList<HabitItem>
     lateinit var goodHabits: ArrayList<HabitItem>
     lateinit var badHabits: ArrayList<HabitItem>
     lateinit var vRecViewHabitsList: RecyclerView
     lateinit var emptyListText: TextView
     var positionTab: Int = 0
+
+    var orientationScreenOrActive: String = ""
 
     // Иницифлизация модели ленивым способом
     private val tabListViewModel by lazy { ViewModelProviders.of(this).get(TabsListViewModel::class.java) }
@@ -43,7 +44,7 @@ class TabsListFragment: Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        callback = activity as GetHabitsListInterface
+        callback = activity as HabitListInterface
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,7 +77,11 @@ class TabsListFragment: Fragment() {
 
         when (positionTab) { // Сортировка привычек по позиции таба
             0 -> {
-                val adapter = RecAdapter(goodHabits, orientationScreenOrActive)
+                val adapter =
+                    RecAdapter(
+                        goodHabits,
+                        orientationScreenOrActive
+                    )
                 vRecViewHabitsList.adapter = adapter
 
                 //подписываем адаптер на получение списка
@@ -90,7 +95,11 @@ class TabsListFragment: Fragment() {
                 }
             }
             else -> {
-                val adapter = RecAdapter(badHabits, orientationScreenOrActive)
+                val adapter =
+                    RecAdapter(
+                        badHabits,
+                        orientationScreenOrActive
+                    )
                 vRecViewHabitsList.adapter = adapter
 
                 //подписываем адаптер на получение списка

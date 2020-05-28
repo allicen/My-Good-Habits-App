@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.application.habittracker.R
 
 class RecHolder(itemView: View): RecyclerView.ViewHolder(itemView),
-    ListInterface {
+    HabitListUpdateInterface {
 
     fun bind(item: HabitItem, orientationScreenOrActive: String){
 

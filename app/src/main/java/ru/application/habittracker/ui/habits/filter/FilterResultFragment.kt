@@ -13,12 +13,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import ru.application.habittracker.R
-import ru.application.habittracker.core.GetHabitsListInterface
+import ru.application.habittracker.*
 import ru.application.habittracker.core.HabitItem
+import ru.application.habittracker.core.HabitListInterface
 import ru.application.habittracker.core.adapter.RecAdapter
-import ru.application.habittracker.orientationScreenOrActive
-import ru.application.habittracker.ui.habits.list.tabs.TabsListFragment
 import ru.application.habittracker.ui.habits.list.tabs.TabsListViewModel
 
 class FilterResultFragment: Fragment() {
@@ -27,11 +25,12 @@ class FilterResultFragment: Fragment() {
     lateinit var  titlePage: TextView
     lateinit var  filterResultHint: TextView
     lateinit var resetFilterResults: LinearLayout
+    var orientationScreenOrActive: String = ""
 
     lateinit var habitsList: ArrayList<HabitItem>
     var query: String = ""
 
-    var callback : GetHabitsListInterface? = null
+    var callback : HabitListInterface? = null
 
     // Иницифлизация модели ленивым способом
     private val tabListViewModel by lazy { ViewModelProviders.of(this).get(TabsListViewModel::class.java) }
@@ -49,7 +48,7 @@ class FilterResultFragment: Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        callback = activity as GetHabitsListInterface
+        callback = activity as HabitListInterface
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,7 +92,10 @@ class FilterResultFragment: Fragment() {
             callback?.getFragmentWithList()
         }
 
-        val adapter = RecAdapter(habitsList, orientationScreenOrActive)
+        val adapter = RecAdapter(
+            habitsList,
+            orientationScreenOrActive
+        )
         vRecViewHabitsList.adapter = adapter
 
         //подписываем адаптер на получение списка

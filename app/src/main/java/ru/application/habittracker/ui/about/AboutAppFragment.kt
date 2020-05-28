@@ -5,24 +5,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import ru.application.habittracker.core.HabitListInterface
 import ru.application.habittracker.R
-import ru.application.habittracker.core.GetHabitsListInterface
 
 class AboutAppFragment: Fragment() {
 
     private lateinit var aboutAppViewModel: AboutAppViewModel
 
     // Связь с активити
-    var callback : GetHabitsListInterface? = null
+    var callback : HabitListInterface? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        callback = activity as GetHabitsListInterface
+        callback = activity as HabitListInterface
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

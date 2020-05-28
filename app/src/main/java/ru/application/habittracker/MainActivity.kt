@@ -17,21 +17,21 @@ import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.fragment_container_habits.*
 import kotlinx.android.synthetic.main.fragment_list.*
 import ru.application.habittracker.core.Constants
-import ru.application.habittracker.core.GetHabitsListInterface
 import ru.application.habittracker.core.HabitItem
-import ru.application.habittracker.core.ListInterface
+import ru.application.habittracker.core.HabitListInterface
+import ru.application.habittracker.core.HabitListUpdateInterface
 import ru.application.habittracker.data.Data
 import ru.application.habittracker.ui.habits.ContainerHabitsFragment
 import ru.application.habittracker.ui.habits.filter.FilterResultFragment
 import ru.application.habittracker.ui.habits.item.AddItemFragment
 import ru.application.habittracker.ui.habits.list.ListFragment
 
-var orientationScreenOrActive: String = ""
 
-class MainActivity : AppCompatActivity(), ListInterface,
-    GetHabitsListInterface {
+class MainActivity : AppCompatActivity(), HabitListUpdateInterface,
+    HabitListInterface {
     private lateinit var appBarConfiguration: AppBarConfiguration
     var habitsList: ArrayList<HabitItem> = Data.habitList
+    var orientationScreenOrActive: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -249,5 +249,9 @@ class MainActivity : AppCompatActivity(), ListInterface,
             supportFragmentManager.beginTransaction()
                 .replace(R.id.tab_layout_replace, filterResult).addToBackStack("filter").commit()
         }
+    }
+
+    override fun getHabitList(): ArrayList<HabitItem> {
+        return habitsList
     }
 }

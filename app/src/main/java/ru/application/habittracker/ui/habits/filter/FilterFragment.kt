@@ -1,6 +1,5 @@
 package ru.application.habittracker.ui.habits.filter
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -11,16 +10,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import kotlinx.android.synthetic.main.fragment_list.*
-import ru.application.habittracker.R
 import ru.application.habittracker.core.Constants
-import ru.application.habittracker.core.GetHabitsListInterface
-import ru.application.habittracker.data.Data
+import ru.application.habittracker.core.HabitListInterface
+import ru.application.habittracker.R
 import ru.application.habittracker.ui.habits.item.AddItemFragment
-import ru.application.habittracker.ui.habits.list.tabs.TabsListViewModel
 
 class FilterFragment : Fragment() {
 
@@ -31,11 +26,11 @@ class FilterFragment : Fragment() {
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
     private lateinit var writeTitle: EditText
     lateinit var  filterLayout: LinearLayout
+    lateinit var bottomPanelWithForm: LinearLayout
 
     lateinit var fab: FloatingActionButton
     var orientationScreenOrActive: String = ""
-    var callback : GetHabitsListInterface? = null
-
+    var callback : HabitListInterface? = null
 
     companion object{
         fun newInstance(): FilterFragment {
@@ -51,7 +46,7 @@ class FilterFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        callback = activity as GetHabitsListInterface
+        callback = activity as HabitListInterface
     }
 
     override fun onCreateView(
@@ -64,12 +59,12 @@ class FilterFragment : Fragment() {
         bottomSheetShow = view.findViewById(R.id.bottom_sheet)
         bottomSheetText = view.findViewById(R.id.show_bottom_panel) // Текст
         bottomSheetImg = view.findViewById(R.id.show_bottom_panel_arrow) // Иконка
+        bottomPanelWithForm = view.findViewById(R.id.bottom_panel) // Форма
 
         filterLayout = view.findViewById(R.id.filter_layout)
         writeTitle = view.findViewById(R.id.write_title)
 
         fab = view.findViewById(R.id.fab)
-
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet) // Вся панель
 
         return view
@@ -77,6 +72,13 @@ class FilterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Показать/скрыть панель в зависимости от наличия списка
+        if (callback?.getHabitList()?.size ?: 0 == 0) {
+            bottomPanelWithForm.visibility = View.INVISIBLE
+        } else {
+            bottomPanelWithForm.visibility = View.VISIBLE
+        }
 
         bottomSheetShow.setOnClickListener {
             if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
@@ -102,11 +104,6 @@ class FilterFragment : Fragment() {
                 })
             }
         }
-
-
-
-
-
 
         fab.setOnClickListener {
             Log.e("tag", "Открыто окно создания привычки")

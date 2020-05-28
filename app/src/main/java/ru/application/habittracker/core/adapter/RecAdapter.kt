@@ -8,9 +8,9 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ru.application.habittracker.core.Constants
-import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.R
 import ru.application.habittracker.core.RecHolder
+import ru.application.habittracker.core.HabitItem
 import java.io.Serializable
 
 class RecAdapter(private val items: ArrayList<HabitItem>, private val orientationScreenOrActive: String): RecyclerView.Adapter<RecHolder>(), Serializable {
@@ -43,7 +43,6 @@ class RecAdapter(private val items: ArrayList<HabitItem>, private val orientatio
     }
 
     fun getActualList() {
-        items.filter { it.title == "Хор" }
         notifyDataSetChanged()
     }
 
