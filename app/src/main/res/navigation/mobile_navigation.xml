@@ -7,7 +7,7 @@
 
     <fragment
             android:id="@+id/habit_container"
-            android:name="ru.application.habittracker.ContainerHabitsFragment"
+            android:name="ru.application.habittracker.ui.habits.ContainerHabitsFragment"
             android:tag="list"
             tools:layout="@layout/fragment_container_habits">
         <action android:id="@+id/action_habit_container_to_listFragment" app:destination="@id/listFragment"/>
@@ -15,18 +15,18 @@
 
     <fragment
             android:id="@+id/nav_about"
-            android:name="ru.application.habittracker.TextFragment"
+            android:name="ru.application.habittracker.ui.about.AboutAppFragment"
             android:tag="text"
-            tools:layout="@layout/fragment_text"/>
-    <fragment android:id="@+id/listFragment" android:name="ru.application.habittracker.ListFragment"
+            tools:layout="@layout/fragment_about_app"/>
+    <fragment android:id="@+id/listFragment" android:name="ru.application.habittracker.ui.habits.list.ListFragment"
               android:label="ListFragment">
         <action android:id="@+id/action_listFragment_to_habitListFragment" app:destination="@id/habitListFragment"/>
     </fragment>
-    <fragment android:id="@+id/habitListFragment" android:name="ru.application.habittracker.HabitListFragment"
+    <fragment android:id="@+id/habitListFragment" android:name="ru.application.habittracker.ui.habits.list.tabs.TabsListFragment"
               android:label="HabitListFragment">
         <action android:id="@+id/action_habitListFragment_to_addItemFragment" app:destination="@id/addItemFragment"/>
     </fragment>
-    <fragment android:id="@+id/addItemFragment" android:name="ru.application.habittracker.AddItemFragment"
+    <fragment android:id="@+id/addItemFragment" android:name="ru.application.habittracker.ui.habits.item.AddItemFragment"
               android:label="AddItemFragment"/>
 
 </navigation>

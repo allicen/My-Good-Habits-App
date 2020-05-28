@@ -1,4 +1,4 @@
-package ru.application.habittracker
+package ru.application.habittracker.ui.habits.list.tabs
 
 import android.content.Context
 import android.os.Bundle
@@ -7,11 +7,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import ru.application.habittracker.core.Constants
+import ru.application.habittracker.R
+import ru.application.habittracker.core.HabitItem
+import ru.application.habittracker.core.HabitListInterface
+import ru.application.habittracker.core.adapter.RecAdapter
 
-class HabitListFragment: Fragment() {
-    var callback : GetHabitsListInterface? = null
+class TabsListFragment: Fragment() {
+    var callback : HabitListInterface? = null
     lateinit var habitsList: ArrayList<HabitItem>
     lateinit var goodHabits: ArrayList<HabitItem>
     lateinit var badHabits: ArrayList<HabitItem>
@@ -19,11 +26,17 @@ class HabitListFragment: Fragment() {
     lateinit var emptyListText: TextView
     var positionTab: Int = 0
 
+    var orientationScreenOrActive: String = ""
+
+    // Иницифлизация модели ленивым способом
+    private val tabListViewModel by lazy { ViewModelProviders.of(this).get(TabsListViewModel::class.java) }
+
     companion object {
-        fun newInstance(positionTab: Int): HabitListFragment {
+        fun newInstance(positionTab: Int, habitsList: ArrayList<HabitItem>): TabsListFragment {
             val bundle = Bundle()
             bundle.putInt("positionTab", positionTab)
-            val fragment = HabitListFragment()
+            bundle.putParcelableArrayList("habitsList", habitsList)
+            val fragment = TabsListFragment()
             fragment.arguments = bundle
             return fragment
         }
@@ -31,14 +44,19 @@ class HabitListFragment: Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        callback = activity as GetHabitsListInterface
+        callback = activity as HabitListInterface
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // Получаем список привычек и фильтруем его по типу
-        habitsList = callback?.getHabitsList() ?: ArrayList()
+//        habitsList = Data.habitList
+
+        arguments?.let {
+            habitsList = it.getParcelableArrayList("habitsList") ?: ArrayList()
+        }
+
         goodHabits = habitsList.filter { it.type == Constants.TYPE_HABITS[0] } as ArrayList<HabitItem>
         badHabits = habitsList.filter { it.type == Constants.TYPE_HABITS[1] } as ArrayList<HabitItem>
 
@@ -59,14 +77,36 @@ class HabitListFragment: Fragment() {
 
         when (positionTab) { // Сортировка привычек по позиции таба
             0 -> {
-                vRecViewHabitsList.adapter = RecAdapter(goodHabits, orientationScreenOrActive)
+                val adapter =
+                    RecAdapter(
+                        goodHabits,
+                        orientationScreenOrActive
+                    )
+                vRecViewHabitsList.adapter = adapter
+
+                //подписываем адаптер на получение списка
+                tabListViewModel.getListHabits().observe(this, Observer {
+                    it?.let { adapter.getActualList() }
+                })
+
                 emptyListText.text = Constants.TYPE_HABITS_EMPTY[0]
                 if (goodHabits.size > 0) {
                     emptyListText.visibility = View.GONE
                 }
             }
             else -> {
-                vRecViewHabitsList.adapter = RecAdapter(badHabits, orientationScreenOrActive)
+                val adapter =
+                    RecAdapter(
+                        badHabits,
+                        orientationScreenOrActive
+                    )
+                vRecViewHabitsList.adapter = adapter
+
+                //подписываем адаптер на получение списка
+                tabListViewModel.getListHabits().observe(this, Observer {
+                    it?.let { adapter.getActualList() }
+                })
+
                 emptyListText.text = Constants.TYPE_HABITS_EMPTY[1]
                 if (badHabits.size > 0) {
                     emptyListText.visibility = View.GONE

@@ -22,38 +22,22 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <fragment
+                android:id="@+id/container_fragment"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:defaultNavHost="false"
+                app:navGraph="@navigation/mobile_navigation"
+                class="androidx.navigation.fragment.NavHostFragment">
 
-                <fragment
-                        android:id="@+id/container_fragment"
+                <FrameLayout
+                        android:id="@+id/container_fragment_frame"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginBottom="50dp"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:defaultNavHost="false"
-                        app:navGraph="@navigation/mobile_navigation"
-                        class="androidx.navigation.fragment.NavHostFragment">
-
-                        <FrameLayout
-                                android:id="@+id/container_fragment_frame"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"/>
-                </fragment>
-
-                <com.google.android.material.bottomnavigation.BottomNavigationView
-                        android:id="@+id/bottom_nav_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:menu="@menu/activity_main_drawer" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                        android:layout_height="match_parent"/>
+        </fragment>
 
         <com.google.android.material.navigation.NavigationView
                 android:id="@+id/nav_view"

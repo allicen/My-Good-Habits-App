@@ -1,18 +1,21 @@
-package ru.application.habittracker
+package ru.application.habittracker.ui.habits.list
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
-import kotlinx.android.synthetic.main.fragment_list.*
+import ru.application.habittracker.core.Constants
+import ru.application.habittracker.R
+import ru.application.habittracker.core.adapter.TabAdapter
+import ru.application.habittracker.core.HabitItem
+import ru.application.habittracker.core.HabitListInterface
+import ru.application.habittracker.ui.habits.filter.FilterFragment
 import java.io.Serializable
 import kotlin.math.max
 
@@ -20,8 +23,7 @@ import kotlin.math.max
 class ListFragment: Fragment(), Serializable {
     var position: Int = Constants.ITEM_POSITION_DEFAULT
     var deleteElem: Boolean = false
-    var callback : GetHabitsListInterface? = null
-    var orientationScreenOrActive: String = ""
+    var callback : HabitListInterface? = null
 
     lateinit var oneItem: HabitItem
 
@@ -34,32 +36,44 @@ class ListFragment: Fragment(), Serializable {
     lateinit var tabsViewpager: ViewPager
 
     companion object {
-        fun newInstance() : ListFragment {
-            return ListFragment()
+        fun newInstance(habitList: ArrayList<HabitItem>) : ListFragment {
+            val bundle = Bundle()
+            bundle.putParcelableArrayList("habitList", habitList)
+            val fragment = ListFragment()
+            fragment.arguments = bundle
+            return fragment
         }
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        callback = activity as GetHabitsListInterface
+        callback = activity as HabitListInterface
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        habitList = ArrayList()
         oneItem = Constants.EMPTY_ITEM
 
         println("#########onCreate List")
 
         val bundle = this.arguments
         if (bundle != null) {
-            position = bundle.getInt("position", Constants.ITEM_POSITION_DEFAULT)
+            position = bundle.getInt("position",
+                Constants.ITEM_POSITION_DEFAULT
+            )
             deleteElem = bundle.getBoolean("delete", false)
             oneItem = bundle.getParcelable("item") ?: Constants.EMPTY_ITEM
             habitList = bundle.getParcelableArrayList("habitList") ?: ArrayList()
 
             // Добавление привычки в список
             habitList = callback?.updateHabitListFromFragmentData(oneItem, position, deleteElem) ?: ArrayList()
+        }
+
+        if (habitList.size == 0) {
+            // Получение списка привычек
+            arguments?.let {
+                habitList = it.getParcelableArrayList("habitList") ?: ArrayList()
+            }
         }
     }
 
@@ -80,53 +94,29 @@ class ListFragment: Fragment(), Serializable {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Получение списка привычек
-        habitList = callback?.getHabitsList() ?: ArrayList()
-
         // Количество привычек
         val goodHabitsCount = habitList.filter { it.type == Constants.TYPE_HABITS[0] }.count()
         val badHabitsCount = habitList.filter { it.type == Constants.TYPE_HABITS[1] }.count()
         val sizeList = max(goodHabitsCount, badHabitsCount)
 
         // Табы
-        tabsViewpager.adapter = TabAdapter(childFragmentManager, goodHabitsCount, badHabitsCount)
+        tabsViewpager.adapter = TabAdapter(
+            childFragmentManager,
+            goodHabitsCount,
+            badHabitsCount, habitList
+        )
         tabsLayout.setupWithViewPager(tabsViewpager)
 
         hideStartText(sizeList)
 
-        fab.setOnClickListener {
-            Log.e("tag", "Открыто окно создания привычки")
-
-            if (add_item_form_land != null) {
-                orientationScreenOrActive = "land"
-            } else {
-                orientationScreenOrActive = "add"
-            }
-
-            val bundle = Bundle()
-            bundle.putString("orientationScreenOrActive", orientationScreenOrActive)
-            bundle.putInt("positions", Constants.ITEM_POSITION_DEFAULT)
-
-            val addItemFragment = AddItemFragment.newInstance()
-            addItemFragment.arguments = bundle
-
-            if (add_item_form_land != null) {
-
-                if (childFragmentManager.findFragmentByTag("addItem") != null) {
-                    activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.add_item_form_land, addItemFragment, "addItem")?.addToBackStack("list")?.commit()
-                } else {
-                    activity?.supportFragmentManager?.beginTransaction()?.add(R.id.add_item_form_land, addItemFragment, "addItem")?.addToBackStack("list")?.commit()
-                }
-
-                view.findViewById<FrameLayout>(R.id.add_item_form_land).visibility = View.VISIBLE
-
-            } else {
-                activity?.supportFragmentManager?.beginTransaction()
-                    ?.remove(this)
-                    ?.replace(R.id.container_habits_fragment, addItemFragment, "addItem")
-                    ?.addToBackStack("list")?.commit()
-            }
+        // Фрагмент для фильтра
+        val filterFragment = FilterFragment.newInstance()
+        if (childFragmentManager.findFragmentByTag("filter") == null) {
+            childFragmentManager.beginTransaction().add(R.id.list_tab_fragment, filterFragment, "filter").addToBackStack("filter").commitAllowingStateLoss()
+        } else {
+            childFragmentManager.beginTransaction().replace(R.id.list_tab_fragment, filterFragment, "filter").addToBackStack("filter").commitAllowingStateLoss()
         }
+
         oneItem = Constants.EMPTY_ITEM
     }
 

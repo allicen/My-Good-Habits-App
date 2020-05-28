@@ -1,16 +1,22 @@
-package ru.application.habittracker
+package ru.application.habittracker.ui.habits.item
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.RadioButton
-import android.widget.TextView
+import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_add_item.*
+import ru.application.habittracker.*
+import ru.application.habittracker.core.Constants
+import ru.application.habittracker.core.HabitItem
+import ru.application.habittracker.core.HabitListInterface
+import ru.application.habittracker.data.Data
+import ru.application.habittracker.ui.habits.list.ListFragment
 
 
 class AddItemFragment: Fragment() {
@@ -21,6 +27,12 @@ class AddItemFragment: Fragment() {
         }
     }
 
+    // Модель
+    private lateinit var addItemViewModel: AddItemViewModel
+
+    // Связь с активити
+    var callback : HabitListInterface? = null
+
     lateinit var types: List<Map<RadioButton, String>>
     lateinit var orientationScreenOrActive: String
 
@@ -30,6 +42,7 @@ class AddItemFragment: Fragment() {
     lateinit var itemPriority: String
     lateinit var itemCount: String
     lateinit var itemPeriod: String
+
     lateinit var headerTitle: LinearLayout
     lateinit var titleImage: ImageView
     lateinit var titleText: TextView
@@ -39,13 +52,27 @@ class AddItemFragment: Fragment() {
     lateinit var changeItem: HabitItem
     var hash: Int = 0
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callback = activity as HabitListInterface
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Получение модели
+        addItemViewModel = requireActivity().run {
+            ViewModelProviders.of(this,
+                AddItemViewModelFactory()
+            ).get(AddItemViewModel::class.java)
+        }
 
         println("########create Item")
 
         val bundle = this.arguments
-        position = bundle?.getInt("position", Constants.ITEM_POSITION_DEFAULT) ?: Constants.ITEM_POSITION_DEFAULT
+        position = bundle?.getInt("position",
+            Constants.ITEM_POSITION_DEFAULT
+        ) ?: Constants.ITEM_POSITION_DEFAULT
         changeItem = bundle?.getParcelable("changeItem") ?: Constants.EMPTY_ITEM
         hash = changeItem.hash
         orientationScreenOrActive = bundle?.getString("orientationScreenOrActive") ?: "land"
@@ -153,7 +180,8 @@ class AddItemFragment: Fragment() {
             priority = itemPriority,
             count = itemCount,
             period = itemPeriod,
-            hash = hash)
+            hash = hash
+        )
     }
 
 
@@ -165,6 +193,15 @@ class AddItemFragment: Fragment() {
     fun pushData (delete: Boolean) {
         val item: HabitItem = getItem ()
 
+        // Получение данных из модели
+        addItemViewModel.title.observe(this, Observer { itemTitle = it })
+        addItemViewModel.description.observe(this, Observer { itemDescription = it })
+        addItemViewModel.type.observe(this, Observer { itemType = it })
+        addItemViewModel.priority.observe(this, Observer { itemPriority = it })
+        addItemViewModel.count.observe(this, Observer { itemCount = it })
+        addItemViewModel.period.observe(this, Observer { itemPeriod = it })
+        addItemViewModel.hash.observe(this, Observer { hash = it })
+
         if (item.title != "") {
             if (item.type == "") {
                 Snackbar.make(view!!, resources.getString(R.string.error_empty_type), Snackbar.LENGTH_LONG)
@@ -175,11 +212,11 @@ class AddItemFragment: Fragment() {
                 bundle.putBoolean("delete", delete)
                 bundle.putParcelable("item", item)
 
-                val listFragment = ListFragment.newInstance()
+                val listFragment =
+                    ListFragment.newInstance(Data.habitList)
                 listFragment.arguments = bundle
 
-                activity?.supportFragmentManager?.beginTransaction()?.remove(this)
-                    ?.replace(R.id.container_habits_fragment, listFragment, "list")?.addToBackStack("addItem")?.commit()
+                callback?.openListFragment(listFragment, this)
             }
         } else {
             Snackbar.make(view!!, resources.getString(R.string.error_empty_title), Snackbar.LENGTH_LONG)
