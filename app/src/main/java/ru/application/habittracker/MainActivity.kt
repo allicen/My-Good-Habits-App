@@ -3,11 +3,13 @@ package ru.application.habittracker
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
-import android.widget.*
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.LiveData
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -21,6 +23,7 @@ import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.core.HabitListInterface
 import ru.application.habittracker.core.HabitListUpdateInterface
 import ru.application.habittracker.data.Data
+import ru.application.habittracker.data.FeedDao
 import ru.application.habittracker.ui.habits.ContainerHabitsFragment
 import ru.application.habittracker.ui.habits.filter.FilterResultFragment
 import ru.application.habittracker.ui.habits.item.AddItemFragment
@@ -30,13 +33,16 @@ import ru.application.habittracker.ui.habits.list.ListFragment
 class MainActivity : AppCompatActivity(), HabitListUpdateInterface,
     HabitListInterface {
     private lateinit var appBarConfiguration: AppBarConfiguration
-    var habitsList: ArrayList<HabitItem> = Data.habitList
     var orientationScreenOrActive: String = ""
+
+    lateinit var dao: FeedDao
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_main)
+
+        val appClass: App = applicationContext as App
+        dao = appClass.getDB().feedDao()
 
         if (savedInstanceState == null) {
             // Контейнер для фрагментов по работе с привычками
@@ -84,21 +90,21 @@ class MainActivity : AppCompatActivity(), HabitListUpdateInterface,
     }
 
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-
-        outState.putParcelableArrayList("habitList", habitsList)
-    }
-
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-
-        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-        habitsList = savedInstanceState.getParcelableArrayList("habitList")
-
-        getFragmentWithList()
-    }
+//    override fun onSaveInstanceState(outState: Bundle) {
+//        super.onSaveInstanceState(outState)
+//
+//        outState.putParcelableArrayList("habitList", habitsList)
+//    }
+//
+//
+//    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+//        super.onRestoreInstanceState(savedInstanceState)
+//
+//        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+//        habitsList = savedInstanceState.getParcelableArrayList("habitList")
+//
+//        getFragmentWithList()
+//    }
 
 
     /**
@@ -151,7 +157,7 @@ class MainActivity : AppCompatActivity(), HabitListUpdateInterface,
      * Получение фрагментов после запуска activity
      * */
     override fun getFragmentWithList() {
-        val listFragment = ListFragment.newInstance(habitsList)
+        val listFragment = ListFragment.newInstance(Data.habitList)
 
         if (container_habits_fragment != null) {
             supportFragmentManager.beginTransaction().replace(R.id.container_habits_fragment, listFragment, "list").addToBackStack("container").commitAllowingStateLoss()
@@ -252,6 +258,6 @@ class MainActivity : AppCompatActivity(), HabitListUpdateInterface,
     }
 
     override fun getHabitList(): ArrayList<HabitItem> {
-        return habitsList
+        return Data.habitList
     }
 }

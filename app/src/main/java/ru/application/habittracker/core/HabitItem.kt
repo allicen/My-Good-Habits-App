@@ -2,10 +2,14 @@ package ru.application.habittracker.core
 
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+@Entity
 class HabitItem(
-    val title: String,
+    @PrimaryKey val title: String,
     val description: String,
     val type: String,
     val priority: String,
