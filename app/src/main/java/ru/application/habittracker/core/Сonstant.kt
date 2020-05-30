@@ -10,13 +10,13 @@ class Constants {
         val TYPE_PRIORITY = listOf("Не важно", "Важно", "Очень важно")
 
         val EMPTY_ITEM = HabitItem(
+            id = null,
             title = "",
             description = "",
             type = "",
             period = "",
             count = "",
-            priority = "",
-            hash = 0
+            priority = ""
         )
 
         var hash = 0

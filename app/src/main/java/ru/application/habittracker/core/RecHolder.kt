@@ -24,18 +24,19 @@ class RecHolder(itemView: View): RecyclerView.ViewHolder(itemView),
         priority.text = item.priority
         count.text = item.count
         period.text = item.period
-        hash.text = item.hash.toString()
 
         itemView.setOnClickListener{
             val changeItem = HabitItem(
+                id = item.id,
                 title = item.title,
                 description = item.description,
                 type = item.type,
                 priority = item.priority,
                 count = item.count,
-                period = item.period,
-                hash = item.hash
+                period = item.period
             )
+
+            println("###### changeItem ${changeItem.id}")
 
             updateHabitItem(itemView, changeItem, bindingAdapterPosition, orientationScreenOrActive)
         }

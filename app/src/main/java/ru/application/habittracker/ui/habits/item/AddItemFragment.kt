@@ -11,11 +11,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_add_item.*
+import kotlinx.android.synthetic.main.fragment_add_item.period_item
+import kotlinx.android.synthetic.main.item.*
 import ru.application.habittracker.*
 import ru.application.habittracker.core.Constants
 import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.core.HabitListInterface
-import ru.application.habittracker.data.Data
 import ru.application.habittracker.ui.habits.list.ListFragment
 
 
@@ -48,9 +49,8 @@ class AddItemFragment: Fragment() {
     lateinit var titleText: TextView
     lateinit var burgerMenu: ImageView
 
-    var position: Int = Constants.ITEM_POSITION_DEFAULT
     lateinit var changeItem: HabitItem
-    var hash: Int = 0
+    var itemId: Int? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -70,17 +70,16 @@ class AddItemFragment: Fragment() {
         println("########create Item")
 
         val bundle = this.arguments
-        position = bundle?.getInt("position",
-            Constants.ITEM_POSITION_DEFAULT
-        ) ?: Constants.ITEM_POSITION_DEFAULT
         changeItem = bundle?.getParcelable("changeItem") ?: Constants.EMPTY_ITEM
-        hash = changeItem.hash
         orientationScreenOrActive = bundle?.getString("orientationScreenOrActive") ?: "land"
+
+        itemId = changeItem.id
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_add_item, container, false)
 
+//        itemId = view.findViewById(R.id.hash_item)
         headerTitle = view.findViewById(R.id.header_title)
         titleImage = view.findViewById(R.id.title_image)
         titleText = view.findViewById(R.id.title_text)
@@ -139,7 +138,7 @@ class AddItemFragment: Fragment() {
         }
 
         // Скрыть/Показать ссылку для удаления привычки
-        if (position != Constants.ITEM_POSITION_DEFAULT) {
+        if (itemId != null) {
             delete.visibility = TextView.VISIBLE
         }
 
@@ -162,25 +161,21 @@ class AddItemFragment: Fragment() {
      * */
 
     fun getItem (): HabitItem {
+
         itemTitle = title_item.text.toString().trim()
         itemDescription = description_item.text.toString().trim()
         itemPriority = priority_item.selectedItem.toString()
         itemCount = count_item.text.toString()
         itemPeriod = period_item.text.toString().trim()
 
-        if (hash == 0) {
-            hash = Constants.hash + 1
-            Constants.hash = hash
-        }
-
         return HabitItem(
+            id = itemId,
             title = itemTitle,
             description = itemDescription,
             type = itemType,
             priority = itemPriority,
             count = itemCount,
-            period = itemPeriod,
-            hash = hash
+            period = itemPeriod
         )
     }
 
@@ -200,7 +195,6 @@ class AddItemFragment: Fragment() {
         addItemViewModel.priority.observe(this, Observer { itemPriority = it })
         addItemViewModel.count.observe(this, Observer { itemCount = it })
         addItemViewModel.period.observe(this, Observer { itemPeriod = it })
-        addItemViewModel.hash.observe(this, Observer { hash = it })
 
         if (item.title != "") {
             if (item.type == "") {
@@ -208,12 +202,11 @@ class AddItemFragment: Fragment() {
                     .setAction("Action", null).show()
             } else {
                 val bundle = Bundle()
-                bundle.putInt("position", position)
                 bundle.putBoolean("delete", delete)
                 bundle.putParcelable("item", item)
 
                 val listFragment =
-                    ListFragment.newInstance(Data.habitList)
+                    ListFragment.newInstance()
                 listFragment.arguments = bundle
 
                 callback?.openListFragment(listFragment, this)

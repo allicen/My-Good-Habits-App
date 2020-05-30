@@ -97,11 +97,7 @@ class FilterResultFragment: Fragment() {
             orientationScreenOrActive
         )
         vRecViewHabitsList.adapter = adapter
-
-        //подписываем адаптер на получение списка
-        tabListViewModel.getListHabits().observe(this, Observer {
-            it?.let { adapter.getActualList() }
-        })
+        tabListViewModel.habitsList.observe(this, Observer { habitsList = it as ArrayList<HabitItem> })
 
         vRecViewHabitsList.layoutManager = LinearLayoutManager(activity)
     }

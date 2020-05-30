@@ -2,30 +2,31 @@ package ru.application.habittracker.core
 
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import org.jetbrains.annotations.NotNull
 
-
+@Entity(tableName = "habits")
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-@Entity
 class HabitItem(
-    @PrimaryKey val title: String,
-    val description: String,
-    val type: String,
-    val priority: String,
-    val count: String,
-    val period: String,
-    val hash: Int
+    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") var id: Int?,
+    @ColumnInfo(name = "title") val title: String,
+    @ColumnInfo(name = "description") val description: String,
+    @ColumnInfo(name = "type") val type: String,
+    @ColumnInfo(name = "priority") val priority: String,
+    @ColumnInfo(name = "count") val count: String,
+    @ColumnInfo(name = "period") val period: String
 
 ): Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readInt(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
-        parcel.readString(),
-        parcel.readInt()
+        parcel.readString()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -35,7 +36,6 @@ class HabitItem(
         parcel.writeString(priority)
         parcel.writeString(count)
         parcel.writeString(period)
-        parcel.writeInt(hash)
     }
 
     override fun describeContents(): Int {

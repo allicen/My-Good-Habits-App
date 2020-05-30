@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import ru.application.habittracker.core.Constants
@@ -36,12 +38,8 @@ class ListFragment: Fragment(), Serializable {
     lateinit var tabsViewpager: ViewPager
 
     companion object {
-        fun newInstance(habitList: ArrayList<HabitItem>) : ListFragment {
-            val bundle = Bundle()
-            bundle.putParcelableArrayList("habitList", habitList)
-            val fragment = ListFragment()
-            fragment.arguments = bundle
-            return fragment
+        fun newInstance() : ListFragment {
+            return ListFragment()
         }
     }
 
@@ -58,21 +56,16 @@ class ListFragment: Fragment(), Serializable {
 
         val bundle = this.arguments
         if (bundle != null) {
-            position = bundle.getInt("position",
-                Constants.ITEM_POSITION_DEFAULT
-            )
-            deleteElem = bundle.getBoolean("delete", false)
-            oneItem = bundle.getParcelable("item") ?: Constants.EMPTY_ITEM
-            habitList = bundle.getParcelableArrayList("habitList") ?: ArrayList()
+            val startActivity: String = bundle.getString("start", "")
+            if (startActivity.isEmpty()) {
+                position = bundle.getInt("position",
+                    Constants.ITEM_POSITION_DEFAULT
+                )
+                deleteElem = bundle.getBoolean("delete", false)
+                oneItem = bundle.getParcelable("item") ?: Constants.EMPTY_ITEM
 
-            // Добавление привычки в список
-            habitList = callback?.updateHabitListFromFragmentData(oneItem, position, deleteElem) ?: ArrayList()
-        }
-
-        if (habitList.size == 0) {
-            // Получение списка привычек
-            arguments?.let {
-                habitList = it.getParcelableArrayList("habitList") ?: ArrayList()
+                // Добавление привычки в список
+                callback?.updateHabitListFromFragmentData(oneItem, deleteElem)
             }
         }
     }
@@ -86,28 +79,35 @@ class ListFragment: Fragment(), Serializable {
         tabsViewpager = view.findViewById(R.id.tabs_viewpager)
         tabsLayout = view.findViewById(R.id.tabs_layout)
 
-        hideStartText(habitList.size)
-
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Количество привычек
-        val goodHabitsCount = habitList.filter { it.type == Constants.TYPE_HABITS[0] }.count()
-        val badHabitsCount = habitList.filter { it.type == Constants.TYPE_HABITS[1] }.count()
-        val sizeList = max(goodHabitsCount, badHabitsCount)
+        val feed: LiveData<List<HabitItem>> = callback?.getContextFromApp()?.getAll()!!
+        feed.observe(viewLifecycleOwner, Observer { feeds ->
+            habitList = feeds as ArrayList<HabitItem>
 
-        // Табы
-        tabsViewpager.adapter = TabAdapter(
-            childFragmentManager,
-            goodHabitsCount,
-            badHabitsCount, habitList
-        )
-        tabsLayout.setupWithViewPager(tabsViewpager)
+            for (id in habitList) {
+                println("===== ${id.id}")
+            }
 
-        hideStartText(sizeList)
+            // Количество привычек
+            val goodHabitsCount = habitList.filter { it.type == Constants.TYPE_HABITS[0] }.count()
+            val badHabitsCount = habitList.filter { it.type == Constants.TYPE_HABITS[1] }.count()
+            val sizeList = max(goodHabitsCount, badHabitsCount)
+
+            // Табы
+            tabsViewpager.adapter = TabAdapter(
+                childFragmentManager,
+                goodHabitsCount,
+                badHabitsCount, habitList
+            )
+            tabsLayout.setupWithViewPager(tabsViewpager)
+
+            hideStartText(sizeList)
+        })
 
         // Фрагмент для фильтра
         val filterFragment = FilterFragment.newInstance()
