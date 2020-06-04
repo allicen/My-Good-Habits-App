@@ -51,8 +51,6 @@ class TabsListFragment: Fragment() {
         super.onCreate(savedInstanceState)
 
         // Получаем список привычек и фильтруем его по типу
-//        habitsList = Data.habitList
-
         arguments?.let {
             habitsList = it.getParcelableArrayList("habitsList") ?: ArrayList()
         }
@@ -83,11 +81,7 @@ class TabsListFragment: Fragment() {
                         orientationScreenOrActive
                     )
                 vRecViewHabitsList.adapter = adapter
-
-                //подписываем адаптер на получение списка
-                tabListViewModel.getListHabits().observe(this, Observer {
-                    it?.let { adapter.getActualList() }
-                })
+                tabListViewModel.habitsList.observe(this, Observer { habitsList = it as ArrayList<HabitItem> })
 
                 emptyListText.text = Constants.TYPE_HABITS_EMPTY[0]
                 if (goodHabits.size > 0) {
@@ -101,11 +95,7 @@ class TabsListFragment: Fragment() {
                         orientationScreenOrActive
                     )
                 vRecViewHabitsList.adapter = adapter
-
-                //подписываем адаптер на получение списка
-                tabListViewModel.getListHabits().observe(this, Observer {
-                    it?.let { adapter.getActualList() }
-                })
+                tabListViewModel.habitsList.observe(this, Observer { habitsList = it as ArrayList<HabitItem> })
 
                 emptyListText.text = Constants.TYPE_HABITS_EMPTY[1]
                 if (badHabits.size > 0) {

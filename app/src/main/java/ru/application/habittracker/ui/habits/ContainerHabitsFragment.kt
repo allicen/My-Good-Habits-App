@@ -6,10 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import ru.application.habittracker.data.Data
 import ru.application.habittracker.core.HabitListInterface
 import ru.application.habittracker.ui.habits.list.ListFragment
 import ru.application.habittracker.R
+import ru.application.habittracker.core.Constants
 
 class ContainerHabitsFragment: Fragment() {
 
@@ -37,7 +37,11 @@ class ContainerHabitsFragment: Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val listFragment =
-            ListFragment.newInstance(Data.habitList)
+            ListFragment.newInstance()
+
+        val bundle = Bundle()
+        bundle.putString("start", "yes")
+        listFragment.arguments = bundle
 
         callback?.openContainerFragment(listFragment)
     }

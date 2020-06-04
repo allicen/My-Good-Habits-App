@@ -3,7 +3,8 @@ package ru.application.habittracker
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
-import android.widget.*
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
@@ -20,8 +21,7 @@ import ru.application.habittracker.core.Constants
 import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.core.HabitListInterface
 import ru.application.habittracker.core.HabitListUpdateInterface
-import ru.application.habittracker.data.Data
-import ru.application.habittracker.ui.habits.ContainerHabitsFragment
+import ru.application.habittracker.data.FeedDao
 import ru.application.habittracker.ui.habits.filter.FilterResultFragment
 import ru.application.habittracker.ui.habits.item.AddItemFragment
 import ru.application.habittracker.ui.habits.list.ListFragment
@@ -30,19 +30,15 @@ import ru.application.habittracker.ui.habits.list.ListFragment
 class MainActivity : AppCompatActivity(), HabitListUpdateInterface,
     HabitListInterface {
     private lateinit var appBarConfiguration: AppBarConfiguration
-    var habitsList: ArrayList<HabitItem> = Data.habitList
     var orientationScreenOrActive: String = ""
 
+    lateinit var dao: FeedDao
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        dao = getContextFromApp()
+
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_main)
-
-        if (savedInstanceState == null) {
-            // Контейнер для фрагментов по работе с привычками
-            val containerFragment = ContainerHabitsFragment.newInstance()
-            supportFragmentManager.beginTransaction().add(R.id.container_fragment_frame, containerFragment).addToBackStack("container").commitAllowingStateLoss()
-        }
 
         // Навигация
         val toolbar: Toolbar = findViewById(R.id.toolbar)
@@ -84,21 +80,21 @@ class MainActivity : AppCompatActivity(), HabitListUpdateInterface,
     }
 
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-
-        outState.putParcelableArrayList("habitList", habitsList)
-    }
-
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-
-        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-        habitsList = savedInstanceState.getParcelableArrayList("habitList")
-
-        getFragmentWithList()
-    }
+//    override fun onSaveInstanceState(outState: Bundle) {
+//        super.onSaveInstanceState(outState)
+//
+//        outState.putParcelableArrayList("habitList", habitsList)
+//    }
+//
+//
+//    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+//        super.onRestoreInstanceState(savedInstanceState)
+//
+//        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+//        habitsList = savedInstanceState.getParcelableArrayList("habitList")
+//
+//        getFragmentWithList()
+//    }
 
 
     /**
@@ -108,50 +104,31 @@ class MainActivity : AppCompatActivity(), HabitListUpdateInterface,
      * @param delete Метка удаления привычки
      * @return Обновленный список привычек
      * **/
-    override fun updateHabitListFromFragmentData(data: HabitItem, position: Int, delete: Boolean): ArrayList<HabitItem> {
+    override fun updateHabitListFromFragmentData(data: HabitItem, delete: Boolean){
         if (data.type == "") {
-            return ArrayList()
+            return
         }
 
-        if (position < Data.habitList.size) {
-            when {
-                position >= 0 && delete -> { // Удаление привычки
-                    for ((index, element) in Data.habitList.withIndex()) {
-                        if (element.hash == data.hash) {
-                            Data.habitList.removeAt(index)
-                            break
-                        }
-                    }
-                }
-                position >= 0 && !delete -> { // Редактирование привычки
-                    for ((index, element) in Data.habitList.withIndex()) {
-                        if (element.hash == data.hash) {
-                            Data.habitList[index] = data
-                            break
-                        }
-                    }
-                }
-                else -> { // Добавление привычки
-                    val habitsHash = mutableListOf<Int>() // Hash добавленных привычек
-                    for (habit in Data.habitList) {
-                        habitsHash.add(habit.hash)
-                    }
-
-                    if (data != Constants.EMPTY_ITEM && data.hash !in habitsHash) {
-                        Data.habitList.add(data)
-                    }
+        when {
+            data.id != null && delete -> { // Удаление привычки
+                dao.deleteById(data.id!!)
+            }
+            data.id != null && !delete -> { // Редактирование привычки
+                dao.update(data)
+            }
+            else -> { // Добавление привычки
+                if (data != Constants.EMPTY_ITEM) {
+                    dao.insert(data)
                 }
             }
         }
-
-        return Data.habitList
     }
 
     /**
      * Получение фрагментов после запуска activity
      * */
     override fun getFragmentWithList() {
-        val listFragment = ListFragment.newInstance(habitsList)
+        val listFragment = ListFragment.newInstance()
 
         if (container_habits_fragment != null) {
             supportFragmentManager.beginTransaction().replace(R.id.container_habits_fragment, listFragment, "list").addToBackStack("container").commitAllowingStateLoss()
@@ -178,7 +155,7 @@ class MainActivity : AppCompatActivity(), HabitListUpdateInterface,
         addItemFragment.arguments = bundle
 
         if (add_item_form_land == null) {
-            val listFragment = ListFragment.newInstance(Data.habitList)
+            val listFragment = ListFragment.newInstance()
 
             if (container_habits_fragment != null) {
                 supportFragmentManager.beginTransaction()
@@ -234,12 +211,7 @@ class MainActivity : AppCompatActivity(), HabitListUpdateInterface,
     }
 
     @SuppressLint("DefaultLocale", "SetTextI18n")
-    override fun getQueryFilter(query: String) {
-        var habits = Data.habitList
-        if (query.isNotEmpty()) {
-            habits = habits.filter { it.title.toLowerCase().indexOf(query) != -1 } as ArrayList
-        }
-
+    override fun getQueryFilter(query: String, habits: ArrayList<HabitItem>) {
         val tabs: LinearLayout = findViewById(R.id.tabs)
 
         tabs.visibility = View.GONE
@@ -251,7 +223,12 @@ class MainActivity : AppCompatActivity(), HabitListUpdateInterface,
         }
     }
 
-    override fun getHabitList(): ArrayList<HabitItem> {
-        return habitsList
+
+    /**
+     * Получение контекста, dao
+     * **/
+    override fun getContextFromApp(): FeedDao{
+        val appClass: App = applicationContext as App
+        return appClass.getDB().feedDao()
     }
 }

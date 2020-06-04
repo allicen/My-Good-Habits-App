@@ -1,5 +1,6 @@
 package ru.application.habittracker.ui.habits.filter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -10,11 +11,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ru.application.habittracker.core.Constants
 import ru.application.habittracker.core.HabitListInterface
 import ru.application.habittracker.R
+import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.ui.habits.item.AddItemFragment
 
 class FilterFragment : Fragment() {
@@ -74,11 +78,18 @@ class FilterFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Показать/скрыть панель в зависимости от наличия списка
-        if (callback?.getHabitList()?.size ?: 0 == 0) {
-            bottomPanelWithForm.visibility = View.INVISIBLE
-        } else {
-            bottomPanelWithForm.visibility = View.VISIBLE
-        }
+        val feed: LiveData<List<HabitItem>> = callback?.getContextFromApp()?.getAll()!!
+        feed.observe(viewLifecycleOwner, Observer { feeds ->
+            val habitList = feeds as ArrayList<HabitItem>
+
+            if (habitList.size == 0) {
+                bottomPanelWithForm.visibility = View.INVISIBLE
+            } else {
+                bottomPanelWithForm.visibility = View.VISIBLE
+            }
+        })
+
+
 
         bottomSheetShow.setOnClickListener {
             if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
@@ -96,9 +107,23 @@ class FilterFragment : Fragment() {
             if (hasFocus) {
                 // Ввод текста нижней панели
                 writeTitle.addTextChangedListener(object : TextWatcher {
+                    @SuppressLint("DefaultLocale")
                     override fun afterTextChanged(s: Editable) {
-                        callback?.getQueryFilter(writeTitle.text.toString())
+                        val query = writeTitle.text.toString()
+
+                        @Suppress("NAME_SHADOWING")
+                        val feed: LiveData<List<HabitItem>> = callback?.getContextFromApp()?.getAll()!!
+                        feed.observe(viewLifecycleOwner, Observer { feeds ->
+
+                            var habits = feeds as ArrayList<HabitItem>
+                            if (query.isNotEmpty()) {
+                                habits = habits.filter { it.title.toLowerCase().indexOf(query) != -1 } as ArrayList
+                            }
+
+                            callback?.getQueryFilter(query, habits)
+                        })
                     }
+
                     override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
                     override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
                 })
