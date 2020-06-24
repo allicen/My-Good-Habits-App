@@ -17,6 +17,10 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.fragment_container_habits.*
 import kotlinx.android.synthetic.main.fragment_list.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.application.habittracker.core.Constants
 import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.core.HabitListInterface
@@ -100,7 +104,6 @@ class MainActivity : AppCompatActivity(), HabitListUpdateInterface,
     /**
      * Обновить данные в списке привычек
      * @param data Одна привычка
-     * @param position Позиция привычки
      * @param delete Метка удаления привычки
      * @return Обновленный список привычек
      * **/
@@ -111,14 +114,20 @@ class MainActivity : AppCompatActivity(), HabitListUpdateInterface,
 
         when {
             data.id != null && delete -> { // Удаление привычки
-                dao.deleteById(data.id!!)
+                GlobalScope.launch(Dispatchers.Default) {
+                    dao.deleteById(data.id!!)
+                }
             }
             data.id != null && !delete -> { // Редактирование привычки
-                dao.update(data)
+                GlobalScope.launch(Dispatchers.Default) {
+                    dao.update(data)
+                }
             }
             else -> { // Добавление привычки
                 if (data != Constants.EMPTY_ITEM) {
-                    dao.insert(data)
+                    GlobalScope.launch(Dispatchers.Default) {
+                        dao.insert(data)
+                    }
                 }
             }
         }
