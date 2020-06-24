@@ -13,7 +13,7 @@ class App: Application() {
         db = databaseBuilder(
             applicationContext,
             AppDataBase::class.java, "habititem"
-        ).allowMainThreadQueries().build()
+        ).build()
 
     }
 
