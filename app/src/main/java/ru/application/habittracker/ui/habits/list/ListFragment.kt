@@ -14,6 +14,7 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import ru.application.habittracker.core.Constants
 import ru.application.habittracker.R
+import ru.application.habittracker.api.NetworkController
 import ru.application.habittracker.core.adapter.TabAdapter
 import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.core.HabitListInterface
@@ -89,8 +90,9 @@ class ListFragment: Fragment(), Serializable {
         feed.observe(viewLifecycleOwner, Observer { feeds ->
             habitList = feeds as ArrayList<HabitItem>
 
-            for (id in habitList) {
-                println("===== ${id.id}")
+            // Загрузить в сеть по API
+            for (habit in habitList) {
+                NetworkController().netWorkPut(habit)
             }
 
             // Количество привычек

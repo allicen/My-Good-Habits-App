@@ -33,10 +33,7 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import ru.application.habittracker.api.FeedAPI
-import ru.application.habittracker.api.FeedItemAPI
-import ru.application.habittracker.api.HabitModelGson
-import ru.application.habittracker.api.NetworkService
+import ru.application.habittracker.api.*
 import ru.application.habittracker.core.Constants
 import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.core.HabitListInterface
@@ -135,18 +132,19 @@ class MainActivity : AppCompatActivity(), HabitListUpdateInterface,
                 GlobalScope.launch(Dispatchers.Default) {
                     dao.deleteById(data.id!!)
                 }
+                NetworkController().netWorkDelete(data.id!!)
             }
             data.id != null && !delete -> { // Редактирование привычки
                 GlobalScope.launch(Dispatchers.Default) {
                     dao.update(data)
                 }
+                NetworkController().netWorkPut(data)
             }
             else -> { // Добавление привычки
                 if (data != Constants.EMPTY_ITEM) {
                     GlobalScope.launch(Dispatchers.Default) {
                         dao.insert(data)
                     }
-                    netWorkPost(data)
                 }
             }
         }
@@ -261,6 +259,9 @@ class MainActivity : AppCompatActivity(), HabitListUpdateInterface,
     }
 
 
+    /**
+     * Работа с сетью
+     * */
     fun getDataFromNetwork(navView: NavigationView) {
 
         // Проверка соединения с сетью
@@ -282,89 +283,24 @@ class MainActivity : AppCompatActivity(), HabitListUpdateInterface,
             }
         }
 
-        // Добавить аватар на шторку меню
-        val avatar = "https://avatars3.githubusercontent.com/u/46901956?s=460&u=07b81e436c2ed8292a610d9df3eec11be04263bd&v=4"
-        val hView = navView.getHeaderView(0)
-        val image: ImageView = hView.findViewById(R.id.imageView)
+        if (typeConnection == "wifi") {
+            // Добавить аватар на шторку меню
+            val avatar = "https://avatars3.githubusercontent.com/u/46901956?s=460&u=07b81e436c2ed8292a610d9df3eec11be04263bd&v=4"
+            val hView = navView.getHeaderView(0)
+            val image: ImageView = hView.findViewById(R.id.imageView)
 
-        Glide.with(this@MainActivity)
-            .load(avatar)
-            .override(250, 250)
-            .centerCrop()
-            .transform(CircleCrop())
-            .placeholder(R.drawable.ic_idea)
-            .error(R.drawable.ic_idea)
-            .into(image)
-
-        // Данные из сети
-        netWorkGet()
-    }
-
-
-    // Получить данные из сети
-    fun netWorkGet() {
-        GlobalScope.launch(Dispatchers.Default) {
-            // запрос
-            val retrofit = Retrofit.Builder()
-                .baseUrl(Constants.URL_NETWORK)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-
-            val service = retrofit.create(NetworkService::class.java)
-            val habits: Call<List<HabitItem>> = service.listHabits()
-
-            // ответ
-            @Suppress("BlockingMethodInNonBlockingContext") val response = habits.execute()
-            val code = response.code()
-            val message = response.body() ?: ArrayList()
-
-            // добавить в БД
-            if (code == 200 && message.isNotEmpty()) {
-                for (habit in message) {
-                    val jsonObject = JsonObject()
-                    val gson = Gson()
-                    val newHabit = gson.fromJson<HabitItem>(jsonObject, HabitItem::class.java)
-                    dao.insert(newHabit)
-                }
-            }
+            Glide.with(this@MainActivity)
+                .load(avatar)
+                .override(250, 250)
+                .centerCrop()
+                .transform(CircleCrop())
+                .placeholder(R.drawable.ic_idea)
+                .error(R.drawable.ic_idea)
+                .into(image)
         }
-    }
 
-    // Отправить данные в сеть
-    fun netWorkPost(data: HabitItem) {
-        GlobalScope.launch(Dispatchers.Default) {
-            // запрос
-            val retrofit = Retrofit.Builder()
-                .baseUrl(Constants.URL_NETWORK)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-
-            val sample = HabitModelGson(data.title, data.description, data.type, data.priority, data.count, data.period)
-            val gson = Gson()
-            val json: String = gson.toJson(sample)
-
-
-            val service = retrofit.create(NetworkService::class.java)
-            val habits: Call<String> = service.addHabit(json)
-
-            // ответ
-            @Suppress("BlockingMethodInNonBlockingContext") val response = habits.execute()
-            val code = response.code()
-            val message = response.body() ?: ""
-
-            println("habits*****************${habits.request()}")
-            println("habits*****************${response}")
-        }
-    }
-
-    // Обновить данные в сети
-    fun netWorkPut() {
-
-    }
-
-    // Удалить данные в сети
-    fun netWorkDelete() {
-
+        // Получить данные из сети по API
+        NetworkController().netWorkGet(dao)
     }
 
 }

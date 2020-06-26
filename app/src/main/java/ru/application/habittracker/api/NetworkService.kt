@@ -5,6 +5,7 @@ import retrofit2.Call
 import retrofit2.http.*
 import ru.application.habittracker.core.HabitItem
 
+
 @Keep
 interface NetworkService {
 
@@ -17,16 +18,13 @@ interface NetworkService {
     fun listHabits(): Call<List<HabitItem>>
 
 
-//    @Headers(
-//        "accept: application/json",
-//        "Authorization: a486867e-cc2c-41de-953e-3ba7542c1ae1"
-//    )
+    @Headers(
+        "accept: application/json",
+        "Authorization: a486867e-cc2c-41de-953e-3ba7542c1ae1"
+    )
 
-//    @FormUrlEncoded
-//    @POST("habit_done")
-//    fun addHabit(
-//        @Field("json") id: String
-//    ): Call<String>
+    @PUT("habit")
+    fun createHabit(@Body habit: HabitItem) : Call<HabitItem>
 
 
     @Headers(
@@ -35,13 +33,7 @@ interface NetworkService {
     )
 
     @FormUrlEncoded
-    @PUT("habit")
-    fun addHabit(
-        @Field("json") id: String
-    ): Call<String>
-
-    @DELETE("habit")
-    fun deleteHabit(): Call<String>
-
+    @HTTP(method = "DELETE", path = "habit", hasBody = true)
+    fun deleteHabit(@Field("id") id: String): Call<String>
 
 }
