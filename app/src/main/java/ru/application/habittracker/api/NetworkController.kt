@@ -48,10 +48,10 @@ class NetworkController {
                         dao.insert(newHabit)
                     }
                 } else {
-                    Log.e("GET", "Нет данных по API")
+                    Log.e("GET", "Нет данных по API, код ответа: $code")
                 }
             } else {
-                Log.e("GET", "Ошибка выгрузки данных по API")
+                Log.e("GET", "Ошибка выгрузки данных по API, код ответа: $code")
             }
         }
     }
@@ -75,7 +75,7 @@ class NetworkController {
             val response = client.newCall(request).execute()
 
             if (!response.isSuccessful) {
-                Log.e("error", "Ошибка добавления привычки с id=${data.id}")
+                Log.e("error", "Ошибка добавления привычки с id=${data.id}, код ответа: ${response.code}")
             }
         }
     }
@@ -105,7 +105,7 @@ class NetworkController {
             val response = createHabit.execute()
 
             if (!response.isSuccessful) {
-                Log.e("error", "Ошибка обновления привычки с id=${habit.id}")
+                Log.e("error", "Ошибка обновления привычки с id=${habit.id}, код ответа: ${response.code()}")
             }
         }
     }
@@ -129,7 +129,7 @@ class NetworkController {
             val response = deleteHabit.execute()
 
             if (!response.isSuccessful) {
-                Log.e("error", "Ошибка удаления привычки с id=$id")
+                Log.e("error", "Ошибка удаления привычки с id=$id, код ответа: ${response.code()}")
             }
         }
     }
