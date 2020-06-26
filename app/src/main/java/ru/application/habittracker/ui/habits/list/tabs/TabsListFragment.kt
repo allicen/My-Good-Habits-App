@@ -55,8 +55,8 @@ class TabsListFragment: Fragment() {
             habitsList = it.getParcelableArrayList("habitsList") ?: ArrayList()
         }
 
-        goodHabits = habitsList.filter { it.type == Constants.TYPE_HABITS[0] } as ArrayList<HabitItem>
-        badHabits = habitsList.filter { it.type == Constants.TYPE_HABITS[1] } as ArrayList<HabitItem>
+        goodHabits = habitsList.filter { it.type == 0 } as ArrayList<HabitItem>
+        badHabits = habitsList.filter { it.type == 1 } as ArrayList<HabitItem>
 
         val bundle = this.arguments
         if (bundle != null) {

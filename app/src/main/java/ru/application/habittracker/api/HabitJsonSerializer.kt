@@ -9,6 +9,7 @@ import java.lang.reflect.Type
 
 class HabitJsonSerializer: JsonSerializer<HabitItem> {
     override fun serialize(src: HabitItem?, typeOfSrc: Type?, context: JsonSerializationContext?): JsonElement = JsonObject().apply {
+        addProperty("id", src?.id)
         addProperty("title", src?.title)
         addProperty("description", src?.description)
         addProperty("type", src?.type)

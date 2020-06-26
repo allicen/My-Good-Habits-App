@@ -26,6 +26,7 @@ import kotlin.math.max
 class ListFragment: Fragment(), Serializable {
     var position: Int = Constants.ITEM_POSITION_DEFAULT
     var deleteElem: Boolean = false
+    var updateElem: Boolean = false
     var callback : HabitListInterface? = null
 
     lateinit var oneItem: HabitItem
@@ -63,10 +64,11 @@ class ListFragment: Fragment(), Serializable {
                     Constants.ITEM_POSITION_DEFAULT
                 )
                 deleteElem = bundle.getBoolean("delete", false)
+                updateElem = bundle.getBoolean("update", false)
                 oneItem = bundle.getParcelable("item") ?: Constants.EMPTY_ITEM
 
                 // Добавление привычки в список
-                callback?.updateHabitListFromFragmentData(oneItem, deleteElem)
+                callback?.updateHabitListFromFragmentData(oneItem, deleteElem, updateElem)
             }
         }
     }
@@ -91,13 +93,13 @@ class ListFragment: Fragment(), Serializable {
             habitList = feeds as ArrayList<HabitItem>
 
             // Загрузить в сеть по API
-            for (habit in habitList) {
-                NetworkController().netWorkPut(habit)
-            }
+//            for (habit in habitList) {
+//                NetworkController().netWorkPut(habit)
+//            }
 
             // Количество привычек
-            val goodHabitsCount = habitList.filter { it.type == Constants.TYPE_HABITS[0] }.count()
-            val badHabitsCount = habitList.filter { it.type == Constants.TYPE_HABITS[1] }.count()
+            val goodHabitsCount = habitList.filter { it.type == 0 }.count()
+            val badHabitsCount = habitList.filter { it.type == 1 }.count()
             val sizeList = max(goodHabitsCount, badHabitsCount)
 
             // Табы

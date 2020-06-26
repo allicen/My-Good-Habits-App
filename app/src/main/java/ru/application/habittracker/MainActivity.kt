@@ -122,19 +122,16 @@ class MainActivity : AppCompatActivity(), HabitListUpdateInterface,
      * @param delete Метка удаления привычки
      * @return Обновленный список привычек
      * **/
-    override fun updateHabitListFromFragmentData(data: HabitItem, delete: Boolean){
-        if (data.type == "") {
-            return
-        }
+    override fun updateHabitListFromFragmentData(data: HabitItem, delete: Boolean, update: Boolean){
 
         when {
-            data.id != null && delete -> { // Удаление привычки
+            delete -> { // Удаление привычки
                 GlobalScope.launch(Dispatchers.Default) {
-                    dao.deleteById(data.id!!)
+                    dao.deleteById(data.id)
                 }
-                NetworkController().netWorkDelete(data.id!!)
+                NetworkController().netWorkDelete(data.id)
             }
-            data.id != null && !delete -> { // Редактирование привычки
+            update -> { // Редактирование привычки
                 GlobalScope.launch(Dispatchers.Default) {
                     dao.update(data)
                 }
@@ -145,6 +142,7 @@ class MainActivity : AppCompatActivity(), HabitListUpdateInterface,
                     GlobalScope.launch(Dispatchers.Default) {
                         dao.insert(data)
                     }
+                    NetworkController().netWorkDelete(data.id)
                 }
             }
         }

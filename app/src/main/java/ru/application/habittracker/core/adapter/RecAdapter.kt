@@ -42,14 +42,10 @@ class RecAdapter(private val items: ArrayList<HabitItem>, private val orientatio
         return items.size
     }
 
-    fun getActualList() {
-        notifyDataSetChanged()
-    }
-
     override fun onBindViewHolder(holder: RecHolder, position: Int) {
         val item = items[position]
 
-        if (item.count == "" || item.period == "") { // Скрыть разделитель
+        if (item.count == 0 || item.period == "") { // Скрыть разделитель
             delimItem.visibility =View.GONE
             countItem.visibility =View.GONE
             periodItem.visibility =View.GONE
@@ -60,16 +56,16 @@ class RecAdapter(private val items: ArrayList<HabitItem>, private val orientatio
             descriptionItem.visibility = View.GONE
         }
 
-        if (item.priority == Constants.TYPE_PRIORITY[0]) { // Установить цвет приоритета
+        if (item.priority == 0) { // Установить цвет приоритета
             priorityItem.setBackgroundColor(Color.parseColor("#f8f183"))
-        } else if (item.priority == Constants.TYPE_PRIORITY[1]) {
+        } else if (item.priority == 1) {
             priorityItem.setBackgroundColor(Color.parseColor("#f8c283"))
         } else {
             priorityItem.setBackgroundColor(Color.parseColor("#ea661e"))
             priorityItem.setTextColor(Color.parseColor("#ffffff"))
         }
 
-        if (item.type == Constants.TYPE_HABITS[0]) { // Перекрасить рамку в зависимости от типа привычки
+        if (item.type == 0) { // Перекрасить рамку в зависимости от типа привычки
             blockItem.setBackgroundResource(R.drawable.good_habit_item)
         } else {
             blockItem.setBackgroundResource(R.drawable.bad_habit_item)
