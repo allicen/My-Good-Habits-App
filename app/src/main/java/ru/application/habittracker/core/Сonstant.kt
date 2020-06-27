@@ -1,7 +1,5 @@
 package ru.application.habittracker.core
 
-import ru.application.habittracker.core.HabitItem
-
 class Constants {
     companion object{
         const val ITEM_POSITION_DEFAULT = -10
@@ -10,15 +8,17 @@ class Constants {
         val TYPE_PRIORITY = listOf("Не важно", "Важно", "Очень важно")
 
         val EMPTY_ITEM = HabitItem(
-            id = null,
+            id = "",
             title = "",
             description = "",
-            type = "",
+            type = 0,
             period = "",
-            count = "",
-            priority = ""
+            count = 0,
+            priority = 0
         )
 
         var hash = 0
+
+        val URL_NETWORK = "https://droid-test-server.doubletapp.ru/api/"
     }
 }

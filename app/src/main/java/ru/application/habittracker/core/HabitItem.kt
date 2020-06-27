@@ -2,39 +2,41 @@ package ru.application.habittracker.core
 
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.annotation.NonNull
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import org.jetbrains.annotations.NotNull
+import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "habits")
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class HabitItem(
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") var id: Int?,
+    @SerializedName("uid") @NonNull @PrimaryKey() @ColumnInfo(name = "id") var id: String,
     @ColumnInfo(name = "title") val title: String,
     @ColumnInfo(name = "description") val description: String,
-    @ColumnInfo(name = "type") val type: String,
-    @ColumnInfo(name = "priority") val priority: String,
-    @ColumnInfo(name = "count") val count: String,
-    @ColumnInfo(name = "period") val period: String
+    @ColumnInfo(name = "type") val type: Int,
+    @ColumnInfo(name = "priority") val priority: Int,
+    @ColumnInfo(name = "count") val count: Int,
+    @SerializedName("frequency") @ColumnInfo(name = "period") val period: String
 
 ): Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
         parcel.readInt(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
+        parcel.readInt(),
+        parcel.readInt(),
         parcel.readString()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(id)
         parcel.writeString(title)
         parcel.writeString(description)
-        parcel.writeString(type)
-        parcel.writeString(priority)
-        parcel.writeString(count)
+        parcel.writeInt(type)
+        parcel.writeInt(priority)
+        parcel.writeInt(count)
         parcel.writeString(period)
     }
 

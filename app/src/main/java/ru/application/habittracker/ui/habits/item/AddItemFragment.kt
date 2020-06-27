@@ -12,12 +12,12 @@ import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_add_item.*
 import kotlinx.android.synthetic.main.fragment_add_item.period_item
-import kotlinx.android.synthetic.main.item.*
 import ru.application.habittracker.*
 import ru.application.habittracker.core.Constants
 import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.core.HabitListInterface
 import ru.application.habittracker.ui.habits.list.ListFragment
+import java.util.*
 
 
 class AddItemFragment: Fragment() {
@@ -40,7 +40,9 @@ class AddItemFragment: Fragment() {
     lateinit var itemTitle: String
     lateinit var itemDescription: String
     lateinit var itemType: String
+    var typeInt: Int = -1
     lateinit var itemPriority: String
+    var priorityInt: Int = -1
     lateinit var itemCount: String
     lateinit var itemPeriod: String
 
@@ -50,7 +52,8 @@ class AddItemFragment: Fragment() {
     lateinit var burgerMenu: ImageView
 
     lateinit var changeItem: HabitItem
-    var itemId: Int? = null
+    var itemId: String = ""
+    var update: Boolean = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -107,20 +110,23 @@ class AddItemFragment: Fragment() {
         type_habit.setOnCheckedChangeListener{ _, _ -> // Радиокнопки
             if (good.isChecked) {
                 itemType = Constants.TYPE_HABITS[0]
+                typeInt = 0
             } else {
                 itemType = Constants.TYPE_HABITS[1]
+                typeInt = 1
             }
         }
 
         title_item.setText(changeItem.title, TextView.BufferType.EDITABLE)
         description_item.setText(changeItem.description, TextView.BufferType.EDITABLE)
-        count_item.setText(changeItem.count, TextView.BufferType.EDITABLE)
+        count_item.setText(changeItem.count.toString(), TextView.BufferType.EDITABLE)
         period_item.setText(changeItem.period, TextView.BufferType.EDITABLE)
 
-        if (changeItem.priority != "") { // Выбор пункта спиннера по тексту
+        if (changeItem.priority > -1) { // Выбор пункта спиннера по тексту
             for (i in 0 until priority_item.adapter.count) {
-                if (priority_item.adapter.getItem(i).toString().contains(changeItem.priority)) {
+                 if (priority_item.adapter.getItem(i).toString().contains(Constants.TYPE_PRIORITY[changeItem.priority])) {
                     priority_item.setSelection(i)
+                    priorityInt = i
                 }
             }
         }
@@ -129,16 +135,14 @@ class AddItemFragment: Fragment() {
             mapOf(good to good.text.toString()),
             mapOf(bad to bad.text.toString()))
 
-        if (changeItem.type != "") { // Выбор типа привычки по тексту
-            for (type in types) {
-                for ((key, value) in type) {
-                    key.isChecked = value == changeItem.type
-                }
+        for (type in types) { // Выбор типа привычки по тексту
+            for ((key, value) in type) {
+                key.isChecked = value == Constants.TYPE_HABITS[changeItem.type]
             }
         }
 
         // Скрыть/Показать ссылку для удаления привычки
-        if (itemId != null) {
+        if (itemId != "") {
             delete.visibility = TextView.VISIBLE
         }
 
@@ -162,19 +166,32 @@ class AddItemFragment: Fragment() {
 
     fun getItem (): HabitItem {
 
+        if (itemId == "") {
+            itemId = UUID.randomUUID().toString()
+        } else {
+            update = true
+        }
+
         itemTitle = title_item.text.toString().trim()
         itemDescription = description_item.text.toString().trim()
         itemPriority = priority_item.selectedItem.toString()
         itemCount = count_item.text.toString()
         itemPeriod = period_item.text.toString().trim()
 
+        // индекс приоритета привычки
+        for (index in Constants.TYPE_PRIORITY.indices) {
+            if (Constants.TYPE_PRIORITY[index] == itemPriority) {
+                priorityInt = index
+            }
+        }
+
         return HabitItem(
             id = itemId,
             title = itemTitle,
             description = itemDescription,
-            type = itemType,
-            priority = itemPriority,
-            count = itemCount,
+            type = typeInt,
+            priority = priorityInt,
+            count = itemCount.toInt(),
             period = itemPeriod
         )
     }
@@ -197,20 +214,16 @@ class AddItemFragment: Fragment() {
         addItemViewModel.period.observe(this, Observer { itemPeriod = it })
 
         if (item.title != "") {
-            if (item.type == "") {
-                Snackbar.make(view!!, resources.getString(R.string.error_empty_type), Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-            } else {
-                val bundle = Bundle()
-                bundle.putBoolean("delete", delete)
-                bundle.putParcelable("item", item)
+            val bundle = Bundle()
+            bundle.putBoolean("delete", delete)
+            bundle.putBoolean("update", update)
+            bundle.putParcelable("item", item)
 
-                val listFragment =
-                    ListFragment.newInstance()
-                listFragment.arguments = bundle
+            val listFragment =
+                ListFragment.newInstance()
+            listFragment.arguments = bundle
 
-                callback?.openListFragment(listFragment, this)
-            }
+            callback?.openListFragment(listFragment, this)
         } else {
             Snackbar.make(view!!, resources.getString(R.string.error_empty_title), Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()

@@ -20,9 +20,9 @@ class RecHolder(itemView: View): RecyclerView.ViewHolder(itemView),
 
         title.text = item.title
         description.text = item.description
-        type.text = item.type
-        priority.text = item.priority
-        count.text = item.count
+        type.text = item.type.toString()
+        priority.text = Constants.TYPE_PRIORITY[item.priority]
+        count.text = item.count.toString()
         period.text = item.period
 
         itemView.setOnClickListener{
