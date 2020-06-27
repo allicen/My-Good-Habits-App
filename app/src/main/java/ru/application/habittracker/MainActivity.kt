@@ -135,14 +135,14 @@ class MainActivity : AppCompatActivity(), HabitListUpdateInterface,
                 GlobalScope.launch(Dispatchers.Default) {
                     dao.update(data)
                 }
-                NetworkController().netWorkPut(data)
+                NetworkController().netWorkPut(data, dao)
             }
             else -> { // Добавление привычки
                 if (data != Constants.EMPTY_ITEM) {
                     GlobalScope.launch(Dispatchers.Default) {
-                        dao.insert(data)
+                        //dao.insert(data)
                     }
-                    NetworkController().netWorkPost(data)
+                    NetworkController().netWorkPut(data, dao)
                 }
             }
         }

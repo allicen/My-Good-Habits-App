@@ -167,7 +167,7 @@ class AddItemFragment: Fragment() {
     fun getItem (): HabitItem {
 
         if (itemId == "") {
-            itemId = UUID.randomUUID().toString()
+            //itemId = UUID.randomUUID().toString()
         } else {
             update = true
         }

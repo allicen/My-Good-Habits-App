@@ -82,19 +82,22 @@ class NetworkController {
 
             if (!response.isSuccessful) {
                 Log.e("error", "Ошибка добавления привычки с id=${habit.id}, код ответа: ${response.code()}")
-            } else {
-                netWorkPut(habit)
             }
         }
     }
 
 
     // Загрузить данные из БД на сервер
-    fun netWorkPut(habit: HabitItem) {
+    fun netWorkPut(habit: HabitItem, dao: FeedDao) {
         GlobalScope.launch(Dispatchers.Default) {
 
+            val date = when (habit.id) {
+                "" -> 0
+                else -> 1
+            }
+
             val gson = GsonBuilder()
-                .registerTypeAdapter(HabitItem::class.java, HabitJsonSerializer())
+                .registerTypeAdapter(HabitItem::class.java, HabitJsonSerializer(date))
                 .create()
 
             val interceptor = HttpLoggingInterceptor()
@@ -120,6 +123,8 @@ class NetworkController {
 
             if (!response.isSuccessful) {
                 Log.e("error", "Ошибка обновления привычки с id=${habit.id}, код ответа: ${response.code()}")
+            } else {
+                netWorkGet(dao)
             }
         }
     }
