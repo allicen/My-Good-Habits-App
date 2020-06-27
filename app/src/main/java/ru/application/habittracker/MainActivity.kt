@@ -142,7 +142,7 @@ class MainActivity : AppCompatActivity(), HabitListUpdateInterface,
                     GlobalScope.launch(Dispatchers.Default) {
                         dao.insert(data)
                     }
-                    NetworkController().netWorkDelete(data.id)
+                    NetworkController().netWorkPost(data)
                 }
             }
         }
