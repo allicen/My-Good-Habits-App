@@ -19,6 +19,13 @@ interface NetworkService {
     @GET("habit")
     fun listHabits(): Call<List<HabitItem>>
 
+    @Headers(
+        "accept: application/json",
+        "Authorization: a486867e-cc2c-41de-953e-3ba7542c1ae1"
+    )
+
+    @POST("habit_done")
+    fun addHabit(@Body requestBody: JsonPostModel) : Call<Void>
 
     @Headers(
         "accept: application/json",
