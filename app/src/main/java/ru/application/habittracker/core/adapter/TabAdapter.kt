@@ -3,7 +3,7 @@ package ru.application.habittracker.core.adapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import ru.application.habittracker.ui.habits.list.tabs.TabsListFragment
+import ru.application.habittracker.ui.habits.list.tabs.TabListFragment
 import ru.application.habittracker.core.HabitItem
 
 class TabAdapter (fragmentManager: FragmentManager,
@@ -11,7 +11,7 @@ class TabAdapter (fragmentManager: FragmentManager,
                   private val badHabitsCount: Int, private val habitsList: ArrayList<HabitItem>): FragmentPagerAdapter(fragmentManager) {
 
     override fun getItem(position: Int): Fragment {
-        return TabsListFragment.newInstance(
+        return TabListFragment.newInstance(
             position,
             habitsList
         )

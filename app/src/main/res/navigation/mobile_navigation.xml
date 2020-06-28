@@ -22,7 +22,7 @@
               android:label="ListFragment">
         <action android:id="@+id/action_listFragment_to_habitListFragment" app:destination="@id/habitListFragment"/>
     </fragment>
-    <fragment android:id="@+id/habitListFragment" android:name="ru.application.habittracker.ui.habits.list.tabs.TabsListFragment"
+    <fragment android:id="@+id/habitListFragment" android:name="ru.application.habittracker.ui.habits.list.tabs.TabListFragment"
               android:label="HabitListFragment">
         <action android:id="@+id/action_habitListFragment_to_addItemFragment" app:destination="@id/addItemFragment"/>
     </fragment>

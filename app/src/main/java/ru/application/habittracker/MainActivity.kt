@@ -21,18 +21,8 @@ import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.google.android.material.navigation.NavigationView
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.fragment_container_habits.*
 import kotlinx.android.synthetic.main.fragment_list.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import org.json.JSONObject
-import retrofit2.Call
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import ru.application.habittracker.api.*
 import ru.application.habittracker.core.Constants
 import ru.application.habittracker.core.HabitItem
@@ -116,37 +106,6 @@ class MainActivity : AppCompatActivity(), HabitListUpdateInterface,
 //    }
 
 
-    /**
-     * Обновить данные в списке привычек
-     * @param data Одна привычка
-     * @param delete Метка удаления привычки
-     * @return Обновленный список привычек
-     * **/
-    override fun updateHabitListFromFragmentData(data: HabitItem, delete: Boolean, update: Boolean){
-
-        when {
-            delete -> { // Удаление привычки
-                GlobalScope.launch(Dispatchers.Default) {
-                    dao.deleteById(data.id)
-                }
-                NetworkController().netWorkDelete(data.id)
-            }
-            update -> { // Редактирование привычки
-                GlobalScope.launch(Dispatchers.Default) {
-                    dao.update(data)
-                }
-                NetworkController().netWorkPut(data, dao)
-            }
-            else -> { // Добавление привычки
-                if (data != Constants.EMPTY_ITEM) {
-                    GlobalScope.launch(Dispatchers.Default) {
-                        //dao.insert(data)
-                    }
-                    NetworkController().netWorkPut(data, dao)
-                }
-            }
-        }
-    }
 
     /**
      * Получение фрагментов после запуска activity

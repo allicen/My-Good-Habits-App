@@ -2,6 +2,7 @@ package ru.application.habittracker.ui.habits.item
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,10 +13,15 @@ import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_add_item.*
 import kotlinx.android.synthetic.main.fragment_add_item.period_item
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import ru.application.habittracker.*
+import ru.application.habittracker.api.NetworkController
 import ru.application.habittracker.core.Constants
 import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.core.HabitListInterface
+import ru.application.habittracker.data.FeedDao
 import ru.application.habittracker.ui.habits.list.ListFragment
 import java.util.*
 
@@ -63,13 +69,6 @@ class AddItemFragment: Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Получение модели
-        addItemViewModel = requireActivity().run {
-            ViewModelProviders.of(this,
-                AddItemViewModelFactory()
-            ).get(AddItemViewModel::class.java)
-        }
-
         println("########create Item")
 
         val bundle = this.arguments
@@ -91,8 +90,9 @@ class AddItemFragment: Fragment() {
         return view
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
 
         when (orientationScreenOrActive) { // Заголовки окна
             "edit" -> {
@@ -124,7 +124,7 @@ class AddItemFragment: Fragment() {
 
         if (changeItem.priority > -1) { // Выбор пункта спиннера по тексту
             for (i in 0 until priority_item.adapter.count) {
-                 if (priority_item.adapter.getItem(i).toString().contains(Constants.TYPE_PRIORITY[changeItem.priority])) {
+                if (priority_item.adapter.getItem(i).toString().contains(Constants.TYPE_PRIORITY[changeItem.priority])) {
                     priority_item.setSelection(i)
                     priorityInt = i
                 }
@@ -155,7 +155,6 @@ class AddItemFragment: Fragment() {
         delete.setOnClickListener {
             pushData (true)
         }
-
     }
 
 
@@ -205,23 +204,30 @@ class AddItemFragment: Fragment() {
     fun pushData (delete: Boolean) {
         val item: HabitItem = getItem ()
 
-        // Получение данных из модели
-        addItemViewModel.title.observe(this, Observer { itemTitle = it })
-        addItemViewModel.description.observe(this, Observer { itemDescription = it })
-        addItemViewModel.type.observe(this, Observer { itemType = it })
-        addItemViewModel.priority.observe(this, Observer { itemPriority = it })
-        addItemViewModel.count.observe(this, Observer { itemCount = it })
-        addItemViewModel.period.observe(this, Observer { itemPeriod = it })
+        // Получение модели
+        val dao: FeedDao = callback?.getContextFromApp()!!
+        addItemViewModel = requireActivity().run {
+            ViewModelProviders.of(this,
+                AddItemViewModelFactory(dao)
+            ).get(AddItemViewModel::class.java)
+        }
+
+        when {
+            delete -> { // Удаление привычки
+               addItemViewModel.delete(item)
+            }
+            update -> { // Редактирование привычки
+                addItemViewModel.update(item)
+            }
+            else -> { // Добавление привычки
+                addItemViewModel.insert(item)
+            }
+        }
+
 
         if (item.title != "") {
-            val bundle = Bundle()
-            bundle.putBoolean("delete", delete)
-            bundle.putBoolean("update", update)
-            bundle.putParcelable("item", item)
-
             val listFragment =
                 ListFragment.newInstance()
-            listFragment.arguments = bundle
 
             callback?.openListFragment(listFragment, this)
         } else {

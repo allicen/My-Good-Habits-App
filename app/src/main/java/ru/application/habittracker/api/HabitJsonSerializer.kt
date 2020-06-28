@@ -7,7 +7,7 @@ import com.google.gson.JsonSerializer
 import ru.application.habittracker.core.HabitItem
 import java.lang.reflect.Type
 
-class HabitJsonSerializer(val date: Int): JsonSerializer<HabitItem> {
+class HabitJsonSerializer(val date: Long): JsonSerializer<HabitItem> {
     override fun serialize(src: HabitItem?, typeOfSrc: Type?, context: JsonSerializationContext?): JsonElement = JsonObject().apply {
         addProperty("uid", src?.id)
         addProperty("title", src?.title)

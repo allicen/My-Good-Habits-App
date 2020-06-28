@@ -8,28 +8,25 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
+import androidx.lifecycle.*
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import ru.application.habittracker.core.Constants
 import ru.application.habittracker.R
-import ru.application.habittracker.api.NetworkController
 import ru.application.habittracker.core.adapter.TabAdapter
 import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.core.HabitListInterface
+import ru.application.habittracker.data.FeedDao
 import ru.application.habittracker.ui.habits.filter.FilterFragment
+import ru.application.habittracker.ui.habits.list.tabs.ListViewModel
+import ru.application.habittracker.ui.habits.list.tabs.ListViewModelFactory
 import java.io.Serializable
 import kotlin.math.max
 
 
 class ListFragment: Fragment(), Serializable {
     var position: Int = Constants.ITEM_POSITION_DEFAULT
-    var deleteElem: Boolean = false
-    var updateElem: Boolean = false
     var callback : HabitListInterface? = null
-
-    lateinit var oneItem: HabitItem
 
     lateinit var emptyList: LinearLayout
     lateinit var titleList: TextView
@@ -38,6 +35,10 @@ class ListFragment: Fragment(), Serializable {
     lateinit var tabs: LinearLayout
     lateinit var tabsLayout: TabLayout
     lateinit var tabsViewpager: ViewPager
+
+    private lateinit var viewModel: ListViewModel
+
+    lateinit var dao: FeedDao
 
     companion object {
         fun newInstance() : ListFragment {
@@ -52,9 +53,15 @@ class ListFragment: Fragment(), Serializable {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        oneItem = Constants.EMPTY_ITEM
 
         println("#########onCreate List")
+
+        dao = callback?.getContextFromApp()!!
+        viewModel = requireActivity().run {
+            ViewModelProviders.of(this,
+                ListViewModelFactory(dao)
+            ).get(ListViewModel::class.java)
+        }
 
         val bundle = this.arguments
         if (bundle != null) {
@@ -63,12 +70,6 @@ class ListFragment: Fragment(), Serializable {
                 position = bundle.getInt("position",
                     Constants.ITEM_POSITION_DEFAULT
                 )
-                deleteElem = bundle.getBoolean("delete", false)
-                updateElem = bundle.getBoolean("update", false)
-                oneItem = bundle.getParcelable("item") ?: Constants.EMPTY_ITEM
-
-                // Добавление привычки в список
-                callback?.updateHabitListFromFragmentData(oneItem, deleteElem, updateElem)
             }
         }
     }
@@ -88,8 +89,7 @@ class ListFragment: Fragment(), Serializable {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val feed: LiveData<List<HabitItem>> = callback?.getContextFromApp()?.getAll()!!
-        feed.observe(viewLifecycleOwner, Observer { feeds ->
+        viewModel.habitsList.observe(this, Observer { feeds ->
             habitList = feeds as ArrayList<HabitItem>
 
             // Загрузить в сеть по API
@@ -120,8 +120,6 @@ class ListFragment: Fragment(), Serializable {
         } else {
             childFragmentManager.beginTransaction().replace(R.id.list_tab_fragment, filterFragment, "filter").addToBackStack("filter").commitAllowingStateLoss()
         }
-
-        oneItem = Constants.EMPTY_ITEM
     }
 
 

@@ -13,7 +13,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import ru.application.habittracker.core.Constants
 import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.data.FeedDao
-import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -76,7 +75,7 @@ class NetworkController {
                 .build()
 
             val service = retrofit.create(NetworkService::class.java)
-            val addHabit: Call<Void> = service.addHabit(JsonPostModel(1, habit.id))
+            val addHabit: Call<Void> = service.addHabit(JsonPostModel(System.currentTimeMillis().toInt(), habit.id))
 
             @Suppress("BlockingMethodInNonBlockingContext") val response = addHabit.execute()
 
@@ -93,7 +92,7 @@ class NetworkController {
 
             val date = when (habit.id) {
                 "" -> 0
-                else -> 1
+                else -> System.currentTimeMillis()
             }
 
             val gson = GsonBuilder()
