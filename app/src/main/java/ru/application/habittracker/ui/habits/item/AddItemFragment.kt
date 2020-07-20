@@ -2,22 +2,16 @@ package ru.application.habittracker.ui.habits.item
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_add_item.*
 import kotlinx.android.synthetic.main.fragment_add_item.period_item
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import ru.application.habittracker.*
-import ru.application.habittracker.api.NetworkController
 import ru.application.habittracker.core.Constants
 import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.core.HabitListInterface
@@ -166,7 +160,7 @@ class AddItemFragment: Fragment() {
     fun getItem (): HabitItem {
 
         if (itemId == "") {
-            //itemId = UUID.randomUUID().toString()
+            itemId = UUID.randomUUID().toString()
         } else {
             update = true
         }
