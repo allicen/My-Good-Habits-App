@@ -1,13 +1,9 @@
 package ru.application.habittracker
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkInfo
 import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -18,12 +14,9 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.fragment_container_habits.*
 import kotlinx.android.synthetic.main.fragment_list.*
-import ru.application.habittracker.api.*
 import ru.application.habittracker.core.Constants
 import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.core.HabitListInterface
@@ -60,8 +53,6 @@ class MainActivity : AppCompatActivity(), HabitListUpdateInterface,
             R.id.habit_container, R.id.nav_about), drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-        getDataFromNetwork(navView)
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -214,50 +205,4 @@ class MainActivity : AppCompatActivity(), HabitListUpdateInterface,
         val appClass: App = applicationContext as App
         return appClass.getDB().feedDao()
     }
-
-
-    /**
-     * Работа с сетью
-     * */
-    fun getDataFromNetwork(navView: NavigationView) {
-
-        // Проверка соединения с сетью
-        val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
-
-        val isConnected: Boolean = activeNetwork?.isConnectedOrConnecting == true
-
-        // Установить тип сети
-        var typeConnection: String = "none"
-        if (activeNetwork != null) {
-            val isWifiConn = activeNetwork.type == ConnectivityManager.TYPE_WIFI && isConnected
-            val isMobileConn = activeNetwork.type == ConnectivityManager.TYPE_MOBILE && isConnected
-
-            typeConnection = when {
-                isWifiConn -> "wifi"
-                isMobileConn -> "mobile"
-                else -> "none"
-            }
-        }
-
-        if (typeConnection == "wifi") {
-            // Добавить аватар на шторку меню
-            val avatar = "https://avatars3.githubusercontent.com/u/46901956?s=460&u=07b81e436c2ed8292a610d9df3eec11be04263bd&v=4"
-            val hView = navView.getHeaderView(0)
-            val image: ImageView = hView.findViewById(R.id.imageView)
-
-            Glide.with(this@MainActivity)
-                .load(avatar)
-                .override(250, 250)
-                .centerCrop()
-                .transform(CircleCrop())
-                .placeholder(R.drawable.ic_idea)
-                .error(R.drawable.ic_idea)
-                .into(image)
-        }
-
-        // Получить данные из сети по API
-        NetworkController().netWorkGet(dao)
-    }
-
 }
