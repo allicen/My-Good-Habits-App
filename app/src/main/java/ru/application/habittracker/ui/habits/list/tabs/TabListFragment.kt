@@ -16,8 +16,9 @@ import ru.application.habittracker.R
 import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.core.HabitListInterface
 import ru.application.habittracker.core.adapter.RecAdapter
+import ru.application.habittracker.data.FeedDao
 
-class TabsListFragment: Fragment() {
+class TabListFragment: Fragment() {
     var callback : HabitListInterface? = null
     lateinit var habitsList: ArrayList<HabitItem>
     lateinit var goodHabits: ArrayList<HabitItem>
@@ -28,15 +29,15 @@ class TabsListFragment: Fragment() {
 
     var orientationScreenOrActive: String = ""
 
-    // Иницифлизация модели ленивым способом
-    private val tabListViewModel by lazy { ViewModelProviders.of(this).get(TabsListViewModel::class.java) }
+    private lateinit var viewModel: ListViewModel
+    lateinit var dao: FeedDao
 
     companion object {
-        fun newInstance(positionTab: Int, habitsList: ArrayList<HabitItem>): TabsListFragment {
+        fun newInstance(positionTab: Int, habitsList: ArrayList<HabitItem>): TabListFragment {
             val bundle = Bundle()
             bundle.putInt("positionTab", positionTab)
             bundle.putParcelableArrayList("habitsList", habitsList)
-            val fragment = TabsListFragment()
+            val fragment = TabListFragment()
             fragment.arguments = bundle
             return fragment
         }
@@ -50,17 +51,18 @@ class TabsListFragment: Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Получаем список привычек и фильтруем его по типу
-        arguments?.let {
-            habitsList = it.getParcelableArrayList("habitsList") ?: ArrayList()
-        }
-
-        goodHabits = habitsList.filter { it.type == 0 } as ArrayList<HabitItem>
-        badHabits = habitsList.filter { it.type == 1 } as ArrayList<HabitItem>
-
         val bundle = this.arguments
         if (bundle != null) {
             positionTab = bundle.getInt("positionTab", 0)
+        }
+
+
+
+        dao = callback?.getContextFromApp()!!
+        viewModel = requireActivity().run {
+            ViewModelProviders.of(this,
+                ListViewModelFactory(dao)
+            ).get(ListViewModel::class.java)
         }
     }
 
@@ -73,38 +75,44 @@ class TabsListFragment: Fragment() {
         vRecViewHabitsList = view.findViewById(R.id.habits_list)
         emptyListText = view.findViewById(R.id.empty_list_habits)
 
-        when (positionTab) { // Сортировка привычек по позиции таба
-            0 -> {
-                val adapter =
-                    RecAdapter(
-                        goodHabits,
-                        orientationScreenOrActive
-                    )
-                vRecViewHabitsList.adapter = adapter
-                tabListViewModel.habitsList.observe(this, Observer { habitsList = it as ArrayList<HabitItem> })
+        viewModel.habitsList.observe(this, Observer { feeds ->
+            habitsList = feeds as ArrayList<HabitItem>
 
-                emptyListText.text = Constants.TYPE_HABITS_EMPTY[0]
-                if (goodHabits.size > 0) {
-                    emptyListText.visibility = View.GONE
+            goodHabits = habitsList.filter { it.type == 0 } as ArrayList<HabitItem>
+            badHabits = habitsList.filter { it.type == 1 } as ArrayList<HabitItem>
+
+
+            when (positionTab) { // Сортировка привычек по позиции таба
+                0 -> {
+                    val adapter =
+                        RecAdapter(
+                            goodHabits,
+                            orientationScreenOrActive
+                        )
+                    vRecViewHabitsList.adapter = adapter
+
+                    emptyListText.text = Constants.TYPE_HABITS_EMPTY[0]
+                    if (goodHabits.size > 0) {
+                        emptyListText.visibility = View.GONE
+                    }
+                }
+                else -> {
+                    val adapter =
+                        RecAdapter(
+                            badHabits,
+                            orientationScreenOrActive
+                        )
+                    vRecViewHabitsList.adapter = adapter
+
+                    emptyListText.text = Constants.TYPE_HABITS_EMPTY[1]
+                    if (badHabits.size > 0) {
+                        emptyListText.visibility = View.GONE
+                    }
                 }
             }
-            else -> {
-                val adapter =
-                    RecAdapter(
-                        badHabits,
-                        orientationScreenOrActive
-                    )
-                vRecViewHabitsList.adapter = adapter
-                tabListViewModel.habitsList.observe(this, Observer { habitsList = it as ArrayList<HabitItem> })
 
-                emptyListText.text = Constants.TYPE_HABITS_EMPTY[1]
-                if (badHabits.size > 0) {
-                    emptyListText.visibility = View.GONE
-                }
-            }
-        }
-
-        vRecViewHabitsList.layoutManager = LinearLayoutManager(activity)
+            vRecViewHabitsList.layoutManager = LinearLayoutManager(activity)
+        })
 
         return view
     }

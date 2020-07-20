@@ -1,14 +1,14 @@
-package ru.application.habittracker.ui.habits.item
+package ru.application.habittracker.ui.habits.list.tabs
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import ru.application.habittracker.data.FeedDao
 
-class AddItemViewModelFactory(private val dao: FeedDao) : ViewModelProvider.Factory {
+class ListViewModelFactory(private val dao: FeedDao): ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(AddItemViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(ListViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return AddItemViewModel(dao) as T
+            return ListViewModel(dao) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

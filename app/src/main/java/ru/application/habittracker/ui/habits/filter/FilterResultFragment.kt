@@ -17,7 +17,7 @@ import ru.application.habittracker.*
 import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.core.HabitListInterface
 import ru.application.habittracker.core.adapter.RecAdapter
-import ru.application.habittracker.ui.habits.list.tabs.TabsListViewModel
+import ru.application.habittracker.ui.habits.list.tabs.ListViewModel
 
 class FilterResultFragment: Fragment() {
 
@@ -33,7 +33,7 @@ class FilterResultFragment: Fragment() {
     var callback : HabitListInterface? = null
 
     // Иницифлизация модели ленивым способом
-    private val tabListViewModel by lazy { ViewModelProviders.of(this).get(TabsListViewModel::class.java) }
+    private val tabListViewModel by lazy { ViewModelProviders.of(this).get(ListViewModel::class.java) }
 
     companion object{
         fun newInstance(habitsList: ArrayList<HabitItem>, query: String): FilterResultFragment {

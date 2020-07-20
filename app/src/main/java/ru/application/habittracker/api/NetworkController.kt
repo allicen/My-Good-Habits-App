@@ -13,7 +13,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import ru.application.habittracker.core.Constants
 import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.data.FeedDao
-import java.util.*
 import kotlin.collections.ArrayList
 
 
@@ -57,7 +56,7 @@ class NetworkController {
     }
 
 
-    // Признак новой привычки
+    // Признак завершенной привычки
     fun netWorkPost(habit: HabitItem) {
         GlobalScope.launch(Dispatchers.Default) {
             val gson = GsonBuilder()
@@ -76,25 +75,28 @@ class NetworkController {
                 .build()
 
             val service = retrofit.create(NetworkService::class.java)
-            val addHabit: Call<Void> = service.addHabit(JsonPostModel(1, habit.id))
+            val addHabit: Call<Void> = service.addHabit(JsonPostModel(System.currentTimeMillis().toInt(), habit.id))
 
             @Suppress("BlockingMethodInNonBlockingContext") val response = addHabit.execute()
 
             if (!response.isSuccessful) {
                 Log.e("error", "Ошибка добавления привычки с id=${habit.id}, код ответа: ${response.code()}")
-            } else {
-                netWorkPut(habit)
             }
         }
     }
 
 
     // Загрузить данные из БД на сервер
-    fun netWorkPut(habit: HabitItem) {
+    fun netWorkPut(habit: HabitItem, dao: FeedDao) {
         GlobalScope.launch(Dispatchers.Default) {
 
+            val date = when (habit.id) {
+                "" -> 0
+                else -> System.currentTimeMillis()
+            }
+
             val gson = GsonBuilder()
-                .registerTypeAdapter(HabitItem::class.java, HabitJsonSerializer())
+                .registerTypeAdapter(HabitItem::class.java, HabitJsonSerializer(date))
                 .create()
 
             val interceptor = HttpLoggingInterceptor()
@@ -120,6 +122,8 @@ class NetworkController {
 
             if (!response.isSuccessful) {
                 Log.e("error", "Ошибка обновления привычки с id=${habit.id}, код ответа: ${response.code()}")
+            } else {
+                netWorkGet(dao)
             }
         }
     }
@@ -129,7 +133,7 @@ class NetworkController {
     fun netWorkDelete(id: String) {
         GlobalScope.launch(Dispatchers.Default) {
             val gson = GsonBuilder()
-                .registerTypeAdapter(HabitItem::class.java, JsonDeleteModelSerializer())
+                //.registerTypeAdapter(HabitItem::class.java, JsonDeleteModelSerializer())
                 .create()
 
             val interceptor = HttpLoggingInterceptor()

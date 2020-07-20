@@ -1,23 +1,52 @@
 package ru.application.habittracker.ui.habits.item
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import ru.application.habittracker.api.NetworkController
+import ru.application.habittracker.core.Constants
 import ru.application.habittracker.core.HabitItem
+import ru.application.habittracker.data.FeedDao
 
-class AddItemViewModel(private val item: HabitItem) : ViewModel() {
 
-    private val _title = MutableLiveData<String>().apply { item.title }
-    private val _description = MutableLiveData<String>().apply { item.description }
-    private val _type = MutableLiveData<String>().apply { item.type }
-    private val _priority = MutableLiveData<String>().apply { item.priority }
-    private val _count = MutableLiveData<String>().apply { item.count }
-    private val _period = MutableLiveData<String>().apply { item.period }
+class AddItemViewModel(private val dao: FeedDao) : ViewModel() {
 
-    val title: LiveData<String> = _title
-    val description: LiveData<String> = _description
-    val type: LiveData<String> = _type
-    val priority: LiveData<String> = _priority
-    val count: LiveData<String> = _count
-    val period: LiveData<String> = _period
+    fun updateDB (delete: Boolean, update: Boolean, item: HabitItem){
+        when {
+            delete -> { // Удаление привычки
+                delete(item)
+            }
+            update -> { // Редактирование привычки
+                update(item)
+            }
+            else -> { // Добавление привычки
+                insert(item)
+            }
+        }
+    }
+
+    private fun insert(habit: HabitItem) {
+        if (habit != Constants.EMPTY_ITEM) {
+            GlobalScope.launch(Dispatchers.Default) {
+                //dao.insert(data)
+            }
+            NetworkController().netWorkPut(habit, dao)
+        }
+    }
+
+    private fun update(habit: HabitItem) {
+        GlobalScope.launch(Dispatchers.Default) {
+            dao.update(habit)
+        }
+        NetworkController().netWorkPut(habit, dao)
+    }
+
+
+    private fun delete(habit: HabitItem) {
+        GlobalScope.launch(Dispatchers.Default) {
+            dao.deleteById(habit.id)
+        }
+        NetworkController().netWorkDelete(habit.id)
+    }
 }
