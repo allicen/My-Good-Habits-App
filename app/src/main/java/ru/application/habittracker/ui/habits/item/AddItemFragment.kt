@@ -212,17 +212,7 @@ class AddItemFragment: Fragment() {
             ).get(AddItemViewModel::class.java)
         }
 
-        when {
-            delete -> { // Удаление привычки
-               addItemViewModel.delete(item)
-            }
-            update -> { // Редактирование привычки
-                addItemViewModel.update(item)
-            }
-            else -> { // Добавление привычки
-                addItemViewModel.insert(item)
-            }
-        }
+        addItemViewModel.updateDB (delete, update, item)
 
 
         if (item.title != "") {

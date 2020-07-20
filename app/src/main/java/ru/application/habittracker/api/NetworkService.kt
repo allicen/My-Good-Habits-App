@@ -1,8 +1,6 @@
 package ru.application.habittracker.api
 
 import androidx.annotation.Keep
-import okhttp3.RequestBody
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.*
 import ru.application.habittracker.core.HabitItem

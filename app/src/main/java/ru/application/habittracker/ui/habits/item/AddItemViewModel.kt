@@ -12,7 +12,21 @@ import ru.application.habittracker.data.FeedDao
 
 class AddItemViewModel(private val dao: FeedDao) : ViewModel() {
 
-    fun insert(habit: HabitItem) {
+    fun updateDB (delete: Boolean, update: Boolean, item: HabitItem){
+        when {
+            delete -> { // Удаление привычки
+                delete(item)
+            }
+            update -> { // Редактирование привычки
+                update(item)
+            }
+            else -> { // Добавление привычки
+                insert(item)
+            }
+        }
+    }
+
+    private fun insert(habit: HabitItem) {
         if (habit != Constants.EMPTY_ITEM) {
             GlobalScope.launch(Dispatchers.Default) {
                 //dao.insert(data)
@@ -21,7 +35,7 @@ class AddItemViewModel(private val dao: FeedDao) : ViewModel() {
         }
     }
 
-    fun update(habit: HabitItem) {
+    private fun update(habit: HabitItem) {
         GlobalScope.launch(Dispatchers.Default) {
             dao.update(habit)
         }
@@ -29,7 +43,7 @@ class AddItemViewModel(private val dao: FeedDao) : ViewModel() {
     }
 
 
-    fun delete(habit: HabitItem) {
+    private fun delete(habit: HabitItem) {
         GlobalScope.launch(Dispatchers.Default) {
             dao.deleteById(habit.id)
         }

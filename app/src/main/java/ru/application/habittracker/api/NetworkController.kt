@@ -56,7 +56,7 @@ class NetworkController {
     }
 
 
-    // Признак новой привычки
+    // Признак завершенной привычки
     fun netWorkPost(habit: HabitItem) {
         GlobalScope.launch(Dispatchers.Default) {
             val gson = GsonBuilder()
@@ -133,7 +133,7 @@ class NetworkController {
     fun netWorkDelete(id: String) {
         GlobalScope.launch(Dispatchers.Default) {
             val gson = GsonBuilder()
-                .registerTypeAdapter(HabitItem::class.java, JsonDeleteModelSerializer())
+                //.registerTypeAdapter(HabitItem::class.java, JsonDeleteModelSerializer())
                 .create()
 
             val interceptor = HttpLoggingInterceptor()

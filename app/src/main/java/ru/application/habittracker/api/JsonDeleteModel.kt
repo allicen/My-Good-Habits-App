@@ -1,5 +1,7 @@
 package ru.application.habittracker.api
 
-class JsonDeleteModel (
-    val uid: String
+import com.google.gson.annotations.SerializedName
+
+data class JsonDeleteModel (
+    @SerializedName("uid") val uid: String
 )
