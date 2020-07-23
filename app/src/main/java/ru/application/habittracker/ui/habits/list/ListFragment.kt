@@ -1,16 +1,25 @@
 package ru.application.habittracker.ui.habits.list
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
+import kotlinx.android.synthetic.main.fragment_filter_bottom_sheet.*
+import kotlinx.android.synthetic.main.fragment_filter_constrain.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import ru.application.habittracker.core.Constants
 import ru.application.habittracker.R
 import ru.application.habittracker.core.adapter.TabAdapter
@@ -37,7 +46,6 @@ class ListFragment: Fragment(), Serializable {
     lateinit var tabsViewpager: ViewPager
 
     private lateinit var viewModel: ListViewModel
-
     lateinit var dao: FeedDao
 
     companion object {
@@ -58,7 +66,7 @@ class ListFragment: Fragment(), Serializable {
 
         dao = callback?.getContextFromApp()!!
         viewModel = requireActivity().run {
-            ViewModelProviders.of(this,
+            ViewModelProviders.of(activity!!,
                 ListViewModelFactory(dao)
             ).get(ListViewModel::class.java)
         }
@@ -71,6 +79,13 @@ class ListFragment: Fragment(), Serializable {
                     Constants.ITEM_POSITION_DEFAULT
                 )
             }
+        }
+        // Фрагмент для фильтра
+        val filterFragment = FilterFragment.newInstance()
+        if (childFragmentManager.findFragmentByTag("filter") == null) {
+            childFragmentManager.beginTransaction().add(R.id.list_tab_fragment, filterFragment, "filter").addToBackStack("filter").commitAllowingStateLoss()
+        } else {
+            childFragmentManager.beginTransaction().replace(R.id.list_tab_fragment, filterFragment, "filter").addToBackStack("filter").commitAllowingStateLoss()
         }
     }
 
@@ -92,34 +107,25 @@ class ListFragment: Fragment(), Serializable {
         viewModel.habitsList.observe(this, Observer { feeds ->
             habitList = feeds as ArrayList<HabitItem>
 
-            // Загрузить в сеть по API
-//            for (habit in habitList) {
-//                NetworkController().netWorkPut(habit)
-//            }
+            getTabs()
 
-            // Количество привычек
-            val goodHabitsCount = habitList.filter { it.type == 0 }.count()
-            val badHabitsCount = habitList.filter { it.type == 1 }.count()
-            val sizeList = max(goodHabitsCount, badHabitsCount)
+            write_title.setOnFocusChangeListener { v, hasFocus  ->
+                if (hasFocus) {
+                    // Ввод текста нижней панели
+                    write_title.addTextChangedListener(object : TextWatcher {
+                        @SuppressLint("DefaultLocale")
+                        override fun afterTextChanged(s: Editable) {
+                            val query = write_title.text.toString()
+                            getTabs(query)
+                        }
 
-            // Табы
-            tabsViewpager.adapter = TabAdapter(
-                childFragmentManager,
-                goodHabitsCount,
-                badHabitsCount, habitList
-            )
-            tabsLayout.setupWithViewPager(tabsViewpager)
-
-            hideStartText(sizeList)
+                        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+                        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
+                    })
+                }
+            }
         })
 
-        // Фрагмент для фильтра
-        val filterFragment = FilterFragment.newInstance()
-        if (childFragmentManager.findFragmentByTag("filter") == null) {
-            childFragmentManager.beginTransaction().add(R.id.list_tab_fragment, filterFragment, "filter").addToBackStack("filter").commitAllowingStateLoss()
-        } else {
-            childFragmentManager.beginTransaction().replace(R.id.list_tab_fragment, filterFragment, "filter").addToBackStack("filter").commitAllowingStateLoss()
-        }
     }
 
 
@@ -135,6 +141,27 @@ class ListFragment: Fragment(), Serializable {
             emptyList.visibility = TextView.GONE
             titleList.visibility = TextView.GONE
             tabs.visibility = LinearLayout.VISIBLE
+        }
+    }
+
+
+    fun getTabs(query:String = "") {
+        Constants.query = query
+
+        val goodHabitsCount = habitList.filter { it.type == 0 && it.title.indexOf(query) != -1 }.count()
+        val badHabitsCount = habitList.filter { it.type == 1 && it.title.indexOf(query) != -1 }.count()
+        val sizeList = max(goodHabitsCount, badHabitsCount)
+
+        // Табы
+        tabsViewpager.adapter = TabAdapter(
+            childFragmentManager,
+            goodHabitsCount,
+            badHabitsCount
+        )
+        tabsLayout.setupWithViewPager(tabsViewpager)
+
+        GlobalScope.launch(Dispatchers.Default) {
+            hideStartText(dao.getAllCount())
         }
     }
 }

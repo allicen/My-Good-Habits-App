@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.fragment_filter_bottom_sheet.*
 import ru.application.habittracker.core.Constants
 import ru.application.habittracker.R
 import ru.application.habittracker.core.HabitItem
@@ -20,7 +21,6 @@ import ru.application.habittracker.data.FeedDao
 
 class TabListFragment: Fragment() {
     var callback : HabitListInterface? = null
-    lateinit var habitsList: ArrayList<HabitItem>
     lateinit var goodHabits: ArrayList<HabitItem>
     lateinit var badHabits: ArrayList<HabitItem>
     lateinit var vRecViewHabitsList: RecyclerView
@@ -33,10 +33,9 @@ class TabListFragment: Fragment() {
     lateinit var dao: FeedDao
 
     companion object {
-        fun newInstance(positionTab: Int, habitsList: ArrayList<HabitItem>): TabListFragment {
+        fun newInstance(positionTab: Int): TabListFragment {
             val bundle = Bundle()
             bundle.putInt("positionTab", positionTab)
-            bundle.putParcelableArrayList("habitsList", habitsList)
             val fragment = TabListFragment()
             fragment.arguments = bundle
             return fragment
@@ -55,15 +54,7 @@ class TabListFragment: Fragment() {
         if (bundle != null) {
             positionTab = bundle.getInt("positionTab", 0)
         }
-
-
-
         dao = callback?.getContextFromApp()!!
-        viewModel = requireActivity().run {
-            ViewModelProviders.of(this,
-                ListViewModelFactory(dao)
-            ).get(ListViewModel::class.java)
-        }
     }
 
     override fun onCreateView(
@@ -72,14 +63,19 @@ class TabListFragment: Fragment() {
     ): View {
         val view: View = inflater.inflate(R.layout.fragment_habits_tab, container, false)
 
+        viewModel = requireActivity().run {
+            ViewModelProviders.of(this,
+                ListViewModelFactory(dao)
+            ).get(ListViewModel::class.java)
+        }
+
         vRecViewHabitsList = view.findViewById(R.id.habits_list)
         emptyListText = view.findViewById(R.id.empty_list_habits)
 
         viewModel.habitsList.observe(this, Observer { feeds ->
-            habitsList = feeds as ArrayList<HabitItem>
 
-            goodHabits = habitsList.filter { it.type == 0 } as ArrayList<HabitItem>
-            badHabits = habitsList.filter { it.type == 1 } as ArrayList<HabitItem>
+            goodHabits = feeds.filter { it.type == 0  && it.title.indexOf(Constants.query) != -1 } as ArrayList<HabitItem>
+            badHabits = feeds.filter { it.type == 1 && it.title.indexOf(Constants.query) != -1 } as ArrayList<HabitItem>
 
 
             when (positionTab) { // Сортировка привычек по позиции таба

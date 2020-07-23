@@ -11,15 +11,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
+import androidx.lifecycle.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ru.application.habittracker.core.Constants
 import ru.application.habittracker.core.HabitListInterface
 import ru.application.habittracker.R
 import ru.application.habittracker.core.HabitItem
+import ru.application.habittracker.data.FeedDao
 import ru.application.habittracker.ui.habits.item.AddItemFragment
+import ru.application.habittracker.ui.habits.list.ListFragment
+import ru.application.habittracker.ui.habits.list.tabs.ListViewModel
+import ru.application.habittracker.ui.habits.list.tabs.ListViewModelFactory
 
 class FilterFragment : Fragment() {
 
@@ -35,6 +38,8 @@ class FilterFragment : Fragment() {
     lateinit var fab: FloatingActionButton
     var orientationScreenOrActive: String = ""
     var callback : HabitListInterface? = null
+
+    lateinit var dao: FeedDao
 
     companion object{
         fun newInstance(): FilterFragment {
@@ -66,7 +71,7 @@ class FilterFragment : Fragment() {
         bottomPanelWithForm = view.findViewById(R.id.bottom_panel) // Форма
 
         filterLayout = view.findViewById(R.id.filter_layout)
-        writeTitle = view.findViewById(R.id.write_title)
+       // writeTitle = view.findViewById(R.id.write_title)
 
         fab = view.findViewById(R.id.fab)
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet) // Вся панель
@@ -78,57 +83,33 @@ class FilterFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Показать/скрыть панель в зависимости от наличия списка
-        val feed: LiveData<List<HabitItem>> = callback?.getContextFromApp()?.getAll()!!
-        feed.observe(viewLifecycleOwner, Observer { feeds ->
-            val habitList = feeds as ArrayList<HabitItem>
+//        val feed: LiveData<List<HabitItem>> = callback?.getContextFromApp()?.getAll()!!
+//        feed.observe(viewLifecycleOwner, Observer { feeds ->
+//            val habitList = feeds as ArrayList<HabitItem>
+//
+//            if (habitList.size == 0) {
+//                bottomPanelWithForm.visibility = View.INVISIBLE
+//            } else {
+//                bottomPanelWithForm.visibility = View.VISIBLE
+//            }
+//        })
 
-            if (habitList.size == 0) {
-                bottomPanelWithForm.visibility = View.INVISIBLE
-            } else {
-                bottomPanelWithForm.visibility = View.VISIBLE
-            }
-        })
 
 
+//
+//
+//        bottomSheetShow.setOnClickListener {
+//            if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
+//                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED)
+//                bottomSheetText.text = "Скрыть фильтр"
+//                bottomSheetImg.setImageResource(R.drawable.ic_keyboard_arrow_down)
+//            } else {
+//                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED)
+//                bottomSheetText.text = "Открыть фильтр"
+//                bottomSheetImg.setImageResource(R.drawable.ic_keyboard_arrow_up)
+//            }
+//        }
 
-        bottomSheetShow.setOnClickListener {
-            if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED)
-                bottomSheetText.text = "Скрыть фильтр"
-                bottomSheetImg.setImageResource(R.drawable.ic_keyboard_arrow_down)
-            } else {
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED)
-                bottomSheetText.text = "Открыть фильтр"
-                bottomSheetImg.setImageResource(R.drawable.ic_keyboard_arrow_up)
-            }
-        }
-
-        writeTitle.setOnFocusChangeListener { v, hasFocus ->
-            if (hasFocus) {
-                // Ввод текста нижней панели
-                writeTitle.addTextChangedListener(object : TextWatcher {
-                    @SuppressLint("DefaultLocale")
-                    override fun afterTextChanged(s: Editable) {
-                        val query = writeTitle.text.toString()
-
-                        @Suppress("NAME_SHADOWING")
-                        val feed: LiveData<List<HabitItem>> = callback?.getContextFromApp()?.getAll()!!
-                        feed.observe(viewLifecycleOwner, Observer { feeds ->
-
-                            var habits = feeds as ArrayList<HabitItem>
-                            if (query.isNotEmpty()) {
-                                habits = habits.filter { it.title.toLowerCase().indexOf(query) != -1 } as ArrayList
-                            }
-
-                            callback?.getQueryFilter(query, habits)
-                        })
-                    }
-
-                    override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-                    override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-                })
-            }
-        }
 
         fab.setOnClickListener {
             Log.e("tag", "Открыто окно создания привычки")

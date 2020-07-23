@@ -9,11 +9,14 @@ interface FeedDao {
     @Query("SELECT * FROM habits")
     fun getAll(): LiveData<List<HabitItem>>
 
+    @Query("SELECT COUNT(*) FROM habits")
+    fun getAllCount(): Int
+
     @Query("SELECT * FROM habits WHERE id IN (:feedId)")
     fun getAllById(feedId: String): LiveData<HabitItem>
 
-    @Query("SELECT * FROM habits WHERE title LIKE :title LIMIT 1")
-    fun findByTitle(title: String): LiveData<HabitItem>
+    @Query("SELECT * FROM habits WHERE title =:title")
+    fun findByTitle(title: String): LiveData<List<HabitItem>>
 
     @Query("SELECT * FROM habits WHERE title LIKE :title LIMIT 1")
     fun findById(title: String): HabitItem

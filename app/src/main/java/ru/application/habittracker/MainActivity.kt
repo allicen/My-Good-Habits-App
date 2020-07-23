@@ -1,10 +1,8 @@
 package ru.application.habittracker
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
@@ -17,12 +15,10 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.fragment_container_habits.*
 import kotlinx.android.synthetic.main.fragment_list.*
-import ru.application.habittracker.core.Constants
 import ru.application.habittracker.core.HabitItem
 import ru.application.habittracker.core.HabitListInterface
 import ru.application.habittracker.core.HabitListUpdateInterface
 import ru.application.habittracker.data.FeedDao
-import ru.application.habittracker.ui.habits.filter.FilterResultFragment
 import ru.application.habittracker.ui.habits.item.AddItemFragment
 import ru.application.habittracker.ui.habits.list.ListFragment
 
@@ -182,19 +178,6 @@ class MainActivity : AppCompatActivity(), HabitListUpdateInterface,
             return false
         }
         return true
-    }
-
-    @SuppressLint("DefaultLocale", "SetTextI18n")
-    override fun getQueryFilter(query: String, habits: ArrayList<HabitItem>) {
-        val tabs: LinearLayout = findViewById(R.id.tabs)
-
-        tabs.visibility = View.GONE
-
-        if (tab_layout_replace != null) {
-            val filterResult = FilterResultFragment.newInstance(habits, query)
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.tab_layout_replace, filterResult).addToBackStack("filter").commit()
-        }
     }
 
 

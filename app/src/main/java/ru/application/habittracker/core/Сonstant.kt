@@ -20,5 +20,7 @@ class Constants {
         var hash = 0
 
         val URL_NETWORK = "https://droid-test-server.doubletapp.ru/api/"
+
+        var query = ""
     }
 }

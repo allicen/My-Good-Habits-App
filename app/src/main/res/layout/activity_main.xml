@@ -32,11 +32,6 @@
                 app:defaultNavHost="false"
                 app:navGraph="@navigation/mobile_navigation"
                 class="androidx.navigation.fragment.NavHostFragment">
-
-<!--                <FrameLayout-->
-<!--                        android:id="@+id/container_fragment_frame"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="match_parent"/>-->
         </fragment>
 
         <com.google.android.material.navigation.NavigationView
